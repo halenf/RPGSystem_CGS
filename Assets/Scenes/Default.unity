@@ -512,7 +512,7 @@ GameObject:
   - component: {fileID: 1200765278}
   - component: {fileID: 1200765277}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -531,6 +531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneUI: {fileID: 394056447}
+  character: {fileID: 11400000, guid: ff375afc9769daa43a78725f4db77c05, type: 2}
 --- !u!4 &1200765278
 Transform:
   m_ObjectHideFlags: 0

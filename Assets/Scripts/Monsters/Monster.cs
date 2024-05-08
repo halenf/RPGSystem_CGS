@@ -36,6 +36,12 @@ namespace RPGSystem
         {
             m_turnTimer = 0;
         }
+
+        public void ClearSlot()
+        {
+            m_skill = null;
+            m_turnTimer = 0;
+        }
     }
 
     [Serializable]
@@ -52,10 +58,7 @@ namespace RPGSystem
 
         public Status status
         {
-            get
-            {
-                return m_status;
-            }
+            get { return m_status; }
         }
         public int turnTimer
         {
@@ -96,6 +99,12 @@ namespace RPGSystem
             else
                 target.ToggleTriggeredEffect(TriggeredEffect.FailStatusClearEffects);
         }
+
+        public void ClearSlot()
+        {
+            m_status = null;
+            m_turnTimer = 0;
+        }
     }
 
     [Serializable]
@@ -113,9 +122,17 @@ namespace RPGSystem
     public class Monster : ScriptableObject
     {
         // monster data
-        public MonsterData monsterData;
+        [SerializeField] private MonsterData m_monsterData;
+        public MonsterData monsterData
+        {
+            get { return m_monsterData; }
+        }
 
-        public string monsterName;
+        [SerializeField] private string m_monsterName;
+        public string monsterName
+        {
+            get { return m_monsterName; }
+        }
 
         // skill and status
         [SerializeField] private SkillSlot[] m_skillSlots = new SkillSlot[3];
@@ -137,10 +154,10 @@ namespace RPGSystem
         }
 
         // tracks stat modifiers from buffs
-        private float[] m_statEffects = new float[4] { 1, 1, 1, 1 } ;
+        [SerializeField] private float[] m_statModifiers = new float[4] { 1, 1, 1, 1 } ;
 
         // bitwise enum for effects with triggers
-        private TriggeredEffect m_triggeredEffects;
+        [SerializeField] private TriggeredEffect m_triggeredEffects;
         public TriggeredEffect triggeredEffects
         {
             get
@@ -150,7 +167,14 @@ namespace RPGSystem
         }
 
         // exp/level
-        private int m_exp;
+        [SerializeField] private int m_exp;
+        public int exp
+        {
+            get
+            {
+                return m_exp;
+            }
+        }
         public int level
         {
             get
@@ -162,13 +186,6 @@ namespace RPGSystem
             {
                 float curveScalar = Mathf.Log((float)monsterData.levelCurve * 10.0f / 3.0f) / 2 * Mathf.Log(10);
                 m_exp = (int)(3.0f * Mathf.Pow(value, curveScalar) / 10.0f);
-            }
-        }
-        public int exp
-        {
-            get
-            {
-                return m_exp;
             }
         }
 
@@ -232,7 +249,7 @@ namespace RPGSystem
         {
             get
             {
-                return (int)(health * Mathf.Pow(1000 * level, 0.4f));
+                return (int)(health * Mathf.Pow(1000 * (level + 1), 0.4f));
             }
         }
         public int currentHP
@@ -246,30 +263,30 @@ namespace RPGSystem
         {
             get
             {
-                return (int)((30 * strength * level / 100 + 10) * m_statEffects[(int)MonsterBaseStats.Strength]);
+                return (int)((30 * strength * (level + 1) / 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Strength]);
             }
         }
         public int defence
         {
             get
             {
-                return (int)((30 * fortitude * level / 100 + 10) * m_statEffects[(int)MonsterBaseStats.Fortitude]);
+                return (int)((30 * fortitude * (level + 1) / 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Fortitude]);
             }
         }
         public int speed
         {
             get
             {
-                return (int)((30 * agility * level / 100 + 10) * m_statEffects[(int)MonsterBaseStats.Agility]);
+                return (int)((30 * agility * (level + 1)/ 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Agility]);
             }
         }
 
         // public methods for battle scene
-        public void ResetMonster()
+        public void BattleResetMonster()
         {
             // clear stat buffs/debuffs
             for (int i = 1; i < 4; i++)
-                m_statEffects[i] = 1;
+                m_statModifiers[i] = 1;
 
             // reset HP
             m_currentHP = maxHP;
@@ -321,7 +338,7 @@ namespace RPGSystem
             else
                 _value = value / 100.0f + 1;
             
-            m_statEffects[(int)baseStat] *= _value;
+            m_statModifiers[(int)baseStat] *= _value;
         }
 
         public void GainStatus(Status status)
@@ -354,10 +371,24 @@ namespace RPGSystem
         }
 
         // functional methods
-        [ContextMenu("SetLevel")]
+        [ContextMenu("Set Level 16")]
         public void SetLevel()
         {
             level = 16;
+        }
+
+        [ContextMenu("Reset Monster")]
+
+        public void ResetMonster()
+        {
+            m_monsterData = null;
+            m_monsterName = string.Empty;
+            m_skillSlots = null;
+            m_statusSlots = null;
+            m_statModifiers = null;
+            m_triggeredEffects = 0;
+            m_exp = 0;
+            m_currentHP = 0;
         }
     }
 }

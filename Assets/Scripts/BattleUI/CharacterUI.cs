@@ -29,8 +29,12 @@ namespace RPGSystem
             // Get the monsterUIs attached to this object
             m_monsterUIArray = GetComponentsInChildren<MonsterUI>();
 
-            foreach (MonsterUI ui in m_monsterUIArray)
-                ui.Initialise();
+            // initialise the monsterUIs
+            for (int i = 0; i < m_monsterUIArray.Length; i++)
+            {
+                m_monsterUIArray[i].monster = character.monsters[i];
+                m_monsterUIArray[i].Initialise();
+            }
         }
 
         public override void UpdateUI()
