@@ -10,10 +10,9 @@ namespace RPGSystem
     public class MonsterEditorWindow : Editor
     {
         Monster monster;
-        
-        int numOfSkills;
-        int numOfStatuses;
-        bool showStatusSlots = false;
+
+        bool showBattleDebug = false;
+        bool showModifierFoldout = false;
 
         SerializedProperty m_monsterData;
         SerializedProperty m_monsterName;
@@ -23,109 +22,144 @@ namespace RPGSystem
         SerializedProperty m_triggeredEffects;
         SerializedProperty m_exp;
 
+        float width;
+
         public void OnEnable()
         {
             monster = (Monster)target;
-            numOfSkills = monster.skillSlots.Length;
-            numOfStatuses = monster.statusSlots.Count;
             GetSerializedProperties();
+            width = Screen.width;
         }
 
         public override void OnInspectorGUI()
         {
-            
             // object slot for monster data
             EditorGUILayout.PropertyField(m_monsterData, new GUIContent("Base Monster Data", "What type of monster this is."));
-            // set monster name
-            // set default to monster data's name
-            EditorGUILayout.PropertyField(m_monsterName, new GUIContent("Name", "The nickname of this monster. Defaults to the base monster's name."));
-            if (monster.monsterData != null && m_monsterName.stringValue == string.Empty)
+
+            // don't show the rest of the ui if the monster has no monster data
+            if (m_monsterData.objectReferenceValue == null)
+                return;
+
+            // set monster name, set default to monster type name
+            EditorGUILayout.PropertyField(m_monsterName, new GUIContent("Nickname", "The nickname of this monster. Defaults to the base monster's name."));
+            if (m_monsterName.stringValue == string.Empty)
             {
-                m_monsterName.stringValue = monster.monsterData.name;
+                m_monsterName.stringValue = ((MonsterData)m_monsterData.objectReferenceValue).monsterName;
             }
+
+            // experience level display
+            EditorGUILayout.BeginHorizontal();
+            m_exp.intValue = EditorGUILayout.IntField(new GUIContent("Exp", "This monster's total experience."), m_exp.intValue);
+            // if the user changed the level field
+            int inputLevel = EditorGUILayout.IntField(new GUIContent("Level", "This monster's curent level."), monster.level);
+            if (inputLevel != monster.level)
+            {
+                monster.level = inputLevel;
+                serializedObject.Update();
+            }
+            EditorGUILayout.EndHorizontal();
 
             // skill slot layout
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Skill Slots");
-            GUILayout.Label("Skill");
-            GUILayout.Label("Turn Timer");
-            GUILayout.EndHorizontal();
-
-            for (int i = 0; i < numOfSkills; i++)
+            EditorGUILayout.PropertyField(m_skillSlots, new GUIContent("Skill Slots", "The monster's skill slots."));
+            /*
+            GUIContent skillFoldoutLabel = new GUIContent("Skill Slots", "This menu shows the monster's skill slots and allows you to " +
+                "add and remove skills.");
+            showSkillSlots = EditorGUILayout.BeginFoldoutHeaderGroup(showSkillSlots, skillFoldoutLabel);
+            if (showSkillSlots)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(("Skill Slot " + (i + 1).ToString()));
-                SerializedProperty skillSlot = m_skillSlots.GetArrayElementAtIndex(i);
-                SerializedProperty skill = skillSlot.FindPropertyRelative("m_skill");
-                SerializedProperty turnTimer = skillSlot.FindPropertyRelative("m_turnTimer");
-                EditorGUILayout.PropertyField(skill, GUIContent.none);
-                EditorGUILayout.PropertyField(turnTimer, GUIContent.none);
+                EditorGUILayout.LabelField("", GUILayout.Width(width * 0.2f));
+                GUILayout.Label("Skill", GUILayout.Width(width * 0.35f));
+                GUILayout.Label("Turn Timer", GUILayout.Width(width * 0.35f));
                 GUILayout.EndHorizontal();
 
-
-
-                /*
-                comp.skillSlots[i].skill = (Skill)EditorGUILayout.ObjectField(comp.skillSlots[i].skill, typeof(Skill), false);
-                comp.skillSlots[i].turnTimer = EditorGUILayout.IntField(comp.skillSlots[i].turnTimer);
-                */
-            }
-
-            // add and remove skill buttons
-            GUILayout.BeginHorizontal();
-            if (numOfSkills < 3)
-                if (GUILayout.Button("+"))
-                    numOfSkills++;
-            if (numOfSkills > 1)
-                if (GUILayout.Button("-"))
+                for (int i = 0; i < numOfSkills; i++)
                 {
-                    monster.skillSlots[numOfSkills - 1].ClearSlot();
-                    numOfSkills--;
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Slot " + (i + 1).ToString(), GUILayout.Width(width * 0.2f));
+                    SerializedProperty skillSlot = m_skillSlots.GetArrayElementAtIndex(i);
+                    SerializedProperty skill = skillSlot.FindPropertyRelative("m_skill");
+                    SerializedProperty turnTimer = skillSlot.FindPropertyRelative("m_turnTimer");
+                    EditorGUILayout.PropertyField(skill, GUIContent.none, GUILayout.Width(width * 0.35f));
+                    EditorGUILayout.PropertyField(turnTimer, GUIContent.none, GUILayout.Width(width * 0.35f));
+                    GUILayout.EndHorizontal();
                 }
-            GUILayout.EndHorizontal();
 
-            // status slots layout for debugging
-            GUIContent statusFoldoutLabel =  new GUIContent("Status Slots Debugging", "This menu will show all the statuses " +
-                "this monster is currently inflicted with and allow you to add or remove statuses for debugging purposes.");
-            showStatusSlots = EditorGUILayout.BeginFoldoutHeaderGroup(showStatusSlots, statusFoldoutLabel);
-            if (showStatusSlots)
-            {
-                
-                
-                
-                
-                // add and remove status buttons
+                // add and remove skill buttons
                 GUILayout.BeginHorizontal();
 
-                if (GUILayout.Button("+"))
-                    numOfStatuses++;
-                if (numOfStatuses > 0)
-                    if (GUILayout.Button("-"))
+                if (numOfSkills < 3)
+                {
+                    if (GUILayout.Button("+", GUILayout.Width(width * 0.1f)))
                     {
-                        monster.statusSlots[numOfStatuses - 1].ClearSlot();
-                        numOfStatuses--;
+                        monster.AddSkillSlot();
+                        numOfSkills++;
+                    }
+                }
+                else
+                    EditorGUILayout.LabelField("", GUILayout.Width(width * 0.1f));
+
+                if (numOfSkills > 1)
+                    if (GUILayout.Button("-", GUILayout.Width(width * 0.1f)))
+                    {
+                        monster.RemoveSkillSlot();
+                        numOfSkills--;
                     }
                 GUILayout.EndHorizontal();
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
+            */
+
+            // battle debug button
+            if (GUILayout.Button(new GUIContent(showBattleDebug ? "Hide Battle Debug Info" : "Show Battle Debug Info", "Toggles the visibility of " +
+                "data and tools relevant only when the monster is in a battle.")))
+                showBattleDebug = !showBattleDebug;
+
+            if (showBattleDebug)
+            {
+                // status slots layout for debugging
+                EditorGUILayout.PropertyField(m_statusSlots, new GUIContent("Status Slots Debugging", "All the statuses " +
+                    "this monster is currently inflicted with. Only shows meaningful data during battles."));
+
+                // stat modifiers display
+                GUIContent modifierFoldoutLabel = new GUIContent("Volatile Stat Modifiers", "Values representing " +
+                    "the modifiers currently affecting this stat.");
+                showModifierFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(showModifierFoldout, modifierFoldoutLabel);
+                if (showModifierFoldout)
+                {
+                    string[] monsterBaseStatNames = Enum.GetNames(typeof(MonsterBaseStats));
+                    for (int i = 1; i < 4; i++)
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        GUILayout.Label(monsterBaseStatNames[i], GUILayout.Width(width * 0.2f));
+                        SerializedProperty statModifier = m_statModifiers.GetArrayElementAtIndex(i);
+                        statModifier.floatValue = EditorGUILayout.Slider(statModifier.floatValue, 0, 2, GUILayout.Width(width * 0.25f));
+                        EditorGUILayout.EndHorizontal();
+                    }
+                }
+
+                EditorGUILayout.EndFoldoutHeaderGroup();
+            }
 
             // apply changes to serialized object
-            serializedObject.ApplyModifiedProperties();
+            if (serializedObject.ApplyModifiedProperties())
+                // If changes were made to the object, update references to properties
+                GetSerializedProperties();
 
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(30);
 
-            base.OnInspectorGUI();
-
+            //base.OnInspectorGUI();
         }
 
         public void GetSerializedProperties()
         {
             m_monsterData = serializedObject.FindProperty("m_monsterData");
             m_monsterName = serializedObject.FindProperty("m_monsterName");
+            m_exp = serializedObject.FindProperty("m_exp");
             m_skillSlots = serializedObject.FindProperty("m_skillSlots");
             m_statusSlots = serializedObject.FindProperty("m_statusSlots");
             m_statModifiers = serializedObject.FindProperty("m_statModifiers");
             m_triggeredEffects = serializedObject.FindProperty("m_triggeredEffects");
-            m_exp = serializedObject.FindProperty("m_exp");
         }
     }
 }

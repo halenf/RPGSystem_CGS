@@ -11,5 +11,9 @@ Monster Editor
 BattleScene
 - Allow any number of monsters in party
 
+GameSettings
+- Static values to represent game options (ie number of skills a monster can have)
+- Saves to script
+
 General
 - Use protected over private and virtual methods to allow users to extend classes and create own functionality.

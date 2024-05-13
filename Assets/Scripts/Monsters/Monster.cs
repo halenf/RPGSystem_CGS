@@ -9,14 +9,15 @@ namespace RPGSystem
     [Serializable]
     public class SkillSlot
     {
-        public SkillSlot(Skill _skill, int _turnTimer)
+        public SkillSlot() { }
+        public SkillSlot(Skill skill, int turnTimer)
         {
-            m_skill = _skill;
-            m_turnTimer = _turnTimer;
+            m_skill = skill;
+            m_turnTimer = turnTimer;
         }
 
         [SerializeField] private Skill m_skill;
-        [SerializeField] private int m_turnTimer;
+        [SerializeField] [Min(0)] private int m_turnTimer;
 
         public Skill skill
         {
@@ -47,6 +48,7 @@ namespace RPGSystem
     [Serializable]
     public class StatusSlot
     {
+        public StatusSlot() { }
         public StatusSlot(Status status, int turnTimer)
         {
             m_status = status;
@@ -54,7 +56,7 @@ namespace RPGSystem
         }
 
         [SerializeField] private Status m_status;
-        [SerializeField] private int m_turnTimer;
+        [SerializeField] [Min(0)] private int m_turnTimer;
 
         public Status status
         {
@@ -135,10 +137,10 @@ namespace RPGSystem
         }
 
         // skill and status
-        [SerializeField] private SkillSlot[] m_skillSlots = new SkillSlot[3];
+        [SerializeField] private List<SkillSlot> m_skillSlots = new List<SkillSlot>();
         [SerializeField] private List<StatusSlot> m_statusSlots = new List<StatusSlot>();
 
-        public SkillSlot[] skillSlots
+        public List<SkillSlot> skillSlots
         {
             get
             {
@@ -154,7 +156,7 @@ namespace RPGSystem
         }
 
         // tracks stat modifiers from buffs
-        [SerializeField] private float[] m_statModifiers = new float[4] { 1, 1, 1, 1 } ;
+        [SerializeField] private float[] m_statModifiers = new float[4];
 
         // bitwise enum for effects with triggers
         [SerializeField] private TriggeredEffect m_triggeredEffects;
@@ -285,7 +287,7 @@ namespace RPGSystem
         public void BattleResetMonster()
         {
             // clear stat buffs/debuffs
-            for (int i = 1; i < 4; i++)
+            for (int i = 1; i < m_statModifiers.Length; i++)
                 m_statModifiers[i] = 1;
 
             // reset HP
@@ -371,13 +373,12 @@ namespace RPGSystem
         }
 
         // functional methods
-        [ContextMenu("Set Level 16")]
-        public void SetLevel()
+        public void SetLevel(int _level)
         {
-            level = 16;
+            level = _level;
         }
 
-        [ContextMenu("Reset Monster")]
+        [ContextMenu("Reset Monster Data")]
 
         public void ResetMonster()
         {
@@ -389,6 +390,64 @@ namespace RPGSystem
             m_triggeredEffects = 0;
             m_exp = 0;
             m_currentHP = 0;
+
+            //this = new Monster();
+        }
+
+        public void AddSkillSlot(Skill skill = null, int turnTimer = 0)
+        {
+            if (skill == null)
+                // add a new empty skill slot
+                m_skillSlots.Add(new SkillSlot());
+            else
+                // add a skill slot with the predefined values
+                m_skillSlots.Add(new SkillSlot(skill, turnTimer));
+        }
+
+        public void RemoveSkillSlot(Skill skill = null)
+        {
+            if (m_skillSlots.Count > 0)
+            {
+                if (skill == null)
+                    // remove the last skill slot in the list
+                    m_skillSlots.RemoveAt(m_skillSlots.Count - 1);
+                else
+                {
+                    // removes all skill slots that have a matching skill
+                    // a monster shouldn't be able to have two of the same skill so it should only remove one skill slot,
+                    // if it has that skill
+                    m_skillSlots.RemoveAll(skillSlot => skillSlot.skill == skill);
+                }
+            }
+            else
+                throw new IndexOutOfRangeException(name + " has no skill slots to remove.");
+        }
+
+        public void AddStatusSlot(Status status = null, int turnTimer = 0)
+        {
+            if (status == null)
+                // add a new empty status slot
+                m_statusSlots.Add(new StatusSlot());
+            else
+                // add a status slot with the predefined values
+                m_statusSlots.Add(new StatusSlot(status, turnTimer));
+        }
+
+        public void RemoveStatusSlot(Status status = null)
+        {
+            if (m_statusSlots.Count > 0)
+            {
+                if (status == null)
+                    // remove the last status slot in the list
+                    m_statusSlots.RemoveAt(m_statusSlots.Count - 1);
+                else
+                    // removes all status slots that have a matching status
+                    // a monster shouldn't be able to have two of the same status so it should only remove one status slot,
+                    // if it has that status
+                    m_statusSlots.RemoveAll(statusSlot => statusSlot.status == status);
+            }
+            else
+                throw new IndexOutOfRangeException(name + " has no status slots to remove.");
         }
     }
 }
