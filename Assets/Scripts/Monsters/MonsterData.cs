@@ -12,11 +12,11 @@ namespace RPGSystem
         Agility = 3
     }
 
-    public enum MonsterLevelCurves
+    public enum MonsterLevelCurve
     {
-        Slow = 300000,
-        Medium = 275000,
-        Fast = 250000
+        Slow = 220,
+        Medium = 200,
+        Fast = 285
     }
 
     [System.Serializable]
@@ -42,7 +42,7 @@ namespace RPGSystem
         // values that represent how the monster will grow
         [SerializeField] private BaseStats m_baseStats;
         // represents the amount of experience a monster needs to level up
-        [SerializeField] private MonsterLevelCurves m_levelCurve;
+        [SerializeField] private MonsterLevelCurve m_levelCurve;
         // list of skills a monster can learn as it levels up
         [SerializeField] private LevelUpSkill[] m_levelUpSkills;
         
@@ -61,7 +61,7 @@ namespace RPGSystem
                 return m_baseStats;
             }
         }
-        public MonsterLevelCurves levelCurve
+        public MonsterLevelCurve levelCurve
         {
             get
             {

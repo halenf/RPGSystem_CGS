@@ -19,5 +19,5 @@ MonoBehaviour:
     strength: 6
     fortitude: 3
     agility: 7
-  m_levelCurve: 300000
+  m_levelCurve: 200
   m_levelUpSkills: []

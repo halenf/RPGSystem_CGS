@@ -21,19 +21,13 @@ MonoBehaviour:
     m_turnTimer: 0
   - m_skill: {fileID: 0}
     m_turnTimer: 0
-  m_statusSlots:
-  - m_status: {fileID: 0}
-    m_turnTimer: 0
-  - m_status: {fileID: 0}
-    m_turnTimer: 0
-  - m_status: {fileID: 0}
-    m_turnTimer: 0
-  - m_status: {fileID: 0}
-    m_turnTimer: 0
+  m_statusSlots: []
   m_statModifiers:
   - 1
   - 1
   - 1
   - 1
   m_triggeredEffects: 0
-  m_exp: 0
+  m_totalExp: 0
+  m_expToNextLevel: 201
+  m_level: 1

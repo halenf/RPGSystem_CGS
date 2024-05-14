@@ -156,7 +156,7 @@ namespace RPGSystem
         }
 
         // tracks stat modifiers from buffs
-        [SerializeField] private float[] m_statModifiers = new float[4];
+        [SerializeField] [Min(0)] private float[] m_statModifiers = new float[4];
 
         // bitwise enum for effects with triggers
         [SerializeField] private TriggeredEffect m_triggeredEffects;
@@ -168,48 +168,21 @@ namespace RPGSystem
             }
         }
 
-        // exp/level
-        [SerializeField] private int m_exp;
+        // exp/m_level
+        [SerializeField] [Min(0)] private int m_totalExp;
         public int exp
         {
-            get
-            {
-                return m_exp;
-            }
+            get { return m_totalExp; }
         }
+        [SerializeField] private int m_expToNextLevel;
+        public int expToNextLevel
+        {
+            get { return m_expToNextLevel; }
+        }
+        [SerializeField] [Range(1, 100)] private int m_level = 1;
         public int level
         {
-            get
-            {
-                float curveScalar = Mathf.Log((float)monsterData.levelCurve * 10.0f / 3.0f) / 2 * Mathf.Log(10);
-                return (int)MathF.Pow(10.0f / 3.0f * m_exp, 1 / curveScalar);
-            }
-            set
-            {
-                float curveScalar = Mathf.Log((float)monsterData.levelCurve * 10.0f / 3.0f) / 2 * Mathf.Log(10);
-                m_exp = (int)(3.0f * Mathf.Pow(value, curveScalar) / 10.0f);
-            }
-        }
-
-        public bool GainExp(int value)
-        {
-            // monster should not be able to gain more exp than the max of their level curve
-            if (m_exp >= (int)monsterData.levelCurve)
-            {
-                m_exp = (int)monsterData.levelCurve;
-                return false;
-            }
-            else
-            {
-                m_exp += value;
-                return true;
-            }
-        }
-
-        public int ExpWorth()
-        {
-            float curveScalar = Mathf.Log((int)monsterData.levelCurve * 10.0f / 3.0f) / 2 * Mathf.Log(10);
-            return (int)Mathf.Pow(level, curveScalar / 1.7f);
+            get { return m_level; }
         }
 
         // base stat accessors
@@ -251,7 +224,7 @@ namespace RPGSystem
         {
             get
             {
-                return (int)(health * Mathf.Pow(1000 * (level + 1), 0.4f));
+                return (int)(health * Mathf.Pow(1000 * (m_level + 1), 0.4f));
             }
         }
         public int currentHP
@@ -265,25 +238,62 @@ namespace RPGSystem
         {
             get
             {
-                return (int)((30 * strength * (level + 1) / 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Strength]);
+                return (int)((30 * strength * (m_level + 1) / 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Strength]);
             }
         }
         public int defence
         {
             get
             {
-                return (int)((30 * fortitude * (level + 1) / 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Fortitude]);
+                return (int)((30 * fortitude * (m_level + 1) / 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Fortitude]);
             }
         }
         public int speed
         {
             get
             {
-                return (int)((30 * agility * (level + 1)/ 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Agility]);
+                return (int)((30 * agility * (m_level + 1)/ 100 + 10) * m_statModifiers[(int)MonsterBaseStats.Agility]);
             }
         }
 
         // public methods for battle scene
+        /// <summary>
+        /// Increase the monster's experience by an amount. Returns true when the monster has gained enough experience to level up.
+        /// A monster cannot gain experience once they reach the level cap.
+        /// </summary>
+        /// <param name="value">Amount of experience for monster to gain.</param>
+        /// <returns></returns>
+        public bool GainExp(int value)
+        {
+            if (m_level < 100)
+            {
+                m_expToNextLevel -= value;
+                if (m_expToNextLevel <= 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public int GetExpWorth()
+        {
+            throw new NotImplementedException("The GetExpWorth method has not been implemented.");
+        }
+
+        public void LevelUp(int remainder)
+        {
+            m_level++;
+            if (m_level == 100)
+                remainder = 0;
+            m_expToNextLevel = GetExpToNextLevel(m_level) - remainder;
+        }
+
+        public int GetExpToNextLevel(int level)
+        {
+            if (level == 100)
+                return 0;
+            return (int)Mathf.Pow(level, 2.1f) + (int)m_monsterData.levelCurve * level;
+        }
+
         public void BattleResetMonster()
         {
             // clear stat buffs/debuffs
@@ -373,9 +383,28 @@ namespace RPGSystem
         }
 
         // functional methods
-        public void SetLevel(int _level)
+        public void SetLevel(int value)
         {
-            level = _level;
+            m_totalExp = 0;
+            m_level = value;
+            m_expToNextLevel = 0;
+            for (int i = 0; i < value - 1; i++)
+                m_totalExp += GetExpToNextLevel(i + 1);
+            m_expToNextLevel = GetExpToNextLevel(m_level);
+        }
+
+        public void SetTotalExp(int value)
+        {
+            m_level = 1;
+            m_totalExp = value;
+            m_expToNextLevel = GetExpToNextLevel(m_level);
+            int experience = value;
+            while (experience > m_expToNextLevel)
+            {
+                experience -= m_expToNextLevel;
+                GainExp(m_expToNextLevel);
+                LevelUp(-m_expToNextLevel);
+            }
         }
 
         [ContextMenu("Reset Monster Data")]
@@ -388,7 +417,7 @@ namespace RPGSystem
             m_statusSlots = null;
             m_statModifiers = null;
             m_triggeredEffects = 0;
-            m_exp = 0;
+            m_totalExp = 0;
             m_currentHP = 0;
 
             //this = new Monster();
