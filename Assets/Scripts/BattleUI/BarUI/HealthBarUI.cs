@@ -6,7 +6,7 @@ namespace RPGSystem
 {
     public class HealthBarUI : BarUI
     {
-        [HideInInspector] public Monster monster;
+        [HideInInspector] public BattleMonster monster;
         
         public override void UpdateUI()
         {

@@ -7,29 +7,30 @@ namespace RPGSystem
 {   
     public class BattleSceneUI : ObjectUI
     {
-        [SerializeField] private CharacterUI[] m_characterUIList = new CharacterUI[2];
+        public CharacterUI m_characterUIPrefab;
+        [SerializeField] private CharacterUI[] m_characterUIArray;
 
         public CharacterUI characterUI
         {
-            get { return m_characterUIList[0]; }
+            get { return m_characterUIArray[0]; }
         }
 
-        public void Initialise(Character character1, Character character2)
+        public void Initialise(Character[] characters)
         {
-            m_characterUIList = GetComponentsInChildren<CharacterUI>();
-            // give the Character references to the CharacterUI objects
-            m_characterUIList[0].character = character1;
-            //m_characterUIList[1].character = character2;
-
-            foreach (CharacterUI ui in m_characterUIList)
-                ui.Initialise();
+            int characterCount = GameManager.current.gameSettings.charactersPerBattle;
+            m_characterUIArray = new CharacterUI[characterCount];
+            for (int i = 0; i < characterCount; i++)
+            {
+                m_characterUIArray[i] = Instantiate(m_characterUIPrefab, transform);
+                m_characterUIArray[i].Initialise(characters[i]);
+            }
 
             UpdateUI();
         }
 
         public override void UpdateUI()
         {
-            foreach (CharacterUI ui in m_characterUIList)
+            foreach (CharacterUI ui in m_characterUIArray)
                 ui.UpdateUI();
         }
     }

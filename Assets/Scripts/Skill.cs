@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RPGSystem
 {   
-    [CreateAssetMenu(fileName = "Skill", menuName = "RPGSystem_SO/Skill", order = 1)]
+    [CreateAssetMenu(fileName = "Skill", menuName = "RPGSystem/Skill", order = 1)]
     public class Skill : ScriptableObject
     {
         [SerializeField] private string m_skillName;

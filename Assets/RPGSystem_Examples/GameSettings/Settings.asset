@@ -9,12 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aca40ff260fe0942abd074bb1ff5c71, type: 3}
-  m_Name: Example
+  m_Script: {fileID: 11500000, guid: 83e9d37d061129a4d87f26c2850e9c96, type: 3}
+  m_Name: Settings
   m_EditorClassIdentifier: 
-  m_monsterData: {fileID: 11400000, guid: 2ff0be7e9583330449be69cc5a5d4a39, type: 2}
-  m_monsterName: Drago
-  m_skillSlots: []
-  m_totalExp: 1493307
-  m_expToNextLevel: 0
-  m_level: 100

@@ -8,47 +8,50 @@ namespace RPGSystem
 {
     public class CharacterUI : ObjectUI
     {       
-        [HideInInspector] public Character character;
-        private MonsterUI[] m_monsterUIArray = new MonsterUI[3];
+        [SerializeField] private Character m_character;
+        private BattleMonsterUI[] m_battleMonsterUIArray;
         private APBarUI m_currentAPBar;
-        
+
         // object references
+        public BattleMonsterUI battleMonsterUIPrefab;
+        public Transform battleMonsterUIDisplayArea;
         [SerializeField] private TextMeshProUGUI m_characterNameDisplay;
         [SerializeField] private Image m_characterIconDisplay;
 
-        public void Initialise()
+        public void Initialise(Character character)
         {
+            // Set character
+            m_character = character;
+            
             // let the slider access the character details
             m_currentAPBar = GetComponentInChildren<APBarUI>();
             m_currentAPBar.character = character;
+
+            // name display
+            m_characterNameDisplay.text = m_character.characterName;
 
             // set icon if available
             if (character.icon != null)
                 m_characterIconDisplay.sprite = character.icon;
 
-            // Get the monsterUIs attached to this object
-            m_monsterUIArray = GetComponentsInChildren<MonsterUI>();
-
-            // initialise the monsterUIs
-            for (int i = 0; i < m_monsterUIArray.Length; i++)
+            // Instantiate the BattleMonsterUIs
+            m_battleMonsterUIArray = new BattleMonsterUI[character.monsters.Length];
+            for (int i = 0; i < m_battleMonsterUIArray.Length; i++)
             {
-                m_monsterUIArray[i].monster = character.monsters[i];
-                m_monsterUIArray[i].Initialise();
+                m_battleMonsterUIArray[i] = Instantiate(battleMonsterUIPrefab, battleMonsterUIDisplayArea);
+                m_battleMonsterUIArray[i].Initialise(new BattleMonster(character.monsters[i]));
             }
         }
 
         public override void UpdateUI()
         {
-            // monster UI
-            foreach (MonsterUI ui in m_monsterUIArray)
+            // battlemonster UI update
+            foreach (BattleMonsterUI ui in m_battleMonsterUIArray)
             {
                 ui.UpdateUI();
             }
-            
-            // name display
-            m_characterNameDisplay.text = character.characterName;
 
-            // ap slider display
+            // ap slider display update
             m_currentAPBar.UpdateUI();
         }
     }

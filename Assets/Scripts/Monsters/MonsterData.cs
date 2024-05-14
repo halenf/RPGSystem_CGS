@@ -16,7 +16,7 @@ namespace RPGSystem
     {
         Slow = 220,
         Medium = 200,
-        Fast = 285
+        Fast = 185
     }
 
     [System.Serializable]
@@ -32,7 +32,7 @@ namespace RPGSystem
         public Skill skill;
     }
 
-    [CreateAssetMenu(fileName = "MonsterData", menuName = "RPGSystem_SO/Monsters/MonsterData", order = 1)]
+    [CreateAssetMenu(fileName = "MonsterData", menuName = "RPGSystem/Monsters/MonsterData", order = 1)]
     public class MonsterData : ScriptableObject
     {
         // monster name

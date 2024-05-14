@@ -11,11 +11,11 @@ namespace RPGSystem
         Debuff
     }
 
-    [CreateAssetMenu(fileName = "Status", menuName = "RPGSystem_SO/Status", order = 1)]
+    [CreateAssetMenu(fileName = "Status", menuName = "RPGSystem/Status", order = 1)]
     public class Status : ScriptableObject
     {
         // the monster that applied the status
-        private Monster m_user;
+        private BattleMonster m_user;
         // whether this status is a buff or debuff
         [SerializeField] private StatusType m_statusType;
         // the default number of turns the status is active for
@@ -26,7 +26,7 @@ namespace RPGSystem
         [SerializeField] private SkillStatusEffect[] m_onTurnEnd;
         [SerializeField] private SkillStatusEffect[] m_onClear;
 
-        public Monster user
+        public BattleMonster user
         {
             get
             {

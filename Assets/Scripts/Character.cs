@@ -12,7 +12,7 @@ namespace RPGSystem
         private int m_cost;
     }
 
-    [CreateAssetMenu(fileName = "Character", menuName = "RPGSystem_SO/Character", order = 1)]
+    [CreateAssetMenu(fileName = "Character", menuName = "RPGSystem/Character", order = 1)]
     public class Character : ScriptableObject
     {
         // personal character details

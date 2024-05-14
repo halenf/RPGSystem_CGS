@@ -41,7 +41,7 @@ namespace RPGSystem
                 return m_target;
             }
         }
-        public abstract void Effect(Monster user, Monster[] targets);
+        public abstract void Effect(BattleMonster user, BattleMonster[] targets);
     }
 
     public enum DamageType
@@ -53,7 +53,7 @@ namespace RPGSystem
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "DamageEffect", menuName = "RPGSystem_SO/Effects/Damage", order = 1)]
+    [CreateAssetMenu(fileName = "DamageEffect", menuName = "RPGSystem/Effects/Damage", order = 1)]
     public class DamageSkillEffect : SkillStatusEffect
     {
         [SerializeField] private DamageType m_damageType;
@@ -65,9 +65,9 @@ namespace RPGSystem
             }
         }
 
-        public override void Effect(Monster user, Monster[] targets)
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
-            foreach (Monster target in targets)
+            foreach (BattleMonster target in targets)
             {
                 int damage = (int)m_damageType / (target.defence + 10);
                 int targetHP = target.currentHP;
@@ -94,7 +94,7 @@ namespace RPGSystem
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "HealEffect", menuName = "RPGSystem_SO/Effects/Heal", order = 1)]
+    [CreateAssetMenu(fileName = "HealEffect", menuName = "RPGSystem/Effects/Heal", order = 1)]
     public class HealSkillEffect : SkillStatusEffect
     {
         [SerializeField] private HealType m_healType;
@@ -106,9 +106,9 @@ namespace RPGSystem
             }
         }
 
-        public override void Effect(Monster user, Monster[] targets)
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
-            foreach (Monster target in targets)
+            foreach (BattleMonster target in targets)
             {
                 // Restores for a percentage of the target's maxHP, percentage of the user's maxHP, or a flat value
                 float _value;
@@ -130,7 +130,7 @@ namespace RPGSystem
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "Status", menuName = "RPGSystem_SO/Effects/ApplyStatus", order = 1)]
+    [CreateAssetMenu(fileName = "Status", menuName = "RPGSystem/Effects/ApplyStatus", order = 1)]
     public class ApplyStatus : SkillStatusEffect
     {
         [SerializeField] private Status m_status;
@@ -139,9 +139,9 @@ namespace RPGSystem
             get { return m_status; }
         }
 
-        public override void Effect(Monster user, Monster[] targets)
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
-            foreach (Monster target in targets)
+            foreach (BattleMonster target in targets)
             {
                 target.GainStatus(m_status);
             }
@@ -149,13 +149,13 @@ namespace RPGSystem
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "RPGSystem_SO/Effects/SkillCooldown", order = 1)]
+    [CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "RPGSystem/Effects/SkillCooldown", order = 1)]
 
     public class SkillCooldownSkillEffect : SkillStatusEffect
     {
-        public override void Effect(Monster user, Monster[] targets)
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
-            foreach (Monster target in targets)
+            foreach (BattleMonster target in targets)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -166,13 +166,13 @@ namespace RPGSystem
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "StatusTimerEffect", menuName = "RPGSystem_SO/Effects/StatusTimer", order = 1)]
+    [CreateAssetMenu(fileName = "StatusTimerEffect", menuName = "RPGSystem/Effects/StatusTimer", order = 1)]
 
     public class StatusTimerSkillEffect : SkillStatusEffect
     {
-        public override void Effect(Monster user, Monster[] targets)
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
-            foreach (Monster target in targets)
+            foreach (BattleMonster target in targets)
             {
                 for (int i = 0; i < target.statusSlots.Count; i++)
                 {
@@ -183,7 +183,7 @@ namespace RPGSystem
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "StatEffect", menuName = "RPGSystem_SO/Effects/Stat", order = 1)]
+    [CreateAssetMenu(fileName = "StatEffect", menuName = "RPGSystem/Effects/Stat", order = 1)]
     public class StatSkillEffect : SkillStatusEffect
     {
         // note: HP cannot be boosted via this method
@@ -193,20 +193,20 @@ namespace RPGSystem
             get { return m_baseStat; }
         }
 
-        public override void Effect(Monster user, Monster[] targets)
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
             if (m_baseStat == MonsterBaseStats.Health)
                 return;
 
-            foreach (Monster target in targets)
+            foreach (BattleMonster target in targets)
             {
-                target.ChangeStat(m_baseStat, m_value);
+                target.ApplyStatModifier(m_baseStat, m_value);
             }
         }
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "ToggleTriggeredEffect", menuName = "RPGSystem_SO/Effects/ToggleTriggeredEffect", order = 1)]
+    [CreateAssetMenu(fileName = "ToggleTriggeredEffect", menuName = "RPGSystem/Effects/ToggleTriggeredEffect", order = 1)]
     public class ToggleTriggeredEffect : SkillStatusEffect
     {
         // the effect to be toggled
@@ -223,9 +223,9 @@ namespace RPGSystem
             get { return m_enableOnly; }
         }
 
-        public override void Effect(Monster user, Monster[] targets)
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
-            foreach (Monster target in targets)
+            foreach (BattleMonster target in targets)
             {
                 // if effect can only be enable
                 if (m_enableOnly && ((target.triggeredEffects & m_effect) != 0))

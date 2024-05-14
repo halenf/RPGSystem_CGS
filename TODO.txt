@@ -1,15 +1,15 @@
 Monster Editor
-- Toggle status debugging
-- View monster base stats and volatile stats.
-- View exp and level
-- Show stat modifiers
-- Show triggered effects
-- Basically section for battle debugging
-- Put array/list into property drawers
-- Compatability with reset monster method
+- Toggle status debugging //
+- View monster base stats and volatile stats. //
+- View exp and level //
+- Show stat modifiers //
+- Show triggered effects //
+- Basically section for battle debugging //
+- Put array/list into property drawers //
+- Compatability with reset monster method //
 
 BattleScene
-- Allow any number of monsters in party
+- Allow any number of monsters in party //
 
 GameSettings
 - Static values to represent game options (ie number of skills a monster can have)
