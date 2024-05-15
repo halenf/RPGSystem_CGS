@@ -7,30 +7,32 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager current;
 
-    [SerializeField] private GameSettings m_gameSettings;
-    public GameSettings gameSettings
-    {
-        get { return m_gameSettings; }
-    }
-
-    public BattleSceneUI sceneUI;
-    public Character character;
+    [SerializeField] private GameSettingsAsset m_gameSettingsAsset;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (current == null)
         {
             current = this;
             DontDestroyOnLoad(this);
         }
-        
-        sceneUI.Initialise(new Character[] { character, character });
+
+        // Load the game settings
+        LoadGameSettings();
     }
 
     // Update is called once per frame
     void Update()
     {
-        sceneUI.UpdateUI();
+
+    }
+
+    [ContextMenu("Load Settings")]
+    public void LoadGameSettings()
+    {
+        // load game settings from asset
+        if (m_gameSettingsAsset)
+            GameSettings.LoadSettingsFromSO(m_gameSettingsAsset);
     }
 }

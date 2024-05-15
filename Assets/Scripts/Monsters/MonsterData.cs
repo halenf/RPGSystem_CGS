@@ -36,15 +36,15 @@ namespace RPGSystem
     public class MonsterData : ScriptableObject
     {
         // monster name
-        [SerializeField] private string m_monsterName;
+        [SerializeField] protected string m_monsterName;
         // monster sprite
-        [SerializeField] private Sprite m_monsterSprite;
+        [SerializeField] protected Sprite m_monsterSprite;
         // values that represent how the monster will grow
-        [SerializeField] private BaseStats m_baseStats;
+        [SerializeField] protected BaseStats m_baseStats;
         // represents the amount of experience a monster needs to level up
-        [SerializeField] private MonsterLevelCurve m_levelCurve;
+        [SerializeField] protected MonsterLevelCurve m_levelCurve;
         // list of skills a monster can learn as it levels up
-        [SerializeField] private LevelUpSkill[] m_levelUpSkills;
+        [SerializeField] protected LevelUpSkill[] m_levelUpSkills;
         
         public string monsterName
         {

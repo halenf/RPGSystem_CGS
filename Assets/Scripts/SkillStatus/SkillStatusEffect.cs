@@ -76,6 +76,7 @@ namespace RPGSystem
                 // if lifesteal is active, heal the user for the damage dealt
                 if ((user.triggeredEffects & TriggeredEffect.Lifesteal) != 0)
                 {
+                    // If damage > targetHP, then there will be overkill damage
                     // Don't restore from overkill damage
                     if (damage > targetHP)
                         user.RestoreHealth(targetHP);
@@ -150,7 +151,6 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "RPGSystem/Effects/SkillCooldown", order = 1)]
-
     public class SkillCooldownSkillEffect : SkillStatusEffect
     {
         public override void Effect(BattleMonster user, BattleMonster[] targets)
@@ -164,7 +164,6 @@ namespace RPGSystem
             }
         }
     }
-
     [Serializable]
     [CreateAssetMenu(fileName = "StatusTimerEffect", menuName = "RPGSystem/Effects/StatusTimer", order = 1)]
 
@@ -206,33 +205,56 @@ namespace RPGSystem
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "ToggleTriggeredEffect", menuName = "RPGSystem/Effects/ToggleTriggeredEffect", order = 1)]
-    public class ToggleTriggeredEffect : SkillStatusEffect
+    [CreateAssetMenu(fileName = "EnableTriggeredEffect", menuName = "RPGSystem/Effects/EnableTriggeredEffect", order = 1)]
+    public class EnableTriggeredEffect : SkillStatusEffect
     {
-        // the effect to be toggled
+        // the effects to be enabled
         [SerializeField] private TriggeredEffect m_effect;
         public TriggeredEffect effect
         {
             get { return m_effect; }
         }
 
-        // if it should only be able to enable the effect (effect cannot be disabled)
-        [SerializeField] private bool m_enableOnly;
-        public bool enableOnly
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
-            get { return m_enableOnly; }
+            foreach (BattleMonster target in targets)
+                target.EnableTriggeredEffect(effect);
+        }
+    }
+
+    [Serializable]
+    [CreateAssetMenu(fileName = "DisableTriggeredEffect", menuName = "RPGSystem/Effects/DisableTriggeredEffect", order = 1)]
+    public class DisableTriggeredEffect : SkillStatusEffect
+    {
+        // the effects to be disabled
+        [SerializeField] private TriggeredEffect m_effect;
+        public TriggeredEffect effect
+        {
+            get { return m_effect; }
         }
 
         public override void Effect(BattleMonster user, BattleMonster[] targets)
         {
             foreach (BattleMonster target in targets)
-            {
-                // if effect can only be enable
-                if (m_enableOnly && ((target.triggeredEffects & m_effect) != 0))
-                    return;
-                else
-                    target.ToggleTriggeredEffect(m_effect);
-            }
+                target.DisableTriggeredEffect(m_effect);
+        }
+    }
+
+    [Serializable]
+    [CreateAssetMenu(fileName = "ToggleTriggeredEffect", menuName = "RPGSystem/Effects/ToggleTriggeredEffect", order = 1)]
+    public class ToggleTriggeredEffect : SkillStatusEffect
+    {
+        // the effects to be toggled
+        [SerializeField] private TriggeredEffect m_effect;
+        public TriggeredEffect effect
+        {
+            get { return m_effect; }
+        }
+
+        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        {
+            foreach (BattleMonster target in targets)
+                target.ToggleTriggeredEffect(m_effect);
         }
     }
 }

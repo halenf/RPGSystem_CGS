@@ -12,12 +12,9 @@ namespace RPGSystem
         SerializedProperty m_monsterData, m_monsterName, m_totalExp, m_expToNextLevel, m_level, 
             m_skillSlots;
 
-        float width;
-
         public void OnEnable()
         {
             GetSerializedProperties();
-            width = Screen.width;
         }
 
         public override void OnInspectorGUI()
@@ -50,22 +47,26 @@ namespace RPGSystem
                 // experience level display
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(new GUIContent("Level", "This monster's curent level."), EditorStyles.boldLabel, GUILayout.Width(width * 0.065f));
-                    int inputLevel = EditorGUILayout.IntField(m_level.intValue, GUILayout.Width(width * 0.06f));
+                    EditorGUILayout.LabelField(new GUIContent("Level", "This monster's curent level."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.065f));
+                    int inputLevel = EditorGUILayout.IntField(m_level.intValue, GUILayout.Width(Screen.width * 0.06f));
                     if (inputLevel != m_level.intValue)
                     {
                         ((Monster)serializedObject.targetObject).SetLevel(inputLevel);
-                        serializedObject.Update();
+                        //serializedObject.Update();
                     }
-                    EditorGUILayout.LabelField(new GUIContent("Total Exp", "This monster's total experience."), EditorStyles.boldLabel, GUILayout.Width(width * 0.1f));
-                    int inputExp = EditorGUILayout.IntField(m_totalExp.intValue, GUILayout.Width(width * 0.13f));
+                    EditorGUILayout.LabelField(new GUIContent("Total Exp", "This monster's total experience."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.1f));
+                    int inputExp = EditorGUILayout.IntField(m_totalExp.intValue, GUILayout.Width(Screen.width * 0.13f));
                     if (inputExp != m_totalExp.intValue)
                     {
                         ((Monster)serializedObject.targetObject).SetTotalExp(inputExp);
-                        serializedObject.Update();
+                        //serializedObject.Update();
                     }
-                    EditorGUILayout.LabelField(new GUIContent("Exp to Next Level", "The amount of exp this monster needs to level up."), EditorStyles.boldLabel, GUILayout.Width(width * 0.175f));
-                    m_expToNextLevel.intValue = EditorGUILayout.IntField(m_expToNextLevel.intValue, GUILayout.Width(width * 0.12f));
+                    // If the monster is at max level, don't show exp to next level
+                    if (((Monster)target).level != GameSettings.MAX_MONSTER_LEVEL)
+                    {
+                        EditorGUILayout.LabelField(new GUIContent("Exp to Next Level", "The amount of exp this monster needs to level up."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.175f));
+                        m_expToNextLevel.intValue = EditorGUILayout.IntField(m_expToNextLevel.intValue, GUILayout.Width(Screen.width * 0.12f));
+                    }
                     EditorGUILayout.EndHorizontal();
                 }
 
@@ -78,20 +79,20 @@ namespace RPGSystem
                 if (showSkillSlots)
                 {
                     GUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField("", GUILayout.Width(width * 0.2f));
-                    GUILayout.Label("Skill", GUILayout.Width(width * 0.35f));
-                    GUILayout.Label("Turn Timer", GUILayout.Width(width * 0.35f));
+                    EditorGUILayout.LabelField("", GUILayout.Width(Screen.width * 0.2f));
+                    GUILayout.Label("Skill", GUILayout.Width(Screen.width * 0.35f));
+                    GUILayout.Label("Turn Timer", GUILayout.Width(Screen.width * 0.35f));
                     GUILayout.EndHorizontal();
 
                     for (int i = 0; i < numOfSkills; i++)
                     {
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label("Slot " + (i + 1).ToString(), GUILayout.Width(width * 0.2f));
+                        GUILayout.Label("Slot " + (i + 1).ToString(), GUILayout.Width(Screen.width * 0.2f));
                         SerializedProperty skillSlot = m_skillSlots.GetArrayElementAtIndex(i);
                         SerializedProperty skill = skillSlot.FindPropertyRelative("m_skill");
                         SerializedProperty turnTimer = skillSlot.FindPropertyRelative("m_turnTimer");
-                        EditorGUILayout.PropertyField(skill, GUIContent.none, GUILayout.Width(width * 0.35f));
-                        EditorGUILayout.PropertyField(turnTimer, GUIContent.none, GUILayout.Width(width * 0.35f));
+                        EditorGUILayout.PropertyField(skill, GUIContent.none, GUILayout.Width(Screen.width * 0.35f));
+                        EditorGUILayout.PropertyField(turnTimer, GUIContent.none, GUILayout.Width(Screen.width * 0.35f));
                         GUILayout.EndHorizontal();
                     }
 
@@ -100,17 +101,17 @@ namespace RPGSystem
 
                     if (numOfSkills < 3)
                     {
-                        if (GUILayout.Button("+", GUILayout.Width(width * 0.1f)))
+                        if (GUILayout.Button("+", GUILayout.Width(Screen.width * 0.1f)))
                         {
                             monster.AddSkillSlot();
                             numOfSkills++;
                         }
                     }
                     else
-                        EditorGUILayout.LabelField("", GUILayout.Width(width * 0.1f));
+                        EditorGUILayout.LabelField("", GUILayout.Width(Screen.width * 0.1f));
 
                     if (numOfSkills > 1)
-                        if (GUILayout.Button("-", GUILayout.Width(width * 0.1f)))
+                        if (GUILayout.Button("-", GUILayout.Width(Screen.width * 0.1f)))
                         {
                             monster.RemoveSkillSlot();
                             numOfSkills--;
@@ -119,7 +120,6 @@ namespace RPGSystem
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
                 */
-
             }
 
             // reset monster button

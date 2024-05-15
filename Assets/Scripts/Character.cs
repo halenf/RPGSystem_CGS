@@ -6,44 +6,55 @@ using UnityEngine;
 namespace RPGSystem
 {
     [Serializable]
-    public struct CharacterSkill
+    public class CharacterSkillSlot
     {
-        private Skill m_skill;
-        private int m_cost;
+        [SerializeField] private Skill m_skill;
+        [SerializeField] private int m_cost;
+
+        public Skill skill
+        { get { return m_skill; } }
+        public int cost
+        { get { return m_cost; } }
+
+        public void ClearSlot()
+        {
+            m_skill = null;
+            m_cost = 0;
+        }
     }
 
     [CreateAssetMenu(fileName = "Character", menuName = "RPGSystem/Character", order = 1)]
     public class Character : ScriptableObject
     {
         // personal character details
-        [SerializeField] private string m_characterName;
-        [SerializeField] private Sprite m_icon;
+        [SerializeField] protected string m_characterName;
+        [SerializeField] protected Sprite m_sprite;
         
         // array of characters monsters
-        [SerializeField] private Monster[] m_monsters = new Monster[3];
+        [SerializeField] protected Monster[] m_monsters = new Monster[3];
 
         // character's available character skills
-        [SerializeField] private CharacterSkill[] m_characterSkills = new CharacterSkill[3];
+        [SerializeField] protected CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[3];
 
         // base stats
-        private int m_skill;
+        protected int m_skill;
 
         // public accessors
         public string characterName
         {
             get { return m_characterName; }
         }
-        public Sprite icon
+        public Sprite sprite
         {
-            get { return m_icon; }
+            get { return m_sprite; }
         }
         public Monster[] monsters
         {
             get { return m_monsters; }
         }
-        public CharacterSkill[] characterSkills
+        public CharacterSkillSlot[] characterSkillSlots
         {
-            get { return m_characterSkills; }
+            get { return m_characterSkillSlots; }
         }
         public int skill
         {
@@ -51,7 +62,7 @@ namespace RPGSystem
         }
 
         // volatile stats
-        private int m_currentAP;
+        protected int m_currentAP;
         public int maxAP
         {
             get
@@ -73,6 +84,20 @@ namespace RPGSystem
                 m_currentAP = maxAP;
             if (m_currentAP < 0)
                 m_currentAP = 0;
+        }
+
+        public void ResetBattleCharacter()
+        {
+            m_currentAP = maxAP;
+        }
+
+        public void ResetCharacter()
+        {
+            ResetBattleCharacter();
+            m_monsters = null;
+            m_characterName = string.Empty;
+            m_sprite = null;
+            m_skill = 1;
         }
     }
 }

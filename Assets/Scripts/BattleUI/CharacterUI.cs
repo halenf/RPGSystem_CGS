@@ -8,15 +8,15 @@ namespace RPGSystem
 {
     public class CharacterUI : ObjectUI
     {       
-        [SerializeField] private Character m_character;
-        private BattleMonsterUI[] m_battleMonsterUIArray;
-        private APBarUI m_currentAPBar;
+        [SerializeField] protected Character m_character;
+        protected BattleMonsterUI[] m_battleMonsterUIArray;
+        protected APBarUI m_currentAPBar;
 
         // object references
         public BattleMonsterUI battleMonsterUIPrefab;
         public Transform battleMonsterUIDisplayArea;
-        [SerializeField] private TextMeshProUGUI m_characterNameDisplay;
-        [SerializeField] private Image m_characterIconDisplay;
+        [SerializeField] protected TextMeshProUGUI m_characterNameDisplay;
+        [SerializeField] protected Image m_characterIconDisplay;
 
         public void Initialise(Character character)
         {
@@ -31,8 +31,8 @@ namespace RPGSystem
             m_characterNameDisplay.text = m_character.characterName;
 
             // set icon if available
-            if (character.icon != null)
-                m_characterIconDisplay.sprite = character.icon;
+            if (character.sprite != null)
+                m_characterIconDisplay.sprite = character.sprite;
 
             // Instantiate the BattleMonsterUIs
             m_battleMonsterUIArray = new BattleMonsterUI[character.monsters.Length];

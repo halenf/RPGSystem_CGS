@@ -8,12 +8,12 @@ namespace RPGSystem
 {
     public class BattleMonsterUI : ObjectUI
     {       
-        [SerializeField] private BattleMonster m_battleMonster;
-        private HealthBarUI m_currentHealthBar;
-        private bool m_facingRight;
+        [SerializeField] protected BattleMonster m_battleMonster;
+        protected HealthBarUI m_currentHealthBar;
+        protected bool m_facingRight;
 
-        [SerializeField] private TextMeshProUGUI m_monsterNameDisplay;
-        [SerializeField] private Image m_monsterSpriteDisplay;
+        [SerializeField] protected TextMeshProUGUI m_monsterNameDisplay;
+        [SerializeField] protected Image m_monsterSpriteDisplay;
 
         public void Initialise(BattleMonster battleMonster)
         {

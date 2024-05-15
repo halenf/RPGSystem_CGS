@@ -8,12 +8,15 @@ Monster Editor
 - Put array/list into property drawers //
 - Compatability with reset monster method //
 
-BattleScene
+Character/UI
 - Allow any number of monsters in party //
 
 GameSettings
-- Static values to represent game options (ie number of skills a monster can have)
-- Saves to script
+- Static values to represent game options (ie number of skills a monster can have) //
+- Saves to scriptable object //eh
 
 General
-- Use protected over private and virtual methods to allow users to extend classes and create own functionality.
+- Use protected over private and virtual methods to allow users to extend classes and create own functionality //
+
+BattleScene
+- Create it

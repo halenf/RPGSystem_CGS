@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.ShaderKeywordFilter;
 
 namespace RPGSystem
 {
@@ -16,8 +17,8 @@ namespace RPGSystem
             m_turnTimer = skill.turnTimer;
         }
 
-        [SerializeField] private Skill m_skill;
-        [SerializeField] [Min(0)] private int m_turnTimer;
+        [SerializeField] protected Skill m_skill;
+        [SerializeField] [Min(0)] protected int m_turnTimer;
 
         public Skill skill
         {
@@ -51,20 +52,20 @@ namespace RPGSystem
     public class Monster : ScriptableObject
     {
         // monster data
-        [SerializeField] private MonsterData m_monsterData;
+        [SerializeField] protected MonsterData m_monsterData;
         public MonsterData monsterData
         {
             get { return m_monsterData; }
         }
 
-        [SerializeField] private string m_monsterName;
+        [SerializeField] protected string m_monsterName;
         public string monsterName
         {
             get { return m_monsterName; }
         }
 
         // skill slots
-        [SerializeField] private List<SkillSlot> m_skillSlots = new List<SkillSlot>();
+        [SerializeField] protected List<SkillSlot> m_skillSlots = new List<SkillSlot>();
 
         public List<SkillSlot> skillSlots
         {
@@ -75,17 +76,17 @@ namespace RPGSystem
         }
 
         // exp/m_level
-        [SerializeField] [Min(0)] private int m_totalExp;
+        [SerializeField] [Min(0)] protected int m_totalExp;
         public int exp
         {
             get { return m_totalExp; }
         }
-        [SerializeField] private int m_expToNextLevel;
+        [SerializeField] protected int m_expToNextLevel;
         public int expToNextLevel
         {
             get { return m_expToNextLevel; }
         }
-        [SerializeField] [Range(1, 100)] private int m_level = 1;
+        [SerializeField] protected int m_level = 1;
         public int level
         {
             get { return m_level; }
@@ -164,11 +165,16 @@ namespace RPGSystem
         /// <returns></returns>
         public bool GainExp(int value)
         {
-            if (m_level < 100)
+            if (m_level < GameSettings.MAX_MONSTER_LEVEL)
             {
                 m_expToNextLevel -= value;
-                if (m_expToNextLevel <= 0)
-                    return true;
+
+                // if the monster did not gain enough experience to level up
+                // it is safe to add the exp to the total
+                if (m_expToNextLevel > 0)
+                    m_totalExp += value;
+
+                return true;
             }
             return false;
         }
@@ -178,17 +184,32 @@ namespace RPGSystem
             throw new NotImplementedException("The GetExpWorth method has not been implemented.");
         }
 
-        public void LevelUp(int remainder)
+        public void LevelUp()
         {
-            m_level++;
-            if (m_level == 100)
-                remainder = 0;
-            m_expToNextLevel = GetExpToNextLevel(m_level) - remainder;
+            while (m_expToNextLevel <= 0)
+            {
+                // increase the monster's level
+                m_level++;
+
+                // once level reaches max, no more experience can be gained
+                if (m_level == GameSettings.MAX_MONSTER_LEVEL)
+                {   
+                    m_expToNextLevel = 0;
+                    break;
+                }
+
+                // calculate the next required amount of experience
+                m_expToNextLevel = GetExpToNextLevel(m_level);
+
+                // if m_expToNextLevel is less than 0, then the remainder has enough experience
+                // for the monster to reach another level, so subtract the a
+                //remainder -= GetExpToNextLevel(m_level - 1);
+            }
         }
 
         public int GetExpToNextLevel(int level)
         {
-            if (level == 100)
+            if (level == GameSettings.MAX_MONSTER_LEVEL)
                 return 0;
             return (int)Mathf.Pow(level, 2.1f) + (int)m_monsterData.levelCurve * level;
         }
@@ -197,7 +218,8 @@ namespace RPGSystem
         public void SetLevel(int value)
         {
             m_totalExp = 0;
-            m_level = value;
+            // level cannot exceed max
+            m_level = value > GameSettings.MAX_MONSTER_LEVEL ? 100 : value;
             m_expToNextLevel = 0;
             for (int i = 0; i < value - 1; i++)
                 m_totalExp += GetExpToNextLevel(i + 1);
@@ -207,14 +229,17 @@ namespace RPGSystem
         public void SetTotalExp(int value)
         {
             m_level = 1;
-            m_totalExp = value;
+            m_totalExp = 0;
             m_expToNextLevel = GetExpToNextLevel(m_level);
             int experience = value;
             while (experience > m_expToNextLevel)
             {
+                if (m_level == GameSettings.MAX_MONSTER_LEVEL)
+                    break;
                 experience -= m_expToNextLevel;
+                m_totalExp += m_expToNextLevel;
                 GainExp(m_expToNextLevel);
-                LevelUp(-m_expToNextLevel);
+                LevelUp();
             }
         }
 

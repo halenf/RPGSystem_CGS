@@ -7,8 +7,14 @@ namespace RPGSystem
 {   
     public class BattleSceneUI : ObjectUI
     {
+        [SerializeField] protected BattleScene m_battleScene;
+        public BattleScene battleScene
+        {
+            get { return m_battleScene; }
+        }
+        
         public CharacterUI m_characterUIPrefab;
-        [SerializeField] private CharacterUI[] m_characterUIArray;
+        [SerializeField] protected CharacterUI[] m_characterUIArray;
 
         public CharacterUI characterUI
         {
@@ -17,7 +23,7 @@ namespace RPGSystem
 
         public void Initialise(Character[] characters)
         {
-            int characterCount = GameManager.current.gameSettings.charactersPerBattle;
+            int characterCount = GameSettings.CHARACTERS_PER_BATTLE;
             m_characterUIArray = new CharacterUI[characterCount];
             for (int i = 0; i < characterCount; i++)
             {
@@ -32,6 +38,12 @@ namespace RPGSystem
         {
             foreach (CharacterUI ui in m_characterUIArray)
                 ui.UpdateUI();
+        }
+
+        private void Update()
+        {
+            // DEBUG
+            UpdateUI();
         }
     }
 }

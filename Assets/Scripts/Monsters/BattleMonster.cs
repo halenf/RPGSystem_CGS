@@ -17,8 +17,8 @@ namespace RPGSystem
             m_turnTimer = status.turnTimer;
         }
 
-        [SerializeField] private Status m_status;
-        [SerializeField][Min(0)] private int m_turnTimer;
+        [SerializeField] protected Status m_status;
+        [SerializeField][Min(0)] protected int m_turnTimer;
 
         public Status status
         {
@@ -27,11 +27,6 @@ namespace RPGSystem
         public int turnTimer
         {
             get { return m_turnTimer; }
-            set
-            {
-                if (value >= 0)
-                    m_turnTimer = value;
-            }
         }
 
         public void OnApply(BattleMonster target)
@@ -61,7 +56,7 @@ namespace RPGSystem
                 }
             }
             else
-                target.ToggleTriggeredEffect(TriggeredEffect.FailStatusClearEffects);
+                target.EnableTriggeredEffect(TriggeredEffect.FailStatusClearEffects);
         }
 
         public void ChangeTurnTimer(int value)
@@ -96,16 +91,17 @@ namespace RPGSystem
         public BattleMonster(Monster monster)
         {
             m_monster = monster;
+            m_currentHP = maxHP;
         }
         
-        [SerializeField] private Monster m_monster;
+        [SerializeField] protected Monster m_monster;
         public Monster monster
         {
             get { return m_monster; }
         }
 
         // health
-        [SerializeField] private int m_currentHP;
+        [SerializeField] protected int m_currentHP;
         public int currentHP
         {
             get { return m_currentHP; }
@@ -129,7 +125,7 @@ namespace RPGSystem
         }
 
         // status slots
-        [SerializeField] private List<StatusSlot> m_statusSlots = new List<StatusSlot>();
+        [SerializeField] protected List<StatusSlot> m_statusSlots = new List<StatusSlot>();
         public List<StatusSlot> statusSlots
         {
             get { return m_statusSlots; }
@@ -141,19 +137,19 @@ namespace RPGSystem
         }
 
         // bitwise enum for effects with triggers
-        [SerializeField] private TriggeredEffect m_triggeredEffects;
+        [SerializeField] protected TriggeredEffect m_triggeredEffects;
         public TriggeredEffect triggeredEffects
         {
             get { return m_triggeredEffects; }
         }
 
         // tracks stat modifiers from buffs
-        [SerializeField][Min(0)] private Dictionary<MonsterBaseStats, float> m_statModifiers = new Dictionary<MonsterBaseStats, float>();
+        [SerializeField][Min(0)] protected Dictionary<MonsterBaseStats, float> m_statModifiers = new Dictionary<MonsterBaseStats, float>();
 
         /// <summary>
         /// Resets the Battle Monster to a default state.
         /// </summary>
-        public void BattleResetMonster()
+        public void ResetBattleMonster()
         {
             // clear stat buffs/debuffs
             for (int i = 1; i < m_statModifiers.Count; i++)
@@ -255,11 +251,30 @@ namespace RPGSystem
         public void ChangeStatusTimer(int index, int value)
         {
             // increase/decrease the turn timer of the status at the indicated index
-            m_statusSlots[index].turnTimer += value;
+            m_statusSlots[index].ChangeTurnTimer(value);
         }
 
         /// <summary>
-        /// Toggles a specified effect from TriggeredEffect.
+        /// Enables specified effects from TriggeredEffect.
+        /// </summary>
+        /// <param name="effect">The effect to enable.</param>
+        public void EnableTriggeredEffect(TriggeredEffect effect)
+        {
+            // enable the effect
+            m_triggeredEffects |= effect;
+        }
+
+        /// <summary>
+        /// Disables specified effects from TriggeredEffect.
+        /// </summary>
+        /// <param name="effect">The effect to disable.</param>
+        public void DisableTriggeredEffect(TriggeredEffect effect)
+        {
+            m_triggeredEffects &= ~effect;
+        }
+
+        /// <summary>
+        /// Toggles specified effects from TriggeredEffect.
         /// </summary>
         /// <param name="effect">The effect to toggle.</param>
         public void ToggleTriggeredEffect(TriggeredEffect effect)

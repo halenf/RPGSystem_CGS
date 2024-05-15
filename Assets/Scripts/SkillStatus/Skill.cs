@@ -8,12 +8,13 @@ namespace RPGSystem
     [CreateAssetMenu(fileName = "Skill", menuName = "RPGSystem/Skill", order = 1)]
     public class Skill : ScriptableObject
     {
-        [SerializeField] private string m_skillName;
-        [SerializeField] private int m_turnTimer;
+        [SerializeField] protected string m_skillName;
+        [SerializeField] protected int m_turnTimer;
 
-        [SerializeField] private SkillStatusEffect[] m_beforeHitEffects;
-        [SerializeField] private SkillStatusEffect[] m_onHitEffects;
-        [SerializeField] private SkillStatusEffect[] m_afterHitEffects;
+        /// <summary>
+        /// Effects trigger in the order set here.
+        /// </summary>
+        [SerializeField] protected SkillStatusEffect[] m_onHitEffects;
 
         public string skillName
         {
@@ -29,26 +30,11 @@ namespace RPGSystem
                 return m_turnTimer;
             }
         }
-
-        public SkillStatusEffect[] beforeHitEffects
-        {
-            get
-            {
-                return m_beforeHitEffects;
-            }
-        }
         public SkillStatusEffect[] onHitEffects
         {
             get
             {
                 return m_onHitEffects;
-            }
-        }
-        public SkillStatusEffect[] afterHitEffects
-        {
-            get
-            {
-                return m_afterHitEffects;
             }
         }
     }

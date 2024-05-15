@@ -15,16 +15,16 @@ namespace RPGSystem
     public class Status : ScriptableObject
     {
         // the monster that applied the status
-        private BattleMonster m_user;
+        protected BattleMonster m_user;
         // whether this status is a buff or debuff
-        [SerializeField] private StatusType m_statusType;
+        [SerializeField] protected StatusType m_statusType;
         // the default number of turns the status is active for
-        [SerializeField] private int m_turnTimer;
+        [SerializeField] protected int m_turnTimer;
 
         // effect arrays for when the status is applied, cleared, and effects that occur at the end of every battle turn
-        [SerializeField] private SkillStatusEffect[] m_onApply;
-        [SerializeField] private SkillStatusEffect[] m_onTurnEnd;
-        [SerializeField] private SkillStatusEffect[] m_onClear;
+        [SerializeField] protected SkillStatusEffect[] m_onApply;
+        [SerializeField] protected SkillStatusEffect[] m_onTurnEnd;
+        [SerializeField] protected SkillStatusEffect[] m_onClear;
 
         public BattleMonster user
         {
