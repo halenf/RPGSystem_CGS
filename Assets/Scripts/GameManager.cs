@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Loads the currently held GameSettingsAsset into the static GameSettings class.
+    /// </summary>
     [ContextMenu("Load Settings")]
     public void LoadGameSettings()
     {

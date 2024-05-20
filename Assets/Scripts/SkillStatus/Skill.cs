@@ -9,6 +9,8 @@ namespace RPGSystem
     public class Skill : ScriptableObject
     {
         [SerializeField] protected string m_skillName;
+        [SerializeField] protected Sprite m_sprite;
+
         [SerializeField] protected int m_turnTimer;
 
         /// <summary>
@@ -22,6 +24,10 @@ namespace RPGSystem
             {
                 return m_skillName;
             }
+        }
+        public Sprite sprite
+        {
+            get { return m_sprite; }
         }
         public int turnTimer
         {

@@ -34,7 +34,7 @@ namespace RPGSystem
         [SerializeField] protected Monster[] m_monsters = new Monster[3];
 
         // character's available character skills
-        [SerializeField] protected CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[3];
+        [SerializeField] protected CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[GameSettings.MAX_SKILLS_PER_CHARACTER];
 
         // base stats
         protected int m_skill;

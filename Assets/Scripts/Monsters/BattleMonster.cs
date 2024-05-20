@@ -10,7 +10,14 @@ namespace RPGSystem
     [Serializable]
     public class StatusSlot
     {
+        /// <summary>
+        /// Create an empty status slot.
+        /// </summary>
         public StatusSlot() { }
+        /// <summary>
+        /// Create a status slot with a status.
+        /// </summary>
+        /// <param name="status">The status.</param>
         public StatusSlot(Status status)
         {
             m_status = status;
@@ -29,6 +36,10 @@ namespace RPGSystem
             get { return m_turnTimer; }
         }
 
+        /// <summary>
+        /// Activates the on apply effects of the status.
+        /// </summary>
+        /// <param name="target"></param>
         public void OnApply(BattleMonster target)
         {
             foreach (SkillStatusEffect effect in m_status.onApply)
@@ -37,6 +48,10 @@ namespace RPGSystem
             }
         }
 
+        /// <summary>
+        /// Activates the end of turn effects of the status.
+        /// </summary>
+        /// <param name="target"></param>
         public void OnTurnEnd(BattleMonster target)
         {
             foreach (SkillStatusEffect effect in m_status.onTurnEnd)
@@ -45,6 +60,10 @@ namespace RPGSystem
             }
         }
 
+        /// <summary>
+        /// Activates the on clear effects of the status.
+        /// </summary>
+        /// <param name="target"></param>
         public void OnClear(BattleMonster target)
         {
             // if clear effects on this target should not fail
@@ -88,9 +107,10 @@ namespace RPGSystem
     public class BattleMonster
     {
         public BattleMonster() { }
-        public BattleMonster(Monster monster)
+        public BattleMonster(Monster monster, BattleMonsterID id)
         {
             m_monster = monster;
+            m_battleID = id;
             m_currentHP = maxHP;
         }
         
@@ -100,13 +120,27 @@ namespace RPGSystem
             get { return m_monster; }
         }
 
+        [SerializeField] protected BattleMonsterID m_battleID;
+        public BattleMonsterID battleID
+        {
+            get { return m_battleID; }
+        }
+
         // health
         [SerializeField] protected int m_currentHP;
         public int currentHP
         {
             get { return m_currentHP; }
         }
-        // accessors for stats for other classes
+        // accessors for variables for other classes
+        public string monsterName
+        {
+            get { return m_monster.monsterName; }
+        }
+        public string monsterDataName
+        {
+            get { return m_monster.monsterData.monsterName; }
+        }
         public int maxHP
         {
             get { return m_monster.maxHP; }
@@ -147,7 +181,7 @@ namespace RPGSystem
         [SerializeField][Min(0)] protected Dictionary<MonsterBaseStats, float> m_statModifiers = new Dictionary<MonsterBaseStats, float>();
 
         /// <summary>
-        /// Resets the Battle Monster to a default state.
+        /// Resets the BattleMonster to a default state.
         /// </summary>
         public void ResetBattleMonster()
         {

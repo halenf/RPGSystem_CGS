@@ -16,7 +16,8 @@ namespace RPGSystem
             m_slider.maxValue = maxAP;
             m_slider.value = currentAP;
 
-            m_textValueDisplay.text = currentAP.ToString() + "/" + maxAP.ToString();
+            if (m_showTextValue)
+                m_textValueDisplay.text = currentAP.ToString() + "/" + maxAP.ToString();
         }
     }
 }

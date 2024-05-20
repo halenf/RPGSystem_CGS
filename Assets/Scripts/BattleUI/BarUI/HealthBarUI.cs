@@ -16,7 +16,8 @@ namespace RPGSystem
             m_slider.maxValue = maxHP;
             m_slider.value = currentHP;
 
-            m_textValueDisplay.text = currentHP.ToString() + "/" + maxHP.ToString();
+            if (m_showTextValue)
+                m_textValueDisplay.text = currentHP.ToString() + "/" + maxHP.ToString();
         }
     }
 }

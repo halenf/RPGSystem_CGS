@@ -10,7 +10,8 @@ namespace RPGSystem
         [SerializeField] protected int m_monstersPerParty;
         [SerializeField] protected int m_maxMonsterLevel;
         [SerializeField] protected int m_charactersPerBattle;
-        [SerializeField] protected int m_maxCharacterSkills;
+        [SerializeField] protected int m_maxSkillsPerCharacter;
+        [SerializeField] protected int m_maxSkillsPerMonster;
 
         public int monstersPerParty
         {
@@ -24,9 +25,13 @@ namespace RPGSystem
         {
             get { return m_charactersPerBattle; }
         }
-        public int maxCharacterSkills
+        public int maxSkillsPerCharacter
         {
-            get { return m_maxCharacterSkills; }
+            get { return m_maxSkillsPerCharacter; }
+        }
+        public int maxSkillsPerMonster
+        {
+            get { return m_maxSkillsPerMonster; }
         }
     }
 }
