@@ -29,14 +29,20 @@ namespace RPGSystem
 
             // Initialise button
             m_button = GetComponent<Button>();
-            m_button.onClick.AddListener(AddUserSkillToBattleScene);
+            m_button.onClick.AddListener(AddSkillToBattleScene);
+            SetAsAvailableSkill(false);
 
             UpdateUI();
         }
         
-        protected void AddUserSkillToBattleScene()
+        protected void AddSkillToBattleScene()
         {
-            m_battleScene.AddUserSkillToAction(m_battleMonster.battleID, m_skillSlotIndex);
+            m_battleScene.AddSkillToAction(m_skillSlotIndex);
+        }
+
+        public void SetAsAvailableSkill(bool value)
+        {
+            m_button.interactable = value;
         }
 
         public override void UpdateUI()

@@ -6,20 +6,6 @@ using UnityEngine;
 namespace RPGSystem
 {
     [Serializable]
-    public enum TargetType
-    {
-        None = 0,
-        SingleEnemy = 1,
-        AdjacentEnemies = 2,
-        Self = 3,
-        SingleParty = 4,
-        WholeParty = 5,
-        WholePartyButSelf = 6,
-        EveryoneButSelf = 7,
-        Everyone = 8
-    }
-
-    [Serializable]
     public abstract class SkillStatusEffect : ScriptableObject
     {
         // Integer data for the skill effect
@@ -32,15 +18,6 @@ namespace RPGSystem
             }
         }
 
-        // What the effect targets
-        [SerializeField] protected TargetType m_target;
-        public TargetType target
-        {
-            get
-            {
-                return m_target;
-            }
-        }
         public abstract void Effect(BattleMonster user, BattleMonster[] targets);
     }
 

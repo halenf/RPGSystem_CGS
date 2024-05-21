@@ -153,9 +153,9 @@ namespace RPGSystem
         {
             get { return m_monster.defence; }
         }
-        public int agility
+        public int speed
         {
-            get { return m_monster.agility; }
+            get { return m_monster.speed; }
         }
 
         // status slots

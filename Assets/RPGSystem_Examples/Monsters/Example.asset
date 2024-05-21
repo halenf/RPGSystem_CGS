@@ -15,6 +15,6 @@ MonoBehaviour:
   m_monsterData: {fileID: 11400000, guid: 2ff0be7e9583330449be69cc5a5d4a39, type: 2}
   m_monsterName: Drago
   m_skillSlots: []
-  m_totalExp: 1493307
-  m_expToNextLevel: 0
-  m_level: 100
+  m_totalExp: 9342
+  m_expToNextLevel: 2125
+  m_level: 10

@@ -22,9 +22,17 @@ namespace RPGSystem
         [SerializeField] protected SkillSlotUI m_skillSlotUIPrefab;
         protected SkillSlotUI[] m_skillSlotUIArray;
 
-        public CharacterUI characterUI
+        public CharacterUI[] characterUIArray
         {
-            get { return m_characterUIArray[0]; }
+            get { return m_characterUIArray; }
+        }
+        public BattleMonsterUI[] battleMonsterUIArray
+        {
+            get { return m_battleMonsterUIArray; }
+        }
+        public SkillSlotUI[] skillSlotUIArray
+        {
+            get { return m_skillSlotUIArray; }
         }
 
         public void Initialise(BattleScene battleScene)
@@ -48,12 +56,16 @@ namespace RPGSystem
                 // Instantiate the BattleMonsterUIs
                 for (int m = 0; m < m_battleMonsterUIArray.GetLength(1); m++)
                 {
-                    m_battleMonsterUIArray[(c * monstersPerParty) + m] = Instantiate(m_battleMonsterUIPrefab, m_characterUIArray[c].transform);
-                    m_battleMonsterUIArray[(c * monstersPerParty) + m].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c,m), c > 0 ? true : false);
+                    int indexMonster = c * monstersPerParty + m;
+                    m_battleMonsterUIArray[indexMonster] = Instantiate(m_battleMonsterUIPrefab, m_characterUIArray[c].transform);
+                    m_battleMonsterUIArray[indexMonster].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c,m), c > 0 ? true : false);
 
+                    // Instantiate the skill slots
                     for (int s = 0; s < m_skillSlotUIArray.GetLength(2); s++)
                     {
-                        m_skillSlotUIArray[(c * monstersPerParty * maxSkillsPerMonster) + (m * maxSkillsPerMonster) + s] = Instantiate(m_skillSlotUIPrefab, m_battleMonsterUIArray[m].transform);
+                        int indexSkill = (c * monstersPerParty * maxSkillsPerMonster) + (m * maxSkillsPerMonster) + s;
+                        m_skillSlotUIArray[indexSkill] = Instantiate(m_skillSlotUIPrefab, m_battleMonsterUIArray[indexMonster].transform);
+                        m_skillSlotUIArray[indexSkill].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c, m), s);
                     }
                 }
             }

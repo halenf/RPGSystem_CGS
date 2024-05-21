@@ -14,9 +14,11 @@ namespace RPGSystem
         protected HealthBarUI m_currentHealthBar;
         protected bool m_facingLeft;
 
-        protected Button m_button;
         [SerializeField] protected TextMeshProUGUI m_monsterNameDisplay;
         [SerializeField] protected Image m_monsterSpriteDisplay;
+
+        [Header("Turn Actions")]
+        protected Button m_button;
 
         public void Initialise(BattleScene battleScene, BattleMonster battleMonster, bool isEnemyMonster)
         {
@@ -26,12 +28,42 @@ namespace RPGSystem
 
             // init button
             m_button = GetComponent<Button>();
-            m_button.onClick.AddListener(SendMonsterAsTarget);
 
             // Init health bar
             m_currentHealthBar = GetComponentInChildren<HealthBarUI>();
             if (m_currentHealthBar)
                 m_currentHealthBar.monster = m_battleMonster;
+
+            UpdateUI();
+        }
+
+        protected void SendMonsterAsUser()
+        {
+            m_battleScene.AddUserToAction(m_battleMonster.battleID);
+        }
+
+        protected void SendMonsterAsTarget()
+        {
+            m_battleScene.AddTargetToAction(m_battleMonster.battleID);
+        }
+
+        public void SetAsAvailableUser()
+        {
+            m_button.interactable = true;
+            m_button.onClick.RemoveAllListeners();
+            m_button.onClick.AddListener(SendMonsterAsUser);
+        }
+
+        public void SetAsAvailableTarget()
+        {
+            m_button.interactable = true;
+            m_button.onClick.RemoveAllListeners();
+            m_button.onClick.AddListener(SendMonsterAsTarget);
+        }
+
+        public void SetAsUnavailable()
+        {
+            m_button.interactable = false;
         }
 
         public override void UpdateUI()
@@ -57,12 +89,6 @@ namespace RPGSystem
                 Vector3 scale = m_monsterSpriteDisplay.rectTransform.localScale;
                 m_monsterSpriteDisplay.rectTransform.localScale = new Vector3(-scale.x, scale.y, scale.z);
             }
-        }
-
-        // need to send one, have buffer in battle scene
-        protected void SendMonsterAsTarget()
-        {
-            //m_battleScene.AddTargetsToAction(m_battleMonster.battleID);
         }
     }
 }
