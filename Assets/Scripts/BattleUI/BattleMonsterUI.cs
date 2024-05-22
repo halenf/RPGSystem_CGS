@@ -19,9 +19,12 @@ namespace RPGSystem
 
         [Header("Turn Actions")]
         protected Button m_button;
+        public Transform skillSlotUIContainer;
 
         public void Initialise(BattleScene battleScene, BattleMonster battleMonster, bool isEnemyMonster)
         {
+            m_battleScene = battleScene;
+            
             // set BattleMonster
             m_battleMonster = battleMonster;
             m_facingLeft = isEnemyMonster;

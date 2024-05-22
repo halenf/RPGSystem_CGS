@@ -84,7 +84,6 @@ namespace RPGSystem
         {
             get { return m_skillSlotIndex; }
         }
-
         public int buildState
         {
             get { return m_buildState; }
@@ -213,9 +212,16 @@ namespace RPGSystem
             }
         }
 
+        /// <summary>
+        /// Initialises and prepares arrays of objects and Instantiates the UI.
+        /// </summary>
         protected void OnBattleStart()
         {
-            // initialise BattleMonsters from characters
+            // get Characters and BattleMonsters ready for battle
+            foreach (Character character in m_characters)
+            {
+                character.ResetBattleCharacter();
+            }
             m_battleMonsters = new BattleMonster[GameSettings.CHARACTERS_PER_BATTLE, GameSettings.MONSTERS_PER_PARTY];
             for (int cha = 0; cha < m_characters.Length; cha++)
             {
@@ -225,12 +231,6 @@ namespace RPGSystem
                 }
             }
 
-            // get Characters and BattleMonsters ready for battle
-            foreach (Character character in m_characters)
-                character.ResetBattleCharacter();
-            foreach (BattleMonster battleMonster in m_battleMonsters)
-                battleMonster?.ResetBattleMonster();
-
             Debug.Log("Battle started between " + m_characters[0].characterName + " and " + m_characters[1].characterName + "!");
 
             // Instantiates the BattleSceneUI
@@ -238,11 +238,18 @@ namespace RPGSystem
             m_battleSceneUI.Initialise(this);
         }
 
+        /// <summary>
+        /// Build actions from UI object buttons.
+        /// When action has user, skill id, and target, action is complete and added to action list.
+        /// When there is an action for every monster, this method returns true and the actions are done.
+        /// </summary>
+        /// <returns>If all monsters have an action.</returns>
         protected bool WaitForActions()
         {
-            if (m_currentAction == null)
-                m_currentAction = new Action();
+            // if null, create new from default constructor
+            m_currentAction ??= new Action();
 
+            // if the action has just been created or edited
             if (m_currentAction.isDirty)
             {
                 // reset the state of all the UI
@@ -260,8 +267,10 @@ namespace RPGSystem
                         for (int m = 0; m < GameSettings.MONSTERS_PER_PARTY; m++)
                         {
                             // if the turn actions already contains that monster's action, then don't make it available as a user
-                            if (m_turnActions.Find(action => action.userID == new BattleMonsterID(0, m)) == null)
-                                m_battleSceneUI.battleMonsterUIArray[m].SetAsAvailableUser();
+                            if (m_turnActions.Find(action => action.userID == new BattleMonsterID(m_currentAction.userID.character, m)) == null)
+                            {
+                                m_battleSceneUI.battleMonsterUIArray[m_currentAction.userID.character * GameSettings.MONSTERS_PER_PARTY + m].SetAsAvailableUser();
+                            }
                         }
                         break;
                     // if has a user, but no skill or target
@@ -269,7 +278,8 @@ namespace RPGSystem
                         // activate the skill slots for the selected monster
                         for (int s = 0; s < GameSettings.MAX_SKILLS_PER_MONSTER; s++)
                         {
-                            m_battleSceneUI.skillSlotUIArray[m_currentAction.userID.monster * GameSettings.MAX_SKILLS_PER_MONSTER + s].SetAsAvailableSkill(true);
+                            m_battleSceneUI.skillSlotUIArray[m_currentAction.userID.character * GameSettings.CHARACTERS_PER_BATTLE + m_currentAction.userID.monster
+                                * GameSettings.MAX_SKILLS_PER_MONSTER + s].SetAsAvailableSkill(true);
                         }
                         break;
                     // if has user and skill, but no target
@@ -277,26 +287,39 @@ namespace RPGSystem
                         // activate the monsters based on the TargetType of the skill
                         switch (GetBattleMonster(m_currentAction.userID).skillSlots[m_currentAction.skillSlotIndex].skill.target)
                         {
-                            case TargetType.Self: //done
-                            case TargetType.EveryoneButSelf: //done
-                            case TargetType.Everyone: //done
-                            case TargetType.AllEnemies:
+                            case TargetType.SingleParty:
+                                // activate the parties monsters to be selected as targets
+                                for (int m = 0; m < GameSettings.MONSTERS_PER_PARTY; m++)
+                                    m_battleSceneUI.battleMonsterUIArray[m_currentAction.userID.character * GameSettings.MONSTERS_PER_PARTY + m].SetAsAvailableTarget();
+                                break;
+                            case TargetType.Self:
+                            case TargetType.EveryoneButSelf:
+                            case TargetType.Everyone:
                             case TargetType.WholePartyButSelf:
                             case TargetType.WholeParty:
                                 m_currentAction.SetTarget(m_currentAction.userID);
                                 break;
-                            
-                                //break;
+                            case TargetType.AllEnemies:
+                                // if the battle only has two characters in it, then just get the other character
+                                if (GameSettings.CHARACTERS_PER_BATTLE == 2)
+                                {
+                                    m_currentAction.SetTarget(new BattleMonsterID(m_currentAction.userID.character == 0 ? 1 : 0, 0));
+                                    break;
+                                }
+                                goto case TargetType.SingleEnemy;
+                            case TargetType.SingleEnemy:
+                            case TargetType.AdjacentEnemies:
+                                // activate all enemy monsters
+                                for (int c = 0; c < GameSettings.CHARACTERS_PER_BATTLE; c++)
+                                {
+                                    // skip the user's character
+                                    if (c == m_currentAction.userID.character)
+                                        continue;
+                                    for (int m = 0; m < GameSettings.MONSTERS_PER_PARTY; m++)
+                                        m_battleSceneUI.battleMonsterUIArray[c * GameSettings.MONSTERS_PER_PARTY + m].SetAsAvailableTarget();
+                                }
+                                break;
                         }
-                        break;
-                    // action is completed
-                    case 3:
-                        m_turnActions.Add(m_currentAction);
-                        m_currentAction = null;
-
-                        // if all monters actions are completed, return true
-                        if (m_turnActions.Count == GameSettings.CHARACTERS_PER_BATTLE * GameSettings.MONSTERS_PER_PARTY)
-                            return true;
                         break;
                 }
 
@@ -304,11 +327,17 @@ namespace RPGSystem
                 m_currentAction.isDirty = false;
             }
 
-            // build actions from UI object buttons
-            // when action has user, skill id, and targets, action is complete and added to action list
-            // when there is an action for every monster, this method returns true and the actions are done
+            // then check if action is complete
+            if (m_currentAction.buildState == 3)
+            {
+                m_turnActions.Add(m_currentAction);
+                m_currentAction = null;
 
-            
+                // if all monters actions are completed, return true
+                if (m_turnActions.Count == GameSettings.CHARACTERS_PER_BATTLE * GameSettings.MONSTERS_PER_PARTY)
+                    return true;
+            }
+
             return false;
         }
 
@@ -337,18 +366,23 @@ namespace RPGSystem
                 BattleMonster user = GetBattleMonster(action.userID);
                 BattleMonster[] targets;
 
+                // quick reference
                 int userCharacter = action.userID.character;
                 int userMonster = action.userID.monster;
                 int targetCharacter = action.targetID.character;
                 int targetMonster = action.targetID.monster;
+                bool moreThanOneMonster = GameSettings.MONSTERS_PER_PARTY > 1;
+                bool moreThanTwoMonsters = GameSettings.MONSTERS_PER_PARTY > 2;
+
+                // position: 0 = left, MAX = right, else is in middle somewhere
                 int userPosition = (userCharacter * GameSettings.MONSTERS_PER_PARTY + targetMonster) % GameSettings.MONSTERS_PER_PARTY;
                 int targetPosition = (targetCharacter * GameSettings.MONSTERS_PER_PARTY + targetMonster) % GameSettings.MONSTERS_PER_PARTY;
 
+                // switch uses this to hold a value
                 int buffer;
                 switch (user.skillSlots[action.skillSlotIndex].skill.target)
                 {
                     case TargetType.SingleEnemy:
-                        continue;
                     case TargetType.SingleParty:
                         targets = new BattleMonster[1];
                         targets[0] = GetBattleMonster(action.targetID);
@@ -361,34 +395,36 @@ namespace RPGSystem
                         Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on itself!");
                         break;
                     case TargetType.AdjacentEnemies:
-                        // position: 0 = left, MAX = right, else is in middle somewhere
-                        if (targetPosition == 0 || targetPosition == GameSettings.MONSTERS_PER_PARTY - 1)
+                        if (moreThanOneMonster)
                         {
-                            targets = new BattleMonster[2];
-                            targets[0] = GetBattleMonster(action.targetID);
-                            targets[1] = GetBattleMonster(targetCharacter, targetMonster + (targetPosition == 0 ? 1 : -1));
-                            Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
-                                GetBattleMonster(action.targetID).monsterName + " and " + GetBattleMonster(targetCharacter, targetMonster + 1).monsterName + "!");
+                            if (targetPosition == 0 || targetPosition == GameSettings.MONSTERS_PER_PARTY - 1)
+                            {
+                                targets = new BattleMonster[2];
+                                targets[0] = GetBattleMonster(action.targetID);
+                                targets[1] = GetBattleMonster(targetCharacter, targetMonster + (targetPosition == 0 ? 1 : -1));
+                                Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
+                                    GetBattleMonster(action.targetID).monsterName + " and " + GetBattleMonster(targetCharacter, targetMonster + 1).monsterName + "!");
+                            }
+                            else if (moreThanTwoMonsters)
+                            {
+                                targets = new BattleMonster[3];
+                                targets[0] = GetBattleMonster(targetCharacter, targetMonster - 1);
+                                targets[1] = GetBattleMonster(action.targetID);
+                                targets[2] = GetBattleMonster(targetCharacter, targetMonster + 1);
+                                Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
+                                    GetBattleMonster(targetCharacter, targetMonster - 1).monsterName + ", " + GetBattleMonster(action.targetID).monsterName + " and  " +
+                                    GetBattleMonster(targetCharacter, targetMonster + 1).monsterName + "!");
+                            }
+                            break;
                         }
-                        else
-                        {
-                            targets = new BattleMonster[3];
-                            targets[0] = GetBattleMonster(targetCharacter, targetMonster - 1);
-                            targets[1] = GetBattleMonster(action.targetID);
-                            targets[2] = GetBattleMonster(targetCharacter, targetMonster + 1);
-                            Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
-                                GetBattleMonster(targetCharacter, targetMonster - 1).monsterName + ", " + GetBattleMonster(action.targetID).monsterName + " and  " +
-                                GetBattleMonster(targetCharacter, targetMonster + 1).monsterName + "!");
-                        }
-                        break;
+                        goto case TargetType.SingleParty;
                     case TargetType.AllEnemies:
-                        targets = new BattleMonster[3];
-                        targets[0] = GetBattleMonster(targetCharacter, targetMonster - 1);
-                        targets[1] = GetBattleMonster(action.targetID);
-                        targets[2] = GetBattleMonster(targetCharacter, targetMonster + 1);
-                        Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
-                            GetBattleMonster(targetCharacter, targetMonster - 1).monsterName + ", " + GetBattleMonster(action.targetID).monsterName + " and  " +
-                            GetBattleMonster(targetCharacter, targetMonster + 1).monsterName + "!");
+                        targets = new BattleMonster[GameSettings.MONSTERS_PER_PARTY];
+                        for (int m = 0; m < GameSettings.MONSTERS_PER_PARTY; m++)
+                        {
+                            targets[m] = GetBattleMonster(targetCharacter, m);
+                        }
+                        Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on the entire enemy party!");
                         break;
                     case TargetType.WholePartyButSelf:
                         targets = new BattleMonster[GameSettings.MONSTERS_PER_PARTY - 1];
@@ -396,21 +432,19 @@ namespace RPGSystem
                         for (int m = 0; m < GameSettings.MONSTERS_PER_PARTY; m++)
                         {
                             if (m_battleMonsters[userCharacter, m].battleID != action.userID)
-                                targets[userCharacter * GameSettings.CHARACTERS_PER_BATTLE + m + buffer] = m_battleMonsters[userCharacter, m];
+                                targets[m - buffer] = GetBattleMonster(userCharacter, m);
                             else
                                 buffer = -1;
                         }
-                        Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
-                                GetBattleMonster(targetCharacter, targetMonster - 1).monsterName + " and " + GetBattleMonster(targetCharacter, targetMonster + 1).monsterName + "!");
+                        Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on its party members!");
                         break;
                     case TargetType.WholeParty:
-                        targets = new BattleMonster[3];
-                        targets[0] = GetBattleMonster(targetCharacter, targetMonster - 1);
-                        targets[1] = user;
-                        targets[2] = GetBattleMonster(targetCharacter, targetMonster + 1);
-                        Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
-                                    GetBattleMonster(targetCharacter, targetMonster - 1).monsterName + ", " + GetBattleMonster(targetCharacter, targetMonster + 1).monsterName +
-                                    " and itself!");
+                        targets = new BattleMonster[GameSettings.MONSTERS_PER_PARTY];
+                        for (int m = 0; m < GameSettings.MONSTERS_PER_PARTY; m++)
+                        {
+                            targets[m] = GetBattleMonster(userCharacter, m);
+                        }
+                        Debug.Log(user.monsterName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on its whole party!");
                         break;
                     case TargetType.EveryoneButSelf:
                         targets = new BattleMonster[GameSettings.CHARACTERS_PER_BATTLE * GameSettings.MONSTERS_PER_PARTY - 1];

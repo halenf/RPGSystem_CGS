@@ -15,4 +15,5 @@ MonoBehaviour:
   m_monstersPerParty: 3
   m_maxMonsterLevel: 100
   m_charactersPerBattle: 2
-  m_maxCharacterSkills: 3
+  m_maxSkillsPerCharacter: 3
+  m_maxSkillsPerMonster: 3

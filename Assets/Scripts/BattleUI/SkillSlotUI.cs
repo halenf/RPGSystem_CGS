@@ -13,19 +13,22 @@ namespace RPGSystem
         protected int m_skillSlotIndex;
 
         protected Button m_button;
-        protected bool isReady
+        public bool isReady
         {
             get { return m_battleMonster.skillSlots[m_skillSlotIndex].turnTimer == 0; }
         }
 
         [SerializeField] protected TextMeshProUGUI m_textDisplay;
-        [SerializeField] protected Image m_spriteDisplay;
+        protected Image m_spriteDisplay;
 
         public void Initialise(BattleScene battleScene, BattleMonster battleMonster, int skillIndex)
         {
             m_battleScene = battleScene;
             m_battleMonster = battleMonster;
             m_skillSlotIndex = skillIndex;
+
+            // Get image component
+            m_spriteDisplay = GetComponent<Image>();
 
             // Initialise button
             m_button = GetComponent<Button>();
@@ -42,7 +45,10 @@ namespace RPGSystem
 
         public void SetAsAvailableSkill(bool value)
         {
-            m_button.interactable = value;
+            if (value && isReady)
+                m_button.interactable = true;
+            else
+                m_button.interactable = false;
         }
 
         public override void UpdateUI()

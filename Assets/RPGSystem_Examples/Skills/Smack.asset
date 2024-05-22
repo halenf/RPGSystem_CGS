@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Smack
   m_EditorClassIdentifier: 
   m_skillName: Smack
+  m_sprite: {fileID: 21300000, guid: e7b8c89c56253214eaabc9edcfedf362, type: 3}
   m_turnTimer: 0
-  m_beforeHitEffects: []
+  m_target: 0
   m_onHitEffects:
-  - {fileID: 11400000, guid: 3021cbf3dcdc4114fa3af4a17b00ec1d, type: 2}
-  m_afterHitEffects: []
+  - {fileID: 0}

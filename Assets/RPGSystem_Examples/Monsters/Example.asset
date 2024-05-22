@@ -14,7 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_monsterData: {fileID: 11400000, guid: 2ff0be7e9583330449be69cc5a5d4a39, type: 2}
   m_monsterName: Drago
-  m_skillSlots: []
+  m_skillSlots:
+  - m_skill: {fileID: 11400000, guid: 6d8e55f157a18174093ff5fdddd50ada, type: 2}
+    m_turnTimer: 0
+  - m_skill: {fileID: 11400000, guid: 6d8e55f157a18174093ff5fdddd50ada, type: 2}
+    m_turnTimer: 0
+  - m_skill: {fileID: 11400000, guid: 6d8e55f157a18174093ff5fdddd50ada, type: 2}
+    m_turnTimer: 0
   m_totalExp: 9342
   m_expToNextLevel: 2125
   m_level: 10

@@ -54,18 +54,18 @@ namespace RPGSystem
                 m_characterUIArray[c].Initialise(m_battleScene.characters[c], c);
 
                 // Instantiate the BattleMonsterUIs
-                for (int m = 0; m < m_battleMonsterUIArray.GetLength(1); m++)
+                for (int m = 0; m < m_battleMonsterUIArray.Length; m++)
                 {
                     int indexMonster = c * monstersPerParty + m;
-                    m_battleMonsterUIArray[indexMonster] = Instantiate(m_battleMonsterUIPrefab, m_characterUIArray[c].transform);
-                    m_battleMonsterUIArray[indexMonster].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c,m), c > 0 ? true : false);
+                    m_battleMonsterUIArray[indexMonster] = Instantiate(m_battleMonsterUIPrefab, m_characterUIArray[c].battleMonsterUIContainer);
+                    m_battleMonsterUIArray[indexMonster].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c,m), c > 0);
 
                     // Instantiate the skill slots
-                    for (int s = 0; s < m_skillSlotUIArray.GetLength(2); s++)
+                    for (int s = 0; s < m_skillSlotUIArray.Length; s++)
                     {
                         int indexSkill = (c * monstersPerParty * maxSkillsPerMonster) + (m * maxSkillsPerMonster) + s;
-                        m_skillSlotUIArray[indexSkill] = Instantiate(m_skillSlotUIPrefab, m_battleMonsterUIArray[indexMonster].transform);
-                        m_skillSlotUIArray[indexSkill].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c, m), s);
+                        m_skillSlotUIArray[indexSkill] = Instantiate(m_skillSlotUIPrefab, m_battleMonsterUIArray[indexMonster].skillSlotUIContainer);
+                        m_skillSlotUIArray[indexSkill].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c, m), s % maxSkillsPerMonster);
                     }
                 }
             }

@@ -54,6 +54,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_playerUIPrefab: {fileID: 114849069117649751, guid: f5d4c0d77772df84babd8bac1ce1c046, type: 3}
   m_enemyUIPrefab: {fileID: 114849069117649751, guid: e44f5784c89feba4188ca62f9848bba3, type: 3}
+  m_battleMonsterUIPrefab: {fileID: 2826563717538192862, guid: ad6507ef8cd432c4f830899e1cf3a223, type: 3}
+  m_skillSlotUIPrefab: {fileID: 7485703527861207017, guid: 98d4eadcb5761184c97282c1227eff63, type: 3}
 --- !u!223 &6156308881136725352
 Canvas:
   m_ObjectHideFlags: 0

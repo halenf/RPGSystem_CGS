@@ -13,7 +13,7 @@ namespace RPGSystem
         [SerializeField] protected bool m_isEnemyCharacter;
 
         // object references
-        public Transform battleMonsterUIDisplayArea;
+        public Transform battleMonsterUIContainer;
         [SerializeField] protected TextMeshProUGUI m_characterNameDisplay;
         [SerializeField] protected Image m_characterIconDisplay;
 
