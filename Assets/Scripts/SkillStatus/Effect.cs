@@ -6,7 +6,7 @@ using UnityEngine;
 namespace RPGSystem
 {
     [Serializable]
-    public abstract class SkillStatusEffect : ScriptableObject
+    public abstract class Effect : ScriptableObject
     {
         // Integer data for the skill effect
         [SerializeField] protected int m_value;
@@ -18,7 +18,7 @@ namespace RPGSystem
             }
         }
 
-        public abstract void Effect(BattleUnit user, BattleUnit[] targets);
+        public abstract void DoEffect(BattleUnit user, BattleUnit[] targets);
     }
 
     public enum DamageType
@@ -31,7 +31,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "DamageEffect", menuName = "RPGSystem/Effects/Damage", order = 1)]
-    public class DamageSkillEffect : SkillStatusEffect
+    public class DamageSkillEffect : Effect
     {
         [SerializeField] private DamageType m_damageType;
         public DamageType damageType
@@ -42,7 +42,7 @@ namespace RPGSystem
             }
         }
 
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
             {
@@ -73,7 +73,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "HealEffect", menuName = "RPGSystem/Effects/Heal", order = 1)]
-    public class HealSkillEffect : SkillStatusEffect
+    public class HealSkillEffect : Effect
     {
         [SerializeField] private HealType m_healType;
         public HealType healType
@@ -84,11 +84,11 @@ namespace RPGSystem
             }
         }
 
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
             {
-                // Restores for a percentage of the target's maxHP, percentage of the user's maxHP, or a flat value
+                // Restores for a percentage of the targets's maxHP, percentage of the user's maxHP, or a flat value
                 float _value;
                 switch (m_healType)
                 {
@@ -109,7 +109,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "Status", menuName = "RPGSystem/Effects/ApplyStatus", order = 1)]
-    public class ApplyStatus : SkillStatusEffect
+    public class ApplyStatus : Effect
     {
         [SerializeField] private Status m_status;
         public Status status
@@ -117,7 +117,7 @@ namespace RPGSystem
             get { return m_status; }
         }
 
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
             {
@@ -128,9 +128,9 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "RPGSystem/Effects/SkillCooldown", order = 1)]
-    public class SkillCooldownSkillEffect : SkillStatusEffect
+    public class SkillCooldownSkillEffect : Effect
     {
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
             {
@@ -144,9 +144,9 @@ namespace RPGSystem
     [Serializable]
     [CreateAssetMenu(fileName = "StatusTimerEffect", menuName = "RPGSystem/Effects/StatusTimer", order = 1)]
 
-    public class StatusTimerSkillEffect : SkillStatusEffect
+    public class StatusTimerSkillEffect : Effect
     {
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
             {
@@ -160,7 +160,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "StatEffect", menuName = "RPGSystem/Effects/Stat", order = 1)]
-    public class StatSkillEffect : SkillStatusEffect
+    public class StatSkillEffect : Effect
     {
         // note: HP cannot be boosted via this method
         [SerializeField] private UnitBaseStatNames m_baseStat;
@@ -169,7 +169,7 @@ namespace RPGSystem
             get { return m_baseStat; }
         }
 
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             if (m_baseStat == UnitBaseStatNames.Health)
                 return;
@@ -183,7 +183,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "EnableTriggeredEffect", menuName = "RPGSystem/Effects/EnableTriggeredEffect", order = 1)]
-    public class EnableTriggeredEffect : SkillStatusEffect
+    public class EnableTriggeredEffect : Effect
     {
         // the effects to be enabled
         [SerializeField] private TriggeredEffect m_effect;
@@ -192,7 +192,7 @@ namespace RPGSystem
             get { return m_effect; }
         }
 
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
                 target.EnableTriggeredEffect(effect);
@@ -201,7 +201,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "DisableTriggeredEffect", menuName = "RPGSystem/Effects/DisableTriggeredEffect", order = 1)]
-    public class DisableTriggeredEffect : SkillStatusEffect
+    public class DisableTriggeredEffect : Effect
     {
         // the effects to be disabled
         [SerializeField] private TriggeredEffect m_effect;
@@ -210,7 +210,7 @@ namespace RPGSystem
             get { return m_effect; }
         }
 
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
                 target.DisableTriggeredEffect(m_effect);
@@ -219,7 +219,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "ToggleTriggeredEffect", menuName = "RPGSystem/Effects/ToggleTriggeredEffect", order = 1)]
-    public class ToggleTriggeredEffect : SkillStatusEffect
+    public class ToggleTriggeredEffect : Effect
     {
         // the effects to be toggled
         [SerializeField] private TriggeredEffect m_effect;
@@ -228,7 +228,7 @@ namespace RPGSystem
             get { return m_effect; }
         }
 
-        public override void Effect(BattleUnit user, BattleUnit[] targets)
+        public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
             foreach (BattleUnit target in targets)
                 target.ToggleTriggeredEffect(m_effect);

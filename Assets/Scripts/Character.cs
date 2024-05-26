@@ -31,7 +31,7 @@ namespace RPGSystem
         [SerializeField] protected Sprite m_sprite;
         
         // array of characters units
-        [SerializeField] protected Unit[] m_units = new Unit[3];
+        [SerializeField] protected Unit[] m_units = new Unit[GameSettings.UNITS_PER_PARTY];
 
         // character's available character skills
         [SerializeField] protected CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[GameSettings.MAX_SKILLS_PER_CHARACTER];
@@ -93,11 +93,11 @@ namespace RPGSystem
 
         public void ResetCharacter()
         {
-            ResetBattleCharacter();
             m_units = null;
             m_characterName = string.Empty;
             m_sprite = null;
             m_skill = 1;
+            ResetBattleCharacter();
         }
     }
 }

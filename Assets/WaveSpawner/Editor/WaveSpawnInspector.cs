@@ -20,8 +20,8 @@ namespace AdamAssets
             // for most use cases.
             //
             // For anything especially complex like the wave system,
-            // you can also use "target".
-            // target has a few small issues here and there, but one of the most obvious 
+            // you can also use "targets".
+            // targets has a few small issues here and there, but one of the most obvious 
             //  is that it can only work with public variables.
 
 
@@ -47,11 +47,11 @@ namespace AdamAssets
 
 
 
-            //------ Wave system using target ------//
+            //------ Wave system using targets ------//
             //
-            // target is a variable that directly references the original script/instance
-            // we can directly change the variables inside target as long as we use a cast.
-            // For example, we could easily use target
+            // targets is a variable that directly references the original script/instance
+            // we can directly change the variables inside targets as long as we use a cast.
+            // For example, we could easily use targets
             // First, I have to set the local waves variable to match the one
             if (waves == null)
                 waves = (target as WaveSpawning).waves;
@@ -107,7 +107,7 @@ namespace AdamAssets
             (target as WaveSpawning).waves = waves;
 
             //
-            //------ Wave system using target ------//
+            //------ Wave system using targets ------//
 
         }
 

@@ -1,8 +1,39 @@
 BattleScene
 - Create it
 - Exp gain during battle for Units
-- Instead make m_battleMonsters a Dict with an int key for position/index.
+- Instead make m_battleUnits a Dict with an int key for position/index.
+- Make it instantiate the UI from a child class outside of the package.
+- Replace m_currentAction with button in UI that calls AddAction in battleScene (?)
+- Make abstract with WaitForActions
+
+Character
+- Move CharacterSkills and Sprite to a child class outside of the package.
+
+BattleUnit
+- Move methods for custom effects and statuses into new script for game (not part of package).
 
 Unit
 - Learn skill method
 - Finish self-contained level up implementation
+
+UnitData
+- Change basestats to be a custom class with protected variables for each stat.
+
+GameSettings
+- Create MAX_STAT_MODIFIER
+- Move MAX_SKILLS_PER_CHARACTER to child class outside of package.
+
+SkillStatusEffect
+- Move custom classes into new script outside of system files.
+
+TriggeredEffects
+- Make into custom class with protected variables.
+
+Skill 
+- Move sprite to child class out of package.
+
+Status
+- Move statusType to child class out of package.
+
+Skill/Status
+- Inconsistency between user and target variables.

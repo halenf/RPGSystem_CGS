@@ -176,11 +176,11 @@ namespace RPGSystem
         /// <summary>
         /// Gets the BattleUnit with a matching BattleUnitID.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        public BattleUnit GetBattleUnit(BattleUnitID index)
+        public BattleUnit GetBattleUnit(BattleUnitID id)
         {
-            return m_battleUnits[index.character, index.unit];
+            return m_battleUnits[id.character, id.unit];
         }
 
         // Start is called before the first frame update
@@ -228,6 +228,7 @@ namespace RPGSystem
                 for (int mon = 0; mon < m_characters[cha].units.Length; mon++)
                 {
                     m_battleUnits[cha, mon] = new BattleUnit(m_characters[cha].units[mon], new BattleUnitID(cha, mon));
+                    m_battleUnits[cha, mon].ResetBattleUnit();
                 }
             }
 
@@ -240,7 +241,7 @@ namespace RPGSystem
 
         /// <summary>
         /// Build actions from UI object buttons.
-        /// When action has user, skill id, and target, action is complete and added to action list.
+        /// When action has user, skill id, and targets, action is complete and added to action list.
         /// When there is an action for every unit, this method returns true and the actions are done.
         /// </summary>
         /// <returns>If all units have an action.</returns>
@@ -261,7 +262,7 @@ namespace RPGSystem
                 // activate the relevant UI objects
                 switch (m_currentAction.buildState)
                 {    
-                    // if has no user, skill, or target
+                    // if has no user, skill, or targets
                     case 0:
                         // activate the parties units to be selected as users
                         for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
@@ -273,7 +274,7 @@ namespace RPGSystem
                             }
                         }
                         break;
-                    // if has a user, but no skill or target
+                    // if has a user, but no skill or targets
                     case 1:
                         // activate the skill slots for the selected unit
                         for (int s = 0; s < GameSettings.MAX_SKILLS_PER_UNIT; s++)
@@ -282,10 +283,10 @@ namespace RPGSystem
                                 * GameSettings.MAX_SKILLS_PER_UNIT + s].SetAsAvailableSkill(true);
                         }
                         break;
-                    // if has user and skill, but no target
+                    // if has user and skill, but no targets
                     case 2:
                         // activate the units based on the TargetType of the skill
-                        switch (GetBattleUnit(m_currentAction.userID).skillSlots[m_currentAction.skillSlotIndex].skill.target)
+                        switch (GetBattleUnit(m_currentAction.userID).skillSlots[m_currentAction.skillSlotIndex].skill.targets)
                         {
                             case TargetType.SingleParty:
                                 // activate the parties units to be selected as targets
@@ -380,7 +381,7 @@ namespace RPGSystem
 
                 // switch uses this to hold a value
                 int buffer;
-                switch (user.skillSlots[action.skillSlotIndex].skill.target)
+                switch (user.skillSlots[action.skillSlotIndex].skill.targets)
                 {
                     case TargetType.SingleEnemy:
                     case TargetType.SingleParty:

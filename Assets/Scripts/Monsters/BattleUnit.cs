@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace RPGSystem
@@ -42,9 +43,9 @@ namespace RPGSystem
         /// <param name="target"></param>
         public void OnApply(BattleUnit target)
         {
-            foreach (SkillStatusEffect effect in m_status.onApply)
+            foreach (Effect effect in m_status.onApply)
             {
-                effect.Effect(m_status.user, new BattleUnit[] { target });
+                effect.DoEffect(m_status.user, new BattleUnit[] { target });
             }
         }
 
@@ -54,9 +55,9 @@ namespace RPGSystem
         /// <param name="target"></param>
         public void OnTurnEnd(BattleUnit target)
         {
-            foreach (SkillStatusEffect effect in m_status.onTurnEnd)
+            foreach (Effect effect in m_status.onTurnEnd)
             {
-                effect.Effect(m_status.user, new BattleUnit[] { target });
+                effect.DoEffect(m_status.user, new BattleUnit[] { target });
             }
         }
 
@@ -66,12 +67,12 @@ namespace RPGSystem
         /// <param name="target"></param>
         public void OnClear(BattleUnit target)
         {
-            // if clear effects on this target should not fail
+            // if clear effects on this targets should not fail
             if ((target.triggeredEffects & TriggeredEffect.FailStatusClearEffects) == 0)
             {
-                foreach (SkillStatusEffect effect in m_status.onClear)
+                foreach (Effect effect in m_status.onClear)
                 {
-                    effect.Effect(m_status.user, new BattleUnit[] { target });
+                    effect.DoEffect(m_status.user, new BattleUnit[] { target });
                 }
             }
             else
@@ -209,15 +210,14 @@ namespace RPGSystem
         /// Causes the unit to lose HP.
         /// </summary>
         /// <param name="damage">Amount of HP lost.</param>
-        public void TakeDamage(int damage)
+        public bool TakeDamage(int damage)
         {
             // reduce HP
             currentHP -= damage;
 
             if (currentHP <= 0)
-            {
-                // kill TODO
-            }
+                return true;
+            return false;
         }
 
         /// <summary>
@@ -256,14 +256,14 @@ namespace RPGSystem
         /// <param name="status">The status to be applied to the unit.</param>
         public void GainStatus(Status status)
         {
-            // if target does not have debuff immunity
+            // if targets does not have debuff immunity
             if ((m_triggeredEffects & TriggeredEffect.DebuffImmunity) == 0)
             {
                 // add new status to status list, then call its on apply affects
                 m_statusSlots.Add(new StatusSlot(status));
                 m_statusSlots.Last().OnApply(this);
             }
-            // if target does have debuff immunity, then don't apply the status
+            // if targets does have debuff immunity, then don't apply the status
         }
 
         /// <summary>
@@ -348,10 +348,11 @@ namespace RPGSystem
                     // removes all status slots that have a matching status
                     // a unit shouldn't be able to have two of the same status so it should only remove one status slot,
                     // if it has that status
-                    m_statusSlots.RemoveAll(statusSlot => statusSlot.status == status);
+                    if (m_statusSlots.RemoveAll(statusSlot => statusSlot.status == status) == 0)
+                        Debug.LogError(unitNickname + "(" + unitName + ") does not have a SkillSlot with " + status.statusType + ".");
             }
             else
-                throw new WarningException(unit.unitNickname + " has no status slots to remove.");
+                Debug.LogError(unitNickname + "(" + unitName + ") has no StatusSlots to remove.");
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace RPGSystem
 {
     public static class GameSettings
-    {
+    {       
         public static int UNITS_PER_PARTY = 3;
         public static int MAX_UNIT_LEVEL = 100;
         public static int CHARACTERS_PER_BATTLE = 2;

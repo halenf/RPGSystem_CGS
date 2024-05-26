@@ -27,12 +27,12 @@ namespace RPGSystem
 
         [SerializeField] protected int m_turnTimer;
 
-        [SerializeField] protected TargetType m_target;
+        [SerializeField] protected TargetType m_targets;
 
         /// <summary>
         /// Effects trigger in the order set here.
         /// </summary>
-        [SerializeField] protected SkillStatusEffect[] m_onHitEffects;
+        [SerializeField] protected Effect[] m_effects;
 
         public string skillName
         {
@@ -52,15 +52,15 @@ namespace RPGSystem
                 return m_turnTimer;
             }
         }
-        public TargetType target
+        public TargetType targets
         {
-            get { return m_target; }
+            get { return m_targets; }
         }
-        public SkillStatusEffect[] onHitEffects
+        public Effect[] effects
         {
             get
             {
-                return m_onHitEffects;
+                return m_effects;
             }
         }
     }

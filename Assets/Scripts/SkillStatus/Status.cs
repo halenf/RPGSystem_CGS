@@ -7,6 +7,7 @@ namespace RPGSystem
     [System.Serializable]
     public enum StatusType
     {
+        Default,
         Buff,
         Debuff
     }
@@ -14,6 +15,8 @@ namespace RPGSystem
     [CreateAssetMenu(fileName = "Status", menuName = "RPGSystem/Status", order = 1)]
     public class Status : ScriptableObject
     {
+        [SerializeField] protected string m_skillName;
+        
         /// <summary>
         /// The unit that applied the status.
         /// </summary>
@@ -28,10 +31,12 @@ namespace RPGSystem
         [SerializeField] protected int m_turnTimer;
 
         // effect arrays for when the status is applied, cleared, and effects that occur at the start and end of every battle turn
-        [SerializeField] protected SkillStatusEffect[] m_onApply;
-        [SerializeField] protected SkillStatusEffect[] m_onTurnStart;
-        [SerializeField] protected SkillStatusEffect[] m_onTurnEnd;
-        [SerializeField] protected SkillStatusEffect[] m_onClear;
+        [SerializeField] protected Effect[] m_onApply;
+        [SerializeField] protected Effect[] m_onTurnStart;
+        [SerializeField] protected Effect[] m_onTurnEnd;
+        [SerializeField] protected Effect[] m_onClear;
+
+        public string skillName { get { return m_skillName;} }
 
         public BattleUnit user
         {
@@ -55,7 +60,7 @@ namespace RPGSystem
             }
         }
 
-        public SkillStatusEffect[] onApply
+        public Effect[] onApply
         {
             get
             {
@@ -63,19 +68,19 @@ namespace RPGSystem
             }
         }
 
-        public SkillStatusEffect[] onTurnStart
+        public Effect[] onTurnStart
         {
             get { return m_onTurnStart; }
         }
 
-        public SkillStatusEffect[] onTurnEnd
+        public Effect[] onTurnEnd
         {
             get
             {
                 return m_onTurnEnd;
             }
         }
-        public SkillStatusEffect[] onClear
+        public Effect[] onClear
         {
             get
             {
