@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    [CustomEditor(typeof(Monster), true)]
-    public class MonsterEditorWindow : Editor
+    [CustomEditor(typeof(Unit), true)]
+    public class UnitEditorWindow : Editor
     {
-        SerializedProperty m_monsterData, m_monsterName, m_totalExp, m_expToNextLevel, m_level, 
+        SerializedProperty m_unitData, m_unitName, m_totalExp, m_expToNextLevel, m_level, 
             m_skillSlots;
 
         public void OnEnable()
@@ -21,59 +21,59 @@ namespace RPGSystem
         {
             EditorGUI.BeginChangeCheck();
             
-            // object slot for monster data
+            // object slot for unit data
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(new GUIContent("Base Monster Data", "What type of monster this is."), EditorStyles.boldLabel);
-                EditorGUILayout.PropertyField(m_monsterData, GUIContent.none);
+                EditorGUILayout.LabelField(new GUIContent("Base Unit Data", "What type of unit this is."), EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(m_unitData, GUIContent.none);
                 EditorGUILayout.EndHorizontal();
             }
 
-            // don't show the rest of the ui if the monster has no monster data
-            if (m_monsterData.objectReferenceValue != null)
+            // don't show the rest of the ui if the unit has no unit data
+            if (m_unitData.objectReferenceValue != null)
             {
-                // set monster name, set default to monster type name
+                // set unit name, set default to unit type name
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(new GUIContent("Nickname", "The nickname of this monster. Defaults to the base monster's name."), EditorStyles.boldLabel);
-                    EditorGUILayout.PropertyField(m_monsterName, GUIContent.none);
+                    EditorGUILayout.LabelField(new GUIContent("Nickname", "The nickname of this unit. Defaults to the base unit's name."), EditorStyles.boldLabel);
+                    EditorGUILayout.PropertyField(m_unitName, GUIContent.none);
                     EditorGUILayout.EndHorizontal();
-                    if (m_monsterName.stringValue == string.Empty)
+                    if (m_unitName.stringValue == string.Empty)
                     {
-                        m_monsterName.stringValue = ((MonsterData)m_monsterData.objectReferenceValue).monsterName;
+                        m_unitName.stringValue = ((UnitData)m_unitData.objectReferenceValue).unitName;
                     }
                 }
 
                 // experience level display
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(new GUIContent("Level", "This monster's curent level."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.065f));
+                    EditorGUILayout.LabelField(new GUIContent("Level", "This unit's curent level."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.065f));
                     int inputLevel = EditorGUILayout.IntField(m_level.intValue, GUILayout.Width(Screen.width * 0.06f));
                     if (inputLevel != m_level.intValue)
                     {
-                        ((Monster)serializedObject.targetObject).SetLevel(inputLevel);
+                        ((Unit)serializedObject.targetObject).SetLevel(inputLevel);
                         //serializedObject.Update();
                     }
-                    EditorGUILayout.LabelField(new GUIContent("Total Exp", "This monster's total experience."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.1f));
+                    EditorGUILayout.LabelField(new GUIContent("Total Exp", "This unit's total experience."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.1f));
                     int inputExp = EditorGUILayout.IntField(m_totalExp.intValue, GUILayout.Width(Screen.width * 0.13f));
                     if (inputExp != m_totalExp.intValue)
                     {
-                        ((Monster)serializedObject.targetObject).SetTotalExp(inputExp);
+                        ((Unit)serializedObject.targetObject).SetTotalExp(inputExp);
                         //serializedObject.Update();
                     }
-                    // If the monster is at max level, don't show exp to next level
-                    if (((Monster)target).level != GameSettings.MAX_MONSTER_LEVEL)
+                    // If the unit is at max level, don't show exp to next level
+                    if (((Unit)target).level != GameSettings.MAX_UNIT_LEVEL)
                     {
-                        EditorGUILayout.LabelField(new GUIContent("Exp to Next Level", "The amount of exp this monster needs to level up."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.175f));
+                        EditorGUILayout.LabelField(new GUIContent("Exp to Next Level", "The amount of exp this unit needs to level up."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.175f));
                         m_expToNextLevel.intValue = EditorGUILayout.IntField(m_expToNextLevel.intValue, GUILayout.Width(Screen.width * 0.12f));
                     }
                     EditorGUILayout.EndHorizontal();
                 }
 
                 // skill slot layout
-                EditorGUILayout.PropertyField(m_skillSlots, new GUIContent("Skill Slots", "The monster's skill slots."));
+                EditorGUILayout.PropertyField(m_skillSlots, new GUIContent("Skill Slots", "The unit's skill slots."));
                 /*
-                GUIContent skillFoldoutLabel = new GUIContent("Skill Slots", "This menu shows the monster's skill slots and allows you to " +
+                GUIContent skillFoldoutLabel = new GUIContent("Skill Slots", "This menu shows the unit's skill slots and allows you to " +
                     "add and remove skills.");
                 showSkillSlots = EditorGUILayout.BeginFoldoutHeaderGroup(showSkillSlots, skillFoldoutLabel);
                 if (showSkillSlots)
@@ -103,7 +103,7 @@ namespace RPGSystem
                     {
                         if (GUILayout.Button("+", GUILayout.Width(Screen.width * 0.1f)))
                         {
-                            monster.AddSkillSlot();
+                            unit.AddSkillSlot();
                             numOfSkills++;
                         }
                     }
@@ -113,7 +113,7 @@ namespace RPGSystem
                     if (numOfSkills > 1)
                         if (GUILayout.Button("-", GUILayout.Width(Screen.width * 0.1f)))
                         {
-                            monster.RemoveSkillSlot();
+                            unit.RemoveSkillSlot();
                             numOfSkills--;
                         }
                     GUILayout.EndHorizontal();
@@ -122,10 +122,10 @@ namespace RPGSystem
                 */
             }
 
-            // reset monster button
+            // reset unit button
             GUILayout.Space(20);
-            if (GUILayout.Button("Reset Monster"))
-                ((Monster)serializedObject.targetObject).ResetMonsterData();
+            if (GUILayout.Button("Reset Unit"))
+                ((Unit)serializedObject.targetObject).ResetUnitData();
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -139,8 +139,8 @@ namespace RPGSystem
 
         public void GetSerializedProperties()
         {
-            m_monsterData = serializedObject.FindProperty("m_monsterData");
-            m_monsterName = serializedObject.FindProperty("m_monsterName");
+            m_unitData = serializedObject.FindProperty("m_unitData");
+            m_unitName = serializedObject.FindProperty("m_unitName");
             m_totalExp = serializedObject.FindProperty("m_totalExp");
             m_expToNextLevel = serializedObject.FindProperty("m_expToNextLevel");
             m_level = serializedObject.FindProperty("m_level");

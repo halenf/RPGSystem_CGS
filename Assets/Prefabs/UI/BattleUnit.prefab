@@ -289,7 +289,7 @@ GameObject:
   - component: {fileID: -608852089419480327}
   - component: {fileID: 5208206976599507972}
   m_Layer: 5
-  m_Name: BattleMonster
+  m_Name: BattleUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

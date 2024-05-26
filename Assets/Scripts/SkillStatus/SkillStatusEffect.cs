@@ -18,7 +18,7 @@ namespace RPGSystem
             }
         }
 
-        public abstract void Effect(BattleMonster user, BattleMonster[] targets);
+        public abstract void Effect(BattleUnit user, BattleUnit[] targets);
     }
 
     public enum DamageType
@@ -42,9 +42,9 @@ namespace RPGSystem
             }
         }
 
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
             {
                 int damage = (int)m_damageType / (target.defence + 10);
                 int targetHP = target.currentHP;
@@ -84,9 +84,9 @@ namespace RPGSystem
             }
         }
 
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
             {
                 // Restores for a percentage of the target's maxHP, percentage of the user's maxHP, or a flat value
                 float _value;
@@ -117,9 +117,9 @@ namespace RPGSystem
             get { return m_status; }
         }
 
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
             {
                 target.GainStatus(m_status);
             }
@@ -130,9 +130,9 @@ namespace RPGSystem
     [CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "RPGSystem/Effects/SkillCooldown", order = 1)]
     public class SkillCooldownSkillEffect : SkillStatusEffect
     {
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -146,9 +146,9 @@ namespace RPGSystem
 
     public class StatusTimerSkillEffect : SkillStatusEffect
     {
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
             {
                 for (int i = 0; i < target.statusSlots.Count; i++)
                 {
@@ -163,18 +163,18 @@ namespace RPGSystem
     public class StatSkillEffect : SkillStatusEffect
     {
         // note: HP cannot be boosted via this method
-        [SerializeField] private MonsterBaseStats m_baseStat;
-        public MonsterBaseStats baseStat
+        [SerializeField] private UnitBaseStatNames m_baseStat;
+        public UnitBaseStatNames baseStat
         {
             get { return m_baseStat; }
         }
 
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            if (m_baseStat == MonsterBaseStats.Health)
+            if (m_baseStat == UnitBaseStatNames.Health)
                 return;
 
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
             {
                 target.ApplyStatModifier(m_baseStat, m_value);
             }
@@ -192,9 +192,9 @@ namespace RPGSystem
             get { return m_effect; }
         }
 
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
                 target.EnableTriggeredEffect(effect);
         }
     }
@@ -210,9 +210,9 @@ namespace RPGSystem
             get { return m_effect; }
         }
 
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
                 target.DisableTriggeredEffect(m_effect);
         }
     }
@@ -228,9 +228,9 @@ namespace RPGSystem
             get { return m_effect; }
         }
 
-        public override void Effect(BattleMonster user, BattleMonster[] targets)
+        public override void Effect(BattleUnit user, BattleUnit[] targets)
         {
-            foreach (BattleMonster target in targets)
+            foreach (BattleUnit target in targets)
                 target.ToggleTriggeredEffect(m_effect);
         }
     }

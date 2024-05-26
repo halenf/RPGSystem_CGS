@@ -15,9 +15,9 @@ namespace RPGSystem
     public class Status : ScriptableObject
     {
         /// <summary>
-        /// The monster that applied the status.
+        /// The unit that applied the status.
         /// </summary>
-        protected BattleMonster m_user;
+        protected BattleUnit m_user;
         /// <summary>
         /// Whether this status is a buff or debuff.
         /// </summary>
@@ -33,7 +33,7 @@ namespace RPGSystem
         [SerializeField] protected SkillStatusEffect[] m_onTurnEnd;
         [SerializeField] protected SkillStatusEffect[] m_onClear;
 
-        public BattleMonster user
+        public BattleUnit user
         {
             get
             {

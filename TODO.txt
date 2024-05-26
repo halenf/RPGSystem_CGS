@@ -1,22 +1,8 @@
-Monster Editor
-- Toggle status debugging //
-- View monster base stats and volatile stats. //
-- View exp and level //
-- Show stat modifiers //
-- Show triggered effects //
-- Basically section for battle debugging //
-- Put array/list into property drawers //
-- Compatability with reset monster method //
-
-Character/UI
-- Allow any number of monsters in party //
-
-GameSettings
-- Static values to represent game options (ie number of skills a monster can have) //
-- Saves to scriptable object //eh
-
-General
-- Use protected over private and virtual methods to allow users to extend classes and create own functionality //
-
 BattleScene
 - Create it
+- Exp gain during battle for Units
+- Instead make m_battleMonsters a Dict with an int key for position/index.
+
+Unit
+- Learn skill method
+- Finish self-contained level up implementation

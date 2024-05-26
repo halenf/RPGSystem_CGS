@@ -9,22 +9,22 @@ namespace RPGSystem
     public class SkillSlotUI : ObjectUI
     {
         protected BattleScene m_battleScene;
-        protected BattleMonster m_battleMonster;
+        protected BattleUnit m_battleUnit;
         protected int m_skillSlotIndex;
 
         protected Button m_button;
         public bool isReady
         {
-            get { return m_battleMonster.skillSlots[m_skillSlotIndex].turnTimer == 0; }
+            get { return m_battleUnit.skillSlots[m_skillSlotIndex].turnTimer == 0; }
         }
 
         [SerializeField] protected TextMeshProUGUI m_textDisplay;
         protected Image m_spriteDisplay;
 
-        public void Initialise(BattleScene battleScene, BattleMonster battleMonster, int skillIndex)
+        public void Initialise(BattleScene battleScene, BattleUnit battleUnit, int skillIndex)
         {
             m_battleScene = battleScene;
-            m_battleMonster = battleMonster;
+            m_battleUnit = battleUnit;
             m_skillSlotIndex = skillIndex;
 
             // Get image component
@@ -54,8 +54,10 @@ namespace RPGSystem
         public override void UpdateUI()
         {
             // display skill
-            m_textDisplay.text = m_battleMonster.skillSlots[m_skillSlotIndex].skill.name;
-            m_spriteDisplay.sprite = m_battleMonster.skillSlots[m_skillSlotIndex].skill.sprite;
+            if (m_textDisplay)
+                m_textDisplay.text = m_battleUnit.skillSlots[m_skillSlotIndex].skill.name;
+            if (m_spriteDisplay)
+                m_spriteDisplay.sprite = m_battleUnit.skillSlots[m_skillSlotIndex].skill.sprite;
         }
     }
 }

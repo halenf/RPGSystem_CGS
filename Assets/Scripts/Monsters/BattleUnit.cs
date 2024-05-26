@@ -40,11 +40,11 @@ namespace RPGSystem
         /// Activates the on apply effects of the status.
         /// </summary>
         /// <param name="target"></param>
-        public void OnApply(BattleMonster target)
+        public void OnApply(BattleUnit target)
         {
             foreach (SkillStatusEffect effect in m_status.onApply)
             {
-                effect.Effect(m_status.user, new BattleMonster[] { target });
+                effect.Effect(m_status.user, new BattleUnit[] { target });
             }
         }
 
@@ -52,11 +52,11 @@ namespace RPGSystem
         /// Activates the end of turn effects of the status.
         /// </summary>
         /// <param name="target"></param>
-        public void OnTurnEnd(BattleMonster target)
+        public void OnTurnEnd(BattleUnit target)
         {
             foreach (SkillStatusEffect effect in m_status.onTurnEnd)
             {
-                effect.Effect(m_status.user, new BattleMonster[] { target });
+                effect.Effect(m_status.user, new BattleUnit[] { target });
             }
         }
 
@@ -64,14 +64,14 @@ namespace RPGSystem
         /// Activates the on clear effects of the status.
         /// </summary>
         /// <param name="target"></param>
-        public void OnClear(BattleMonster target)
+        public void OnClear(BattleUnit target)
         {
             // if clear effects on this target should not fail
             if ((target.triggeredEffects & TriggeredEffect.FailStatusClearEffects) == 0)
             {
                 foreach (SkillStatusEffect effect in m_status.onClear)
                 {
-                    effect.Effect(m_status.user, new BattleMonster[] { target });
+                    effect.Effect(m_status.user, new BattleUnit[] { target });
                 }
             }
             else
@@ -104,58 +104,58 @@ namespace RPGSystem
         Lifesteal = 16 // Implemented
     }
 
-    public class BattleMonster
+    public class BattleUnit
     {
-        public BattleMonster() { }
-        public BattleMonster(Monster monster, BattleMonsterID id)
+        public BattleUnit() { }
+        public BattleUnit(Unit unit, BattleUnitID id)
         {
-            m_monster = monster;
+            m_unit = unit;
             m_battleID = id;
-            m_currentHP = maxHP;
+            currentHP = maxHP;
         }
         
-        [SerializeField] protected Monster m_monster;
-        public Monster monster
+        [SerializeField] protected Unit m_unit;
+        public Unit unit
         {
-            get { return m_monster; }
+            get { return m_unit; }
         }
 
-        [SerializeField] protected BattleMonsterID m_battleID;
-        public BattleMonsterID battleID
+        [SerializeField] protected BattleUnitID m_battleID;
+        public BattleUnitID battleID
         {
             get { return m_battleID; }
         }
 
+        // accessors for variables for other classes
+        public string unitNickname
+        {
+            get { return m_unit.unitNickname; }
+        }
+        public string unitName
+        {
+            get { return m_unit.unitData.unitName; }
+        }
         // health
-        [SerializeField] protected int m_currentHP;
         public int currentHP
         {
-            get { return m_currentHP; }
-        }
-        // accessors for variables for other classes
-        public string monsterName
-        {
-            get { return m_monster.monsterName; }
-        }
-        public string monsterDataName
-        {
-            get { return m_monster.monsterData.monsterName; }
+            get { return m_unit.currentHP; }
+            set { m_unit.currentHP = value; }
         }
         public int maxHP
         {
-            get { return m_monster.maxHP; }
+            get { return m_unit.maxHP; }
         }
         public int attack
         {
-            get { return m_monster.attack; }
+            get { return m_unit.attack; }
         }
         public int defence
         {
-            get { return m_monster.defence; }
+            get { return m_unit.defence; }
         }
         public int speed
         {
-            get { return m_monster.speed; }
+            get { return m_unit.speed; }
         }
 
         // status slots
@@ -167,7 +167,7 @@ namespace RPGSystem
         // skill slots accessor for other classes
         public List<SkillSlot> skillSlots
         {
-            get { return m_monster.skillSlots; }
+            get { return m_unit.skillSlots; }
         }
 
         // bitwise enum for effects with triggers
@@ -178,22 +178,22 @@ namespace RPGSystem
         }
 
         // tracks stat modifiers from buffs
-        [SerializeField][Min(0)] protected Dictionary<MonsterBaseStats, float> m_statModifiers = new Dictionary<MonsterBaseStats, float>();
+        [SerializeField][Min(0)] protected Dictionary<UnitBaseStatNames, float> m_statModifiers = new Dictionary<UnitBaseStatNames, float>();
 
         /// <summary>
-        /// Resets the BattleMonster to a default state.
+        /// Resets the BattleUnit to a default state.
         /// </summary>
-        public void ResetBattleMonster()
+        public void ResetBattleUnit()
         {
             // clear stat buffs/debuffs
             for (int i = 1; i < m_statModifiers.Count; i++)
-                m_statModifiers[(MonsterBaseStats)i] = 1;
+                m_statModifiers[(UnitBaseStatNames)i] = 1;
 
             // reset HP
-            m_currentHP = m_monster.maxHP;
+            currentHP = maxHP;
 
             // reset all skill cooldowns
-            foreach (SkillSlot skillSlot in m_monster.skillSlots)
+            foreach (SkillSlot skillSlot in m_unit.skillSlots)
             {
                 skillSlot.ResetTimer();
             }
@@ -206,39 +206,39 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Causes the monster to lose HP.
+        /// Causes the unit to lose HP.
         /// </summary>
         /// <param name="damage">Amount of HP lost.</param>
         public void TakeDamage(int damage)
         {
             // reduce HP
-            m_currentHP -= damage;
+            currentHP -= damage;
 
-            if (m_currentHP <= 0)
+            if (currentHP <= 0)
             {
                 // kill TODO
             }
         }
 
         /// <summary>
-        /// Restores the monster's HP.
+        /// Restores the unit's HP.
         /// </summary>
         /// <param name="value">Amount of HP to restore.</param>
         public void RestoreHealth(int value)
         {
-            // increase HP, don't allow monster to have HP over the maximum
-            m_currentHP += value;
+            // increase HP, don't allow unit to have HP over the maximum
+            currentHP += value;
 
-            if (m_currentHP > m_monster.maxHP)
-                m_currentHP = m_monster.maxHP;
+            if (currentHP > m_unit.maxHP)
+                currentHP = m_unit.maxHP;
         }
 
         /// <summary>
-        /// Apply a modifier to one of the monster's stats.
+        /// Apply a modifier to one of the unit's stats.
         /// </summary>
         /// <param name="baseStat">The stat to be affected.</param>
         /// <param name="value">Magnitude of the modifer. Negative values represent a debuff.</param>
-        public void ApplyStatModifier(MonsterBaseStats baseStat, int value)
+        public void ApplyStatModifier(UnitBaseStatNames baseStat, int value)
         {
             // apply percentage multiplier to specified stat (compounding with other boosts)
             // note: negative values represent a debuff
@@ -251,9 +251,9 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Adds a status to the monster's Status Slots.
+        /// Adds a status to the unit's Status Slots.
         /// </summary>
-        /// <param name="status">The status to be applied to the monster.</param>
+        /// <param name="status">The status to be applied to the unit.</param>
         public void GainStatus(Status status)
         {
             // if target does not have debuff immunity
@@ -274,7 +274,7 @@ namespace RPGSystem
         public void ChangeSkillCooldown(int index, int value)
         {
             // increase/decrease the turn timer of the skill at the indicated index
-            m_monster.skillSlots[index].ChangeTurnTimer(value);
+            m_unit.skillSlots[index].ChangeTurnTimer(value);
         }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Adds a Status Slot to the monster.
+        /// Adds a Status Slot to the unit.
         /// Can be created with or without a status.
         /// </summary>
         /// <param name="status">The Status to add.</param>
@@ -332,7 +332,7 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Removes a Status Slot from the monster.
+        /// Removes a Status Slot from the unit.
         /// Either removes the newest Status Slot or the Status Slot with a Status matching the param.
         /// </summary>
         /// <param name="status">Will remove the Status Slot with this Status.</param>
@@ -346,12 +346,12 @@ namespace RPGSystem
                     m_statusSlots.RemoveAt(m_statusSlots.Count - 1);
                 else
                     // removes all status slots that have a matching status
-                    // a monster shouldn't be able to have two of the same status so it should only remove one status slot,
+                    // a unit shouldn't be able to have two of the same status so it should only remove one status slot,
                     // if it has that status
                     m_statusSlots.RemoveAll(statusSlot => statusSlot.status == status);
             }
             else
-                throw new WarningException(monster.monsterName + " has no status slots to remove.");
+                throw new WarningException(unit.unitNickname + " has no status slots to remove.");
         }
     }
 }

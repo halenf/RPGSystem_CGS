@@ -30,8 +30,8 @@ namespace RPGSystem
         [SerializeField] protected string m_characterName;
         [SerializeField] protected Sprite m_sprite;
         
-        // array of characters monsters
-        [SerializeField] protected Monster[] m_monsters = new Monster[3];
+        // array of characters units
+        [SerializeField] protected Unit[] m_units = new Unit[3];
 
         // character's available character skills
         [SerializeField] protected CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[GameSettings.MAX_SKILLS_PER_CHARACTER];
@@ -48,9 +48,9 @@ namespace RPGSystem
         {
             get { return m_sprite; }
         }
-        public Monster[] monsters
+        public Unit[] units
         {
-            get { return m_monsters; }
+            get { return m_units; }
         }
         public CharacterSkillSlot[] characterSkillSlots
         {
@@ -94,7 +94,7 @@ namespace RPGSystem
         public void ResetCharacter()
         {
             ResetBattleCharacter();
-            m_monsters = null;
+            m_units = null;
             m_characterName = string.Empty;
             m_sprite = null;
             m_skill = 1;

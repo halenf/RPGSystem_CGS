@@ -6,12 +6,12 @@ namespace RPGSystem
 {
     public class HealthBarUI : BarUI
     {
-        [HideInInspector] public BattleMonster monster;
+        [HideInInspector] public BattleUnit unit;
         
         public override void UpdateUI()
         {
-            int maxHP = monster.maxHP;
-            int currentHP = monster.currentHP;
+            int maxHP = unit.maxHP;
+            int currentHP = unit.currentHP;
 
             m_slider.maxValue = maxHP;
             m_slider.value = currentHP;

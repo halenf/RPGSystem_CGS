@@ -14,9 +14,9 @@ namespace RPGSystem
         [SerializeField] private CharacterUI m_enemyUIPrefab;
         protected CharacterUI[] m_characterUIArray;
 
-        [Header("Monster UI")]
-        [SerializeField] protected BattleMonsterUI m_battleMonsterUIPrefab;
-        protected BattleMonsterUI[] m_battleMonsterUIArray;
+        [Header("Unit UI")]
+        [SerializeField] protected BattleUnitUI m_battleUnitUIPrefab;
+        protected BattleUnitUI[] m_battleUnitUIArray;
 
         [Header("Skill Slot UI")]
         [SerializeField] protected SkillSlotUI m_skillSlotUIPrefab;
@@ -26,9 +26,9 @@ namespace RPGSystem
         {
             get { return m_characterUIArray; }
         }
-        public BattleMonsterUI[] battleMonsterUIArray
+        public BattleUnitUI[] battleUnitUIArray
         {
-            get { return m_battleMonsterUIArray; }
+            get { return m_battleUnitUIArray; }
         }
         public SkillSlotUI[] skillSlotUIArray
         {
@@ -40,12 +40,12 @@ namespace RPGSystem
             m_battleScene = battleScene;
 
             int charactersPerBattle = GameSettings.CHARACTERS_PER_BATTLE;
-            int monstersPerParty = GameSettings.MONSTERS_PER_PARTY;
-            int maxSkillsPerMonster = GameSettings.MAX_SKILLS_PER_MONSTER;
+            int unitsPerParty = GameSettings.UNITS_PER_PARTY;
+            int maxSkillsPerUnit = GameSettings.MAX_SKILLS_PER_UNIT;
 
             m_characterUIArray = new CharacterUI[charactersPerBattle];
-            m_battleMonsterUIArray = new BattleMonsterUI[charactersPerBattle * monstersPerParty];
-            m_skillSlotUIArray = new SkillSlotUI[charactersPerBattle * monstersPerParty * maxSkillsPerMonster];
+            m_battleUnitUIArray = new BattleUnitUI[charactersPerBattle * unitsPerParty];
+            m_skillSlotUIArray = new SkillSlotUI[charactersPerBattle * unitsPerParty * maxSkillsPerUnit];
 
             // instantiate the character UIs
             for (int c = 0; c < m_characterUIArray.Length; c++)
@@ -53,19 +53,19 @@ namespace RPGSystem
                 m_characterUIArray[c] = Instantiate(c > 0 ? m_enemyUIPrefab : m_playerUIPrefab, transform);
                 m_characterUIArray[c].Initialise(m_battleScene.characters[c], c);
 
-                // Instantiate the BattleMonsterUIs
-                for (int m = 0; m < m_battleMonsterUIArray.Length; m++)
+                // Instantiate the BattleUnitUIs
+                for (int m = 0; m < m_battleUnitUIArray.Length; m++)
                 {
-                    int indexMonster = c * monstersPerParty + m;
-                    m_battleMonsterUIArray[indexMonster] = Instantiate(m_battleMonsterUIPrefab, m_characterUIArray[c].battleMonsterUIContainer);
-                    m_battleMonsterUIArray[indexMonster].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c,m), c > 0);
+                    int unitIndex = c * unitsPerParty + m;
+                    m_battleUnitUIArray[unitIndex] = Instantiate(m_battleUnitUIPrefab, m_characterUIArray[c].battleUnitUIContainer);
+                    m_battleUnitUIArray[unitIndex].Initialise(m_battleScene, m_battleScene.GetBattleUnit(c,m), c > 0);
 
                     // Instantiate the skill slots
                     for (int s = 0; s < m_skillSlotUIArray.Length; s++)
                     {
-                        int indexSkill = (c * monstersPerParty * maxSkillsPerMonster) + (m * maxSkillsPerMonster) + s;
-                        m_skillSlotUIArray[indexSkill] = Instantiate(m_skillSlotUIPrefab, m_battleMonsterUIArray[indexMonster].skillSlotUIContainer);
-                        m_skillSlotUIArray[indexSkill].Initialise(m_battleScene, m_battleScene.GetBattleMonster(c, m), s % maxSkillsPerMonster);
+                        int indexSkill = (c * unitsPerParty * maxSkillsPerUnit) + (m * maxSkillsPerUnit) + s;
+                        m_skillSlotUIArray[indexSkill] = Instantiate(m_skillSlotUIPrefab, m_battleUnitUIArray[unitIndex].skillSlotUIContainer);
+                        m_skillSlotUIArray[indexSkill].Initialise(m_battleScene, m_battleScene.GetBattleUnit(c, m), s % maxSkillsPerUnit);
                     }
                 }
             }
@@ -77,7 +77,7 @@ namespace RPGSystem
         {
             foreach (CharacterUI ui in m_characterUIArray)
                 ui.UpdateUI();
-            foreach (BattleMonsterUI ui in m_battleMonsterUIArray)
+            foreach (BattleUnitUI ui in m_battleUnitUIArray)
                 ui.UpdateUI();
             foreach (SkillSlotUI ui in m_skillSlotUIArray)
                 ui.UpdateUI();

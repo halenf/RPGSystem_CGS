@@ -7,19 +7,19 @@ namespace RPGSystem
     [CreateAssetMenu(fileName = "Settings", menuName = "RPGSystem/Game Settings", order = 0)]
     public class GameSettingsAsset : ScriptableObject
     {
-        [SerializeField] protected int m_monstersPerParty;
-        [SerializeField] protected int m_maxMonsterLevel;
+        [SerializeField] protected int m_unitsPerParty;
+        [SerializeField] protected int m_maxUnitLevel;
         [SerializeField] protected int m_charactersPerBattle;
         [SerializeField] protected int m_maxSkillsPerCharacter;
-        [SerializeField] protected int m_maxSkillsPerMonster;
+        [SerializeField] protected int m_maxSkillsPerUnit;
 
-        public int monstersPerParty
+        public int unitsPerParty
         {
-            get { return m_monstersPerParty; }
+            get { return m_unitsPerParty; }
         }
-        public int maxMonsterLevel
+        public int maxUnitLevel
         {
-            get { return m_maxMonsterLevel; }
+            get { return m_maxUnitLevel; }
         }
         public int charactersPerBattle
         {
@@ -29,9 +29,9 @@ namespace RPGSystem
         {
             get { return m_maxSkillsPerCharacter; }
         }
-        public int maxSkillsPerMonster
+        public int maxSkillsPerUnit
         {
-            get { return m_maxSkillsPerMonster; }
+            get { return m_maxSkillsPerUnit; }
         }
     }
 }

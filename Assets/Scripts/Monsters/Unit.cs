@@ -1,9 +1,7 @@
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.ShaderKeywordFilter;
 
 namespace RPGSystem
 {
@@ -48,20 +46,20 @@ namespace RPGSystem
         }
     }
     
-    [CreateAssetMenu(fileName = "Monster", menuName = "RPGSystem/Monsters/Monster", order = 1)]
-    public class Monster : ScriptableObject
+    [CreateAssetMenu(fileName = "Unit", menuName = "RPGSystem/Unit", order = 1)]
+    public class Unit : ScriptableObject
     {
-        // monster data
-        [SerializeField] protected MonsterData m_monsterData;
-        public MonsterData monsterData
+        // unit data
+        [SerializeField] protected UnitData m_unitData;
+        public UnitData unitData
         {
-            get { return m_monsterData; }
+            get { return m_unitData; }
         }
 
-        [SerializeField] protected string m_monsterName;
-        public string monsterName
+        [SerializeField] protected string m_unitNickname;
+        public string unitNickname
         {
-            get { return m_monsterName; }
+            get { return m_unitNickname; }
         }
 
         // skill slots
@@ -92,45 +90,18 @@ namespace RPGSystem
             get { return m_level; }
         }
 
-        // base stat accessors
-        public int health
-        {
-            get
-            {
-                return monsterData.baseStats.health;
-            }
-        }
-
-        public int strength
-        {
-            get
-            {
-                return monsterData.baseStats.strength;
-            }
-        }
-
-        public int fortitude
-        {
-            get
-            {
-                return monsterData.baseStats.fortitude;
-            }
-        }
-
-        public int agility
-        {
-            get
-            {
-                return monsterData.baseStats.agility;
-            }
-        }
-
         // volatile stat accessors
+        protected int m_currentHP;
+        public int currentHP
+        { 
+            get { return m_currentHP; } 
+            set { m_currentHP = value; }
+        }
         public int maxHP
         {
             get
             {
-                return (int)(health * Mathf.Pow(1000 * (m_level + 1), 0.4f));
+                return (int)(m_unitData.baseStats.health * Mathf.Pow(1000 * (m_level + 1), 0.4f));
             }
         }
 
@@ -138,38 +109,38 @@ namespace RPGSystem
         {
             get
             {
-                return (int)(30 * strength * (m_level + 1) / 100.0f + 10);
+                return (int)(30 * m_unitData.baseStats.strength * (m_level + 1) / 100.0f + 10);
             }
         }
         public int defence
         {
             get
             {
-                return (int)(30 * fortitude * (m_level + 1) / 100.0f + 10);
+                return (int)(30 * m_unitData.baseStats.fortitude * (m_level + 1) / 100.0f + 10);
             }
         }
         public int speed
         {
             get
             {
-                return (int)(30 * agility * (m_level + 1)/ 100.0f + 10);
+                return (int)(30 * m_unitData.baseStats.agility * (m_level + 1)/ 100.0f + 10);
             }
         }
 
         // public methods for battle scene
         /// <summary>
-        /// Increase the monster's experience by an amount. Returns true when the monster has gained enough experience to level up.
-        /// A monster cannot gain experience once they reach the level cap.
+        /// Increase the unit's experience by an amount. Returns true when the unit has gained enough experience to level up.
+        /// Prevents units that have reached the level cap from gaining experience.
         /// </summary>
-        /// <param name="value">Amount of experience for monster to gain.</param>
+        /// <param name="value">Amount of experience for unit to gain.</param>
         /// <returns></returns>
-        public bool GainExp(int value)
+        public bool GainExp(int value) // unfinished
         {
-            if (m_level < GameSettings.MAX_MONSTER_LEVEL)
+            if (m_level < GameSettings.MAX_UNIT_LEVEL)
             {
                 m_expToNextLevel -= value;
 
-                // if the monster did not gain enough experience to level up
+                // if the unit did not gain enough experience to level up
                 // it is safe to add the exp to the total
                 if (m_expToNextLevel > 0)
                     m_totalExp += value;
@@ -186,32 +157,25 @@ namespace RPGSystem
 
         public void LevelUp()
         {
-            while (m_expToNextLevel <= 0)
-            {
-                // increase the monster's level
-                m_level++;
+            // increase the unit's level
+            m_level++;
 
-                // once level reaches max, no more experience can be gained
-                if (m_level == GameSettings.MAX_MONSTER_LEVEL)
-                {   
-                    m_expToNextLevel = 0;
-                    break;
-                }
-
-                // calculate the next required amount of experience
-                m_expToNextLevel = GetExpToNextLevel(m_level);
-
-                // if m_expToNextLevel is less than 0, then the remainder has enough experience
-                // for the monster to reach another level, so subtract the a
-                //remainder -= GetExpToNextLevel(m_level - 1);
+            // once level reaches max, no more experience can be gained
+            if (m_level == GameSettings.MAX_UNIT_LEVEL)
+            {   
+                m_expToNextLevel = 0;
+                    return;
             }
+
+            // calculate the next required amount of experience
+            m_expToNextLevel = GetExpToNextLevel(m_level);
         }
 
         public int GetExpToNextLevel(int level)
         {
-            if (level == GameSettings.MAX_MONSTER_LEVEL)
+            if (level == GameSettings.MAX_UNIT_LEVEL)
                 return 0;
-            return (int)Mathf.Pow(level, 2.1f) + (int)m_monsterData.levelCurve * level;
+            return (int)Mathf.Pow(level, 2.1f) + (int)m_unitData.levelCurve * level;
         }
 
         // functional methods
@@ -219,7 +183,7 @@ namespace RPGSystem
         {
             m_totalExp = 0;
             // level cannot exceed max
-            m_level = value > GameSettings.MAX_MONSTER_LEVEL ? 100 : value;
+            m_level = value > GameSettings.MAX_UNIT_LEVEL ? 100 : value;
             m_expToNextLevel = 0;
             for (int i = 0; i < value - 1; i++)
                 m_totalExp += GetExpToNextLevel(i + 1);
@@ -234,7 +198,7 @@ namespace RPGSystem
             int experience = value;
             while (experience > m_expToNextLevel)
             {
-                if (m_level == GameSettings.MAX_MONSTER_LEVEL)
+                if (m_level == GameSettings.MAX_UNIT_LEVEL)
                     break;
                 experience -= m_expToNextLevel;
                 m_totalExp += m_expToNextLevel;
@@ -243,19 +207,19 @@ namespace RPGSystem
             }
         }
 
-        public void ResetMonsterData()
+        public void ResetUnitData()
         {
-            m_monsterData = null;
-            m_monsterName = string.Empty;
+            m_unitData = null;
+            m_unitNickname = string.Empty;
             m_totalExp = 0;
             m_expToNextLevel = 0;
             m_level = 1;
             m_skillSlots = null;
 
-            //this = new Monster();
+            //this = new Unit();
         }
 
-        public void AddSkillSlot(Skill skill = null, int turnTimer = 0)
+        public void AddSkillSlot(Skill skill = null)
         {
             if (skill == null)
                 // add a new empty skill slot
@@ -275,13 +239,14 @@ namespace RPGSystem
                 else
                 {
                     // removes all skill slots that have a matching skill
-                    // a monster shouldn't be able to have two of the same skill so it should only remove one skill slot,
+                    // a unit shouldn't be able to have two of the same skill so it should only remove one skill slot,
                     // if it has that skill
-                    m_skillSlots.RemoveAll(skillSlot => skillSlot.skill == skill);
+                    if (m_skillSlots.RemoveAll(skillSlot => skillSlot.skill == skill) == 0)
+                        Debug.LogError(m_unitNickname + "(" + m_unitData.unitName + ") does not have a SkillSlot with " + skill.skillName + ".");
                 }
             }
             else
-                throw new IndexOutOfRangeException(name + " has no skill slots to remove.");
+                Debug.LogError(m_unitNickname + "(" + m_unitData.unitName + ") has no SkillSlots to remove.");
         }
     }
 }
