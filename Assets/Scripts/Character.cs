@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RPGSystem
@@ -86,8 +87,12 @@ namespace RPGSystem
                 m_currentAP = 0;
         }
 
-        public void ResetBattleCharacter()
+        /// <summary>
+        /// Cut any null entries from the Character's Units.
+        /// </summary>
+        public void InitialiseForBattle()
         {
+            m_units = m_units.Where(unit => unit != null).ToArray();
             m_currentAP = maxAP;
         }
 
@@ -97,7 +102,6 @@ namespace RPGSystem
             m_characterName = string.Empty;
             m_sprite = null;
             m_skill = 1;
-            ResetBattleCharacter();
         }
     }
 }

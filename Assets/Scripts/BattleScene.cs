@@ -5,24 +5,24 @@ using UnityEngine;
 
 namespace RPGSystem
 {   
-    public struct BattleUnitID
+    public readonly struct BattleUnitID
     {
         public BattleUnitID(int character, int unit)
         {
             m_character = character;
-            m_unit = unit;
+            m_battleUnit = unit;
         }
 
-        private int m_character;
-        private int m_unit;
+        private readonly int m_character;
+        private readonly int m_battleUnit;
 
         public int character
         {
             get { return m_character; }
         }
-        public int unit
+        public int battleUnit
         {
-            get { return m_unit; }
+            get { return m_battleUnit; }
         }
 
         public static bool operator ==(BattleUnitID left, BattleUnitID right)
@@ -42,17 +42,12 @@ namespace RPGSystem
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
-            return character.Equals(other.character) && unit.Equals(other.unit);
+            return character.Equals(other.character) && battleUnit.Equals(other.battleUnit);
         }
         public override bool Equals(object obj) => Equals((BattleUnitID)obj);
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hashCode = character.GetHashCode();
-                hashCode = (hashCode * 397) ^ unit.GetHashCode();
-                return hashCode;
-            }
+            return System.HashCode.Combine(character, battleUnit);
         }
     }
     
@@ -123,11 +118,11 @@ namespace RPGSystem
     {
         [SerializeField] protected BattleSceneUI m_battleSceneUIPrefab;
         protected BattleSceneUI m_battleSceneUI;
-        
+
         /// <summary>
         /// Characters participating in the battle.
         /// </summary>
-        [SerializeField] protected Character[] m_characters = new Character[GameSettings.CHARACTERS_PER_BATTLE];
+        [SerializeField] protected Character[] m_characters;
         public Character[] characters
         {
             get { return m_characters; }
@@ -136,7 +131,7 @@ namespace RPGSystem
         /// <summary>
         /// Row for each character, column for each BattleUnit.
         /// </summary>
-        protected BattleUnit[,] m_battleUnits;
+        protected BattleUnit[] m_battleUnits;
 
         /// <summary>
         /// Number of turns passed since the start of battle.
@@ -166,11 +161,11 @@ namespace RPGSystem
         /// Gets the specified BattleUnit from the specified Character.
         /// </summary>
         /// <param name="character">Index representing the selected Character.</param>
-        /// <param name="battleUnit">Index representing the selected BattleUnit.</param>
+        /// <param name="unit">Index representing the selected BattleUnit.</param>
         /// <returns></returns>
-        public BattleUnit GetBattleUnit(int character, int battleUnit)
+        public BattleUnit GetBattleUnit(int character, int unit)
         {
-            return m_battleUnits[character, battleUnit];
+            return m_battleUnits[character * GameSettings.UNITS_PER_PARTY + unit];
         }
 
         /// <summary>
@@ -180,7 +175,7 @@ namespace RPGSystem
         /// <returns></returns>
         public BattleUnit GetBattleUnit(BattleUnitID id)
         {
-            return m_battleUnits[id.character, id.unit];
+            return m_battleUnits[id.character * GameSettings.UNITS_PER_PARTY + id.battleUnit];
         }
 
         // Start is called before the first frame update
@@ -200,6 +195,7 @@ namespace RPGSystem
                     break;
                 case BattlePhase.TurnStart:
                     // check on turn start status effects for all units
+                    m_currentPhase = BattlePhase.ChooseActions;
                     break;
                 case BattlePhase.ChooseActions:
                     if (WaitForActions())
@@ -209,6 +205,11 @@ namespace RPGSystem
                     ProcessActions();
                     m_currentPhase = BattlePhase.TurnEnd;
                     break;
+                case BattlePhase.TurnEnd:
+                    m_currentPhase = BattlePhase.TurnStart;
+                    break;
+                case BattlePhase.End:
+                    break;
             }
         }
 
@@ -217,22 +218,28 @@ namespace RPGSystem
         /// </summary>
         protected void OnBattleStart()
         {
+            Debug.Log("Battle started between " + m_characters[0].characterName + " and " + m_characters[1].characterName + "!");
+
             // get Characters and BattleUnits ready for battle
             foreach (Character character in m_characters)
             {
-                character.ResetBattleCharacter();
-            }
-            m_battleUnits = new BattleUnit[GameSettings.CHARACTERS_PER_BATTLE, GameSettings.UNITS_PER_PARTY];
-            for (int cha = 0; cha < m_characters.Length; cha++)
-            {
-                for (int mon = 0; mon < m_characters[cha].units.Length; mon++)
+                character.InitialiseForBattle();
+                foreach (Unit unit in character.units)
                 {
-                    m_battleUnits[cha, mon] = new BattleUnit(m_characters[cha].units[mon], new BattleUnitID(cha, mon));
-                    m_battleUnits[cha, mon].ResetBattleUnit();
+                    unit.InitialiseForBattle();
                 }
             }
-
-            Debug.Log("Battle started between " + m_characters[0].characterName + " and " + m_characters[1].characterName + "!");
+            m_battleUnits = new BattleUnit[m_characters.Length * GameSettings.UNITS_PER_PARTY];
+            for (int c = 0; c < m_characters.Length; c++)
+            {
+                for (int u = 0; u < m_characters[c].units.Length; u++)
+                {
+                    int index = c * GameSettings.UNITS_PER_PARTY + u;
+                    m_battleUnits[index] = new BattleUnit(m_characters[c].units[u], new BattleUnitID(c, u));
+                    m_battleUnits[index].ResetBattleUnit();
+                    Debug.Log(m_characters[c].characterName + " sends out " + GetBattleUnit(c, u).displayName + "!");
+                }
+            }
 
             // Instantiates the BattleSceneUI
             m_battleSceneUI = Instantiate(m_battleSceneUIPrefab);
@@ -254,70 +261,72 @@ namespace RPGSystem
             if (m_currentAction.isDirty)
             {
                 // reset the state of all the UI
-                foreach (BattleUnitUI ui in m_battleSceneUI.battleUnitUIArray)
-                    ui.SetAsUnavailable();
-                foreach (SkillSlotUI ui in m_battleSceneUI.skillSlotUIArray)
-                    ui.SetAsAvailableSkill(false);
+                for (int u = 0; u < m_battleSceneUI.battleUnitUIArray.Length; u++)
+                    if (m_battleSceneUI.battleUnitUIArray[u] != null)
+                        m_battleSceneUI.battleUnitUIArray[u].SetAsUnavailable();
+                for (int s = 0; s < m_battleSceneUI.skillSlotUIArray.Length; s++)
+                    if (m_battleSceneUI.skillSlotUIArray[s] != null)
+                        m_battleSceneUI.skillSlotUIArray[s].SetAsAvailableSkill(false);
 
                 // activate the relevant UI objects
                 switch (m_currentAction.buildState)
                 {    
                     // if has no user, skill, or targets
                     case 0:
+                        Debug.Log("Choose one of your Units.");
                         // activate the parties units to be selected as users
-                        for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
+                        for (int u = 0; u < m_characters[0].units.Length; u++)
                         {
                             // if the turn actions already contains that unit's action, then don't make it available as a user
-                            if (m_turnActions.Find(action => action.userID == new BattleUnitID(m_currentAction.userID.character, m)) == null)
-                            {
-                                m_battleSceneUI.battleUnitUIArray[m_currentAction.userID.character * GameSettings.UNITS_PER_PARTY + m].SetAsAvailableUser();
-                            }
+                            if (m_turnActions.Find(action => action.userID == new BattleUnitID(0, u)) == null)
+                                m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableUser();
                         }
                         break;
                     // if has a user, but no skill or targets
                     case 1:
+                        Debug.Log("Choose a skill for " + GetBattleUnit(m_currentAction.userID).displayName + " to use.");
                         // activate the skill slots for the selected unit
-                        for (int s = 0; s < GameSettings.MAX_SKILLS_PER_UNIT; s++)
+                        for (int s = 0; s < GetBattleUnit(0, m_currentAction.userID.battleUnit).skillSlots.Count; s++)
                         {
-                            m_battleSceneUI.skillSlotUIArray[m_currentAction.userID.character * GameSettings.CHARACTERS_PER_BATTLE + m_currentAction.userID.unit
-                                * GameSettings.MAX_SKILLS_PER_UNIT + s].SetAsAvailableSkill(true);
+                            int skillIndex = m_currentAction.userID.battleUnit * GameSettings.MAX_SKILLS_PER_UNIT + s;
+                            m_battleSceneUI.skillSlotUIArray[skillIndex].SetAsAvailableSkill(true);
                         }
                         break;
                     // if has user and skill, but no targets
                     case 2:
+                        Debug.Log("Choose the target for " + GetBattleUnit(m_currentAction.userID).skillSlots[m_currentAction.skillSlotIndex].skill.skillName + ".");
                         // activate the units based on the TargetType of the skill
                         switch (GetBattleUnit(m_currentAction.userID).skillSlots[m_currentAction.skillSlotIndex].skill.targets)
                         {
                             case TargetType.SingleParty:
                                 // activate the parties units to be selected as targets
-                                for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
-                                    m_battleSceneUI.battleUnitUIArray[m_currentAction.userID.character * GameSettings.UNITS_PER_PARTY + m].SetAsAvailableTarget();
+                                for (int u = 0; u < m_characters[0].units.Length; u++)
+                                    m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableTarget();
                                 break;
                             case TargetType.Self:
                             case TargetType.EveryoneButSelf:
                             case TargetType.Everyone:
                             case TargetType.WholePartyButSelf:
                             case TargetType.WholeParty:
+                                // Target Types where the Skill's target is irrelevant
                                 m_currentAction.SetTarget(m_currentAction.userID);
                                 break;
                             case TargetType.AllEnemies:
-                                // if the battle only has two characters in it, then just get the other character
+                                // if the battle only has two characters in it, then just attack one of the other character's Units
                                 if (GameSettings.CHARACTERS_PER_BATTLE == 2)
                                 {
-                                    m_currentAction.SetTarget(new BattleUnitID(m_currentAction.userID.character == 0 ? 1 : 0, 0));
+                                    m_currentAction.SetTarget(new BattleUnitID(1, 0));
                                     break;
                                 }
+                                // otherwise let the user pick an enemy
                                 goto case TargetType.SingleEnemy;
                             case TargetType.SingleEnemy:
                             case TargetType.AdjacentEnemies:
                                 // activate all enemy units
-                                for (int c = 0; c < GameSettings.CHARACTERS_PER_BATTLE; c++)
+                                for (int c = 1; c < GameSettings.CHARACTERS_PER_BATTLE; c++)
                                 {
-                                    // skip the user's character
-                                    if (c == m_currentAction.userID.character)
-                                        continue;
-                                    for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
-                                        m_battleSceneUI.battleUnitUIArray[c * GameSettings.UNITS_PER_PARTY + m].SetAsAvailableTarget();
+                                    for (int u = 0; u < m_characters[c].units.Length; u++)
+                                        m_battleSceneUI.battleUnitUIArray[c * GameSettings.UNITS_PER_PARTY + u].SetAsAvailableTarget();
                                 }
                                 break;
                         }
@@ -331,11 +340,14 @@ namespace RPGSystem
             // then check if action is complete
             if (m_currentAction.buildState == 3)
             {
+                Debug.Log(GetBattleUnit(m_currentAction.userID).displayName + " will use " +
+                    GetBattleUnit(m_currentAction.userID).skillSlots[m_currentAction.skillSlotIndex].skill.skillName + " on Character " +
+                    m_currentAction.targetID.character + "'s party at position " + m_currentAction.targetID.battleUnit + ".");
                 m_turnActions.Add(m_currentAction);
                 m_currentAction = null;
 
-                // if all monters actions are completed, return true
-                if (m_turnActions.Count == GameSettings.CHARACTERS_PER_BATTLE * GameSettings.UNITS_PER_PARTY)
+                // if all the party's actions are completed, return true
+                if (m_turnActions.Count == m_characters[0].units.Length)
                     return true;
             }
 
@@ -369,9 +381,9 @@ namespace RPGSystem
 
                 // quick reference
                 int userCharacter = action.userID.character;
-                int userUnit = action.userID.unit;
+                int userUnit = action.userID.battleUnit;
                 int targetCharacter = action.targetID.character;
-                int targetUnit = action.targetID.unit;
+                int targetUnit = action.targetID.battleUnit;
                 bool moreThanOneUnit = GameSettings.UNITS_PER_PARTY > 1;
                 bool moreThanTwoUnits = GameSettings.UNITS_PER_PARTY > 2;
 
@@ -387,13 +399,13 @@ namespace RPGSystem
                     case TargetType.SingleParty:
                         targets = new BattleUnit[1];
                         targets[0] = GetBattleUnit(action.targetID);
-                        Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + 
-                            " on " + GetBattleUnit(action.targetID).unitNickname + "!");
+                        Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + 
+                            " on " + GetBattleUnit(action.targetID).displayName + "!");
                         break;
                     case TargetType.Self:
                         targets = new BattleUnit[1];
                         targets[0] = user;
-                        Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on itself!");
+                        Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on itself!");
                         break;
                     case TargetType.AdjacentEnemies:
                         if (moreThanOneUnit)
@@ -403,8 +415,8 @@ namespace RPGSystem
                                 targets = new BattleUnit[2];
                                 targets[0] = GetBattleUnit(action.targetID);
                                 targets[1] = GetBattleUnit(targetCharacter, targetUnit + (targetPosition == 0 ? 1 : -1));
-                                Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
-                                    GetBattleUnit(action.targetID).unitNickname + " and " + GetBattleUnit(targetCharacter, targetUnit + 1).unitNickname + "!");
+                                Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
+                                    GetBattleUnit(action.targetID).displayName + " and " + GetBattleUnit(targetCharacter, targetUnit + 1).displayName + "!");
                             }
                             else if (moreThanTwoUnits)
                             {
@@ -412,66 +424,66 @@ namespace RPGSystem
                                 targets[0] = GetBattleUnit(targetCharacter, targetUnit - 1);
                                 targets[1] = GetBattleUnit(action.targetID);
                                 targets[2] = GetBattleUnit(targetCharacter, targetUnit + 1);
-                                Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
-                                    GetBattleUnit(targetCharacter, targetUnit - 1).unitNickname + ", " + GetBattleUnit(action.targetID).unitNickname + " and  " +
-                                    GetBattleUnit(targetCharacter, targetUnit + 1).unitNickname + "!");
+                                Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on " +
+                                    GetBattleUnit(targetCharacter, targetUnit - 1).displayName + ", " + GetBattleUnit(action.targetID).displayName + " and  " +
+                                    GetBattleUnit(targetCharacter, targetUnit + 1).displayName + "!");
                             }
                             break;
                         }
                         goto case TargetType.SingleParty;
                     case TargetType.AllEnemies:
                         targets = new BattleUnit[GameSettings.UNITS_PER_PARTY];
-                        for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
+                        for (int u = 0; u < GameSettings.UNITS_PER_PARTY; u++)
                         {
-                            targets[m] = GetBattleUnit(targetCharacter, m);
+                            targets[u] = GetBattleUnit(targetCharacter, u);
                         }
-                        Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on the entire enemy party!");
+                        Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on the entire enemy party!");
                         break;
                     case TargetType.WholePartyButSelf:
                         targets = new BattleUnit[GameSettings.UNITS_PER_PARTY - 1];
                         buffer = 0;
-                        for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
+                        for (int u = 0; u < GameSettings.UNITS_PER_PARTY; u++)
                         {
-                            if (m_battleUnits[userCharacter, m].battleID != action.userID)
-                                targets[m - buffer] = GetBattleUnit(userCharacter, m);
+                            if (GetBattleUnit(userCharacter, u).battleID != action.userID)
+                                targets[u - buffer] = GetBattleUnit(userCharacter, u);
                             else
                                 buffer = -1;
                         }
-                        Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on its party members!");
+                        Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on its party members!");
                         break;
                     case TargetType.WholeParty:
                         targets = new BattleUnit[GameSettings.UNITS_PER_PARTY];
-                        for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
+                        for (int u = 0; u < GameSettings.UNITS_PER_PARTY; u++)
                         {
-                            targets[m] = GetBattleUnit(userCharacter, m);
+                            targets[u] = GetBattleUnit(userCharacter, u);
                         }
-                        Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on its whole party!");
+                        Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on its whole party!");
                         break;
                     case TargetType.EveryoneButSelf:
                         targets = new BattleUnit[GameSettings.CHARACTERS_PER_BATTLE * GameSettings.UNITS_PER_PARTY - 1];
                         buffer = 0;
                         for (int c = 0; c < GameSettings.CHARACTERS_PER_BATTLE; c++)
                         {
-                            for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
+                            for (int u = 0; u < GameSettings.UNITS_PER_PARTY; u++)
                             {
-                                if (m_battleUnits[c, m].battleID != action.userID)
-                                    targets[c * GameSettings.UNITS_PER_PARTY + m + buffer] = m_battleUnits[c, m];
+                                if (GetBattleUnit(c, u).battleID != action.userID)
+                                    targets[c * GameSettings.UNITS_PER_PARTY + u + buffer] = GetBattleUnit(c, u);
                                 else
                                     buffer = -1;
                             }
                         }
-                        Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on everyone else!");
+                        Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on everyone else!");
                         break;
                     case TargetType.Everyone:
                         targets = new BattleUnit[GameSettings.CHARACTERS_PER_BATTLE * GameSettings.UNITS_PER_PARTY];
                         for (int c = 0; c < GameSettings.CHARACTERS_PER_BATTLE; c++)
                         {
-                            for (int m = 0; m < GameSettings.UNITS_PER_PARTY; m++)
+                            for (int u = 0; u < GameSettings.UNITS_PER_PARTY; u++)
                             {
-                                targets[c * GameSettings.CHARACTERS_PER_BATTLE + m] = m_battleUnits[c, m];
+                                targets[c * GameSettings.CHARACTERS_PER_BATTLE + u] = GetBattleUnit(c, u);
                             }
                         }
-                        Debug.Log(user.unitNickname + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on everyone!");
+                        Debug.Log(user.displayName + " uses " + user.skillSlots[action.skillSlotIndex].skill.skillName + " on everyone!");
                         break;
                 }
             }

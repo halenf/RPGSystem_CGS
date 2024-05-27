@@ -8,103 +8,6 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    [Serializable]
-    public class StatusSlot
-    {
-        /// <summary>
-        /// Create an empty status slot.
-        /// </summary>
-        public StatusSlot() { }
-        /// <summary>
-        /// Create a status slot with a status.
-        /// </summary>
-        /// <param name="status">The status.</param>
-        public StatusSlot(Status status)
-        {
-            m_status = status;
-            m_turnTimer = status.turnTimer;
-        }
-
-        [SerializeField] protected Status m_status;
-        [SerializeField][Min(0)] protected int m_turnTimer;
-
-        public Status status
-        {
-            get { return m_status; }
-        }
-        public int turnTimer
-        {
-            get { return m_turnTimer; }
-        }
-
-        /// <summary>
-        /// Activates the on apply effects of the status.
-        /// </summary>
-        /// <param name="target"></param>
-        public void OnApply(BattleUnit target)
-        {
-            foreach (Effect effect in m_status.onApply)
-            {
-                effect.DoEffect(m_status.user, new BattleUnit[] { target });
-            }
-        }
-
-        /// <summary>
-        /// Activates the end of turn effects of the status.
-        /// </summary>
-        /// <param name="target"></param>
-        public void OnTurnEnd(BattleUnit target)
-        {
-            foreach (Effect effect in m_status.onTurnEnd)
-            {
-                effect.DoEffect(m_status.user, new BattleUnit[] { target });
-            }
-        }
-
-        /// <summary>
-        /// Activates the on clear effects of the status.
-        /// </summary>
-        /// <param name="target"></param>
-        public void OnClear(BattleUnit target)
-        {
-            // if clear effects on this targets should not fail
-            if ((target.triggeredEffects & TriggeredEffect.FailStatusClearEffects) == 0)
-            {
-                foreach (Effect effect in m_status.onClear)
-                {
-                    effect.DoEffect(m_status.user, new BattleUnit[] { target });
-                }
-            }
-            else
-                target.EnableTriggeredEffect(TriggeredEffect.FailStatusClearEffects);
-        }
-
-        public void ChangeTurnTimer(int value)
-        {
-            m_turnTimer += value;
-            if (m_turnTimer < 0)
-                m_turnTimer = 0;
-        }
-
-        public void ClearSlot()
-        {
-            m_status = null;
-            m_turnTimer = 0;
-        }
-    }
-
-    [Serializable]
-    [Flags]
-    public enum TriggeredEffect
-    {
-        None = 0,
-        FailNextSkillEffect = 1,
-        FailStatusClearEffects = 2, // Implemented
-        DamageOnSkillUse = 4,
-        DebuffImmunity = 8, // Implemented
-        Lifesteal = 16 // Implemented
-    }
-
     public class BattleUnit
     {
         public BattleUnit() { }
@@ -127,15 +30,8 @@ namespace RPGSystem
             get { return m_battleID; }
         }
 
-        // accessors for variables for other classes
-        public string unitNickname
-        {
-            get { return m_unit.unitNickname; }
-        }
-        public string unitName
-        {
-            get { return m_unit.unitData.unitName; }
-        }
+        public string displayName { get { return m_unit.displayName; } }
+
         // health
         public int currentHP
         {
@@ -349,10 +245,10 @@ namespace RPGSystem
                     // a unit shouldn't be able to have two of the same status so it should only remove one status slot,
                     // if it has that status
                     if (m_statusSlots.RemoveAll(statusSlot => statusSlot.status == status) == 0)
-                        Debug.LogError(unitNickname + "(" + unitName + ") does not have a SkillSlot with " + status.statusType + ".");
+                        Debug.LogError(displayName + " does not have a SkillSlot with " + status.statusType + ".");
             }
             else
-                Debug.LogError(unitNickname + "(" + unitName + ") has no StatusSlots to remove.");
+                Debug.LogError(displayName + " has no StatusSlots to remove.");
         }
     }
 }

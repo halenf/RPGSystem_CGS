@@ -4,29 +4,11 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    public enum UnitBaseStatNames
-    {
-        Health = 0,
-        Strength = 1,
-        Fortitude = 2,
-        Agility = 3
-    }
-
     public enum UnitLevelCurve
     {
         Slow = 220,
         Medium = 200,
         Fast = 185
-    }
-
-    [System.Serializable]
-    public class BaseStats
-    {
-        protected int m_health, m_strength, m_fortitude, m_agility;
-        public int health { get { return m_health; } }
-        public int strength { get { return m_strength; } }
-        public int fortitude { get { return m_fortitude; } }
-        public int agility { get { return m_agility; } }
     }
 
     [CreateAssetMenu(fileName = "UnitData", menuName = "RPGSystem/UnitData", order = 1)]
@@ -40,7 +22,7 @@ namespace RPGSystem
         [SerializeField] protected UnitLevelCurve m_levelCurve;
         // list of skills a unit can learn as it levels up
         [SerializeField] protected Dictionary<int, Skill> m_levelUpSkills;
-        
+
         public string unitName
         {
             get { return m_unitName; }
@@ -65,6 +47,13 @@ namespace RPGSystem
             {
                 return m_levelUpSkills;
             }
+        }
+
+        [ContextMenu("Reset")]
+        public void ResetUnitData()
+        {
+            m_unitName = string.Empty;
+            m_baseStats = new BaseStats();
         }
     }
 }

@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffd181dc0bbf292439bb376f4d1e02cb, type: 3}
-  m_Name: Smack
-  m_EditorClassIdentifier: 
-  m_skillName: Smack
-  m_turnTimer: 0
-  m_targets: 0
-  m_effects:
-  - {fileID: 11400000, guid: a85c22243b25e5148b83a8d2a8ee5069, type: 2}
+  m_Script: {fileID: 0}
+  m_Name: LightDamage
+  m_EditorClassIdentifier: Assembly-CSharp:RPGSystem:DamageEffect
+  m_value: 0
+  m_damageType: 3

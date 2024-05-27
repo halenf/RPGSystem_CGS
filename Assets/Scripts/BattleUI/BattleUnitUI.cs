@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,17 +36,22 @@ namespace RPGSystem
             if (m_currentHealthBar)
                 m_currentHealthBar.unit = m_battleUnit;
 
+            skillSlotUIContainer.gameObject.SetActive(false);
+
             UpdateUI();
         }
 
         protected void SendUnitAsUser()
         {
             m_battleScene.AddUserToAction(m_battleUnit.battleID);
+            skillSlotUIContainer.gameObject.SetActive(true);
+            Debug.Log(m_battleUnit.displayName + " selected as user.");
         }
 
         protected void SendUnitAsTarget()
         {
             m_battleScene.AddTargetToAction(m_battleUnit.battleID);
+            Debug.Log(m_battleUnit.displayName + " selected as target.");
         }
 
         public void SetAsAvailableUser()
@@ -55,6 +59,7 @@ namespace RPGSystem
             m_button.interactable = true;
             m_button.onClick.RemoveAllListeners();
             m_button.onClick.AddListener(SendUnitAsUser);
+            skillSlotUIContainer.gameObject.SetActive(false);
         }
 
         public void SetAsAvailableTarget()
@@ -62,6 +67,7 @@ namespace RPGSystem
             m_button.interactable = true;
             m_button.onClick.RemoveAllListeners();
             m_button.onClick.AddListener(SendUnitAsTarget);
+            skillSlotUIContainer.gameObject.SetActive(false);
         }
 
         public void SetAsUnavailable()
@@ -76,10 +82,7 @@ namespace RPGSystem
                 m_currentHealthBar.UpdateUI();
 
             // name display set to unit name
-            string nameText = m_battleUnit.unitNickname;
-            if (m_battleUnit.unitNickname != m_battleUnit.unitName)
-                nameText += " (" + m_battleUnit.unitName + ")";
-            m_unitNameDisplay.text = nameText;
+            m_unitNameDisplay.text = m_battleUnit.displayName;
 
             // if the unit should face the other way, flip it by inverting the scale
             if (m_facingLeft)

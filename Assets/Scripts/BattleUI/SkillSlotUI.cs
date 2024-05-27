@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 namespace RPGSystem
 {
@@ -32,15 +33,16 @@ namespace RPGSystem
 
             // Initialise button
             m_button = GetComponent<Button>();
-            m_button.onClick.AddListener(AddSkillToBattleScene);
+            m_button.onClick.AddListener(SendSkillAsSkillSlotIndex);
             SetAsAvailableSkill(false);
 
             UpdateUI();
         }
         
-        protected void AddSkillToBattleScene()
+        protected void SendSkillAsSkillSlotIndex()
         {
             m_battleScene.AddSkillToAction(m_skillSlotIndex);
+            Debug.Log(m_battleUnit.skillSlots[m_skillSlotIndex].skill.skillName + " selected as skill.");
         }
 
         public void SetAsAvailableSkill(bool value)
@@ -51,13 +53,19 @@ namespace RPGSystem
                 m_button.interactable = false;
         }
 
+        public void SetSkillSlotIndex(int value)
+        {
+            if (value >= GameSettings.MAX_SKILLS_PER_UNIT || value < 0)
+                throw new IndexOutOfRangeException("SkillSlot index is out of range.");
+            else
+                m_skillSlotIndex = value;
+        }
+
         public override void UpdateUI()
         {
             // display skill
             if (m_textDisplay)
                 m_textDisplay.text = m_battleUnit.skillSlots[m_skillSlotIndex].skill.name;
-            if (m_spriteDisplay)
-                m_spriteDisplay.sprite = m_battleUnit.skillSlots[m_skillSlotIndex].skill.sprite;
         }
     }
 }

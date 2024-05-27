@@ -289,7 +289,7 @@ GameObject:
   - component: {fileID: -608852089419480327}
   - component: {fileID: 5208206976599507972}
   m_Layer: 5
-  m_Name: BattleUnit
+  m_Name: PlayerBattleUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -331,8 +331,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 620cd259b1d668a42ab79fb5149cc141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_monsterNameDisplay: {fileID: 599403585123989475}
-  m_monsterSpriteDisplay: {fileID: 8863075752513828271}
+  m_unitNameDisplay: {fileID: 599403585123989475}
+  m_unitSpriteDisplay: {fileID: 8863075752513828271}
+  skillSlotUIContainer: {fileID: 4767665016469731594}
 --- !u!222 &5519848661577285723
 CanvasRenderer:
   m_ObjectHideFlags: 0

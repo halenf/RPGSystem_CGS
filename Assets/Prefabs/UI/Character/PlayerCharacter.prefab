@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 114849068371256962}
   - component: {fileID: 114849068371256963}
   m_Layer: 5
-  m_Name: Monster Display Area
+  m_Name: Unit Display Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -188,8 +188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isEnemyCharacter: 0
-  battleMonsterUIPrefab: {fileID: 2826563717538192862, guid: ad6507ef8cd432c4f830899e1cf3a223, type: 3}
-  battleMonsterUIDisplayArea: {fileID: 114849068371256962}
+  battleUnitUIContainer: {fileID: 114849068371256962}
   m_characterNameDisplay: {fileID: 114849069166668057}
   m_characterIconDisplay: {fileID: 114849069556189480}
 --- !u!1 &114849069166668056

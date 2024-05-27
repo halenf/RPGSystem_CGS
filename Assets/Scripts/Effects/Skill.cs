@@ -22,15 +22,20 @@ namespace RPGSystem
     [CreateAssetMenu(fileName = "Skill", menuName = "RPGSystem/Skill", order = 1)]
     public class Skill : ScriptableObject
     {
-        [SerializeField] protected string m_skillName;
-        [SerializeField] protected Sprite m_sprite;
-
-        [SerializeField] protected int m_turnTimer;
-
-        [SerializeField] protected TargetType m_targets;
-
         /// <summary>
-        /// Effects trigger in the order set here.
+        /// The name of the Skill.
+        /// </summary>
+        [SerializeField] protected string m_skillName;
+        /// <summary>
+        /// The default length of the Skill's cooldown.
+        /// </summary>
+        [SerializeField] protected int m_turnTimer;
+        /// <summary>
+        /// What the Skill can target.
+        /// </summary>
+        [SerializeField] protected TargetType m_targets;
+        /// <summary>
+        /// The Skill's Effects trigger in the order set here.
         /// </summary>
         [SerializeField] protected Effect[] m_effects;
 
@@ -40,10 +45,6 @@ namespace RPGSystem
             {
                 return m_skillName;
             }
-        }
-        public Sprite sprite
-        {
-            get { return m_sprite; }
         }
         public int turnTimer
         {
@@ -62,6 +63,47 @@ namespace RPGSystem
             {
                 return m_effects;
             }
+        }
+    }
+
+    [Serializable]
+    public class SkillSlot
+    {
+        public SkillSlot() { }
+        public SkillSlot(Skill skill)
+        {
+            m_skill = skill;
+            m_turnTimer = skill.turnTimer;
+        }
+
+        [SerializeField] protected Skill m_skill;
+        [SerializeField][Min(0)] protected int m_turnTimer;
+
+        public Skill skill
+        {
+            get { return m_skill; }
+        }
+        public int turnTimer
+        {
+            get { return m_turnTimer; }
+        }
+
+        public void ChangeTurnTimer(int value)
+        {
+            m_turnTimer += value;
+            if (m_turnTimer < 0)
+                m_turnTimer = 0;
+        }
+
+        public void ResetTimer()
+        {
+            m_turnTimer = 0;
+        }
+
+        public void ClearSlot()
+        {
+            m_skill = null;
+            m_turnTimer = 0;
         }
     }
 }

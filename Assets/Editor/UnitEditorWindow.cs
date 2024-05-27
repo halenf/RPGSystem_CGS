@@ -9,7 +9,7 @@ namespace RPGSystem
     [CustomEditor(typeof(Unit), true)]
     public class UnitEditorWindow : Editor
     {
-        SerializedProperty m_unitData, m_unitName, m_totalExp, m_expToNextLevel, m_level, 
+        SerializedProperty m_unitData, m_unitNickname, m_totalExp, m_expToNextLevel, m_level, 
             m_skillSlots;
 
         public void OnEnable()
@@ -35,12 +35,12 @@ namespace RPGSystem
                 // set unit name, set default to unit type name
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(new GUIContent("Nickname", "The nickname of this unit. Defaults to the base unit's name."), EditorStyles.boldLabel);
-                    EditorGUILayout.PropertyField(m_unitName, GUIContent.none);
+                    EditorGUILayout.LabelField(new GUIContent("Nickname", "The nickname of this unit. Defaults to the base Unit's name."), EditorStyles.boldLabel);
+                    EditorGUILayout.PropertyField(m_unitNickname, GUIContent.none);
                     EditorGUILayout.EndHorizontal();
-                    if (m_unitName.stringValue == string.Empty)
+                    if (m_unitNickname.stringValue == string.Empty)
                     {
-                        m_unitName.stringValue = ((UnitData)m_unitData.objectReferenceValue).unitName;
+                        m_unitNickname.stringValue = ((UnitData)m_unitData.objectReferenceValue).unitName;
                     }
                 }
 
@@ -125,7 +125,7 @@ namespace RPGSystem
             // reset unit button
             GUILayout.Space(20);
             if (GUILayout.Button("Reset Unit"))
-                ((Unit)serializedObject.targetObject).ResetUnitData();
+                ((Unit)serializedObject.targetObject).ResetUnit();
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -140,7 +140,7 @@ namespace RPGSystem
         public void GetSerializedProperties()
         {
             m_unitData = serializedObject.FindProperty("m_unitData");
-            m_unitName = serializedObject.FindProperty("m_unitName");
+            m_unitNickname = serializedObject.FindProperty("m_unitNickname");
             m_totalExp = serializedObject.FindProperty("m_totalExp");
             m_expToNextLevel = serializedObject.FindProperty("m_expToNextLevel");
             m_level = serializedObject.FindProperty("m_level");

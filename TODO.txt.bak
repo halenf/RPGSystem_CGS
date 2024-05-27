@@ -23,7 +23,7 @@ GameSettings
 - Move MAX_SKILLS_PER_CHARACTER to child class outside of package.
 
 Effect
-- Move children into unqiue script for Scriptable Object functionality.
+- Move custom classes into new script outside of system files.
 
 Skill 
 - Move sprite to child class out of package.

@@ -52,9 +52,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b56468161929aff40b5025e28c9561fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_playerUIPrefab: {fileID: 114849069117649751, guid: f5d4c0d77772df84babd8bac1ce1c046, type: 3}
-  m_enemyUIPrefab: {fileID: 114849069117649751, guid: e44f5784c89feba4188ca62f9848bba3, type: 3}
-  m_battleMonsterUIPrefab: {fileID: 2826563717538192862, guid: ad6507ef8cd432c4f830899e1cf3a223, type: 3}
+  m_playerCharacterUIPrefab: {fileID: 114849069117649751, guid: f5d4c0d77772df84babd8bac1ce1c046, type: 3}
+  m_enemyCharacterUIPrefab: {fileID: 114849069117649751, guid: e44f5784c89feba4188ca62f9848bba3, type: 3}
+  m_playerUnitUIPrefab: {fileID: 2826563717538192862, guid: ad6507ef8cd432c4f830899e1cf3a223, type: 3}
+  m_enemyUnitUIPrefab: {fileID: 2826563717538192862, guid: d23920631a7fa7b44a02c6f334403e56, type: 3}
   m_skillSlotUIPrefab: {fileID: 7485703527861207017, guid: 98d4eadcb5761184c97282c1227eff63, type: 3}
 --- !u!223 &6156308881136725352
 Canvas:

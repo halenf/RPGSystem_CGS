@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_characterName: Sam
   m_sprite: {fileID: 0}
-  m_monsters:
-  - {fileID: 11400000, guid: a1b74b69c65a7504dbf22ddeac6988fa, type: 2}
-  - {fileID: 11400000, guid: a1b74b69c65a7504dbf22ddeac6988fa, type: 2}
-  - {fileID: 11400000, guid: a1b74b69c65a7504dbf22ddeac6988fa, type: 2}
+  m_units:
+  - {fileID: 11400000, guid: bca9a013d7491d14882e640ec3ff3133, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
   m_characterSkillSlots:
   - m_skill: {fileID: 0}
     m_cost: 0

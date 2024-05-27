@@ -31,7 +31,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "DamageEffect", menuName = "RPGSystem/Effects/Damage", order = 1)]
-    public class DamageSkillEffect : Effect
+    public class DamageEffect : Effect
     {
         [SerializeField] private DamageType m_damageType;
         public DamageType damageType
@@ -73,7 +73,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "HealEffect", menuName = "RPGSystem/Effects/Heal", order = 1)]
-    public class HealSkillEffect : Effect
+    public class HealEffect : Effect
     {
         [SerializeField] private HealType m_healType;
         public HealType healType
@@ -119,6 +119,7 @@ namespace RPGSystem
 
         public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
+            m_status.SetUser(user);
             foreach (BattleUnit target in targets)
             {
                 target.GainStatus(m_status);
@@ -128,7 +129,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "RPGSystem/Effects/SkillCooldown", order = 1)]
-    public class SkillCooldownSkillEffect : Effect
+    public class SkillCooldownEffect : Effect
     {
         public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
@@ -144,7 +145,7 @@ namespace RPGSystem
     [Serializable]
     [CreateAssetMenu(fileName = "StatusTimerEffect", menuName = "RPGSystem/Effects/StatusTimer", order = 1)]
 
-    public class StatusTimerSkillEffect : Effect
+    public class StatusTimerEffect : Effect
     {
         public override void DoEffect(BattleUnit user, BattleUnit[] targets)
         {
@@ -160,7 +161,7 @@ namespace RPGSystem
 
     [Serializable]
     [CreateAssetMenu(fileName = "StatEffect", menuName = "RPGSystem/Effects/Stat", order = 1)]
-    public class StatSkillEffect : Effect
+    public class StatModifierEffect : Effect
     {
         // note: HP cannot be boosted via this method
         [SerializeField] private UnitBaseStatNames m_baseStat;
