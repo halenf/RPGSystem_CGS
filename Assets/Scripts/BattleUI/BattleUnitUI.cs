@@ -8,16 +8,16 @@ namespace RPGSystem
 {
     public class BattleUnitUI : ObjectUI
     {
-        protected BattleScene m_battleScene;
-        protected BattleUnit m_battleUnit;
-        protected HealthBarUI m_currentHealthBar;
-        protected bool m_facingLeft;
+        private BattleScene m_battleScene;
+        private BattleUnit m_battleUnit;
+        private bool m_facingLeft;
 
-        [SerializeField] protected TextMeshProUGUI m_unitNameDisplay;
-        [SerializeField] protected Image m_unitSpriteDisplay;
+        [SerializeField] private TextMeshProUGUI m_unitNameDisplay;
+        [SerializeField] private Image m_unitSpriteDisplay;
+        [SerializeField] private HealthBarUI m_healthBar;
 
         [Header("Turn Actions")]
-        protected Button m_button;
+        private Button m_button;
         public Transform skillSlotUIContainer;
 
         public void Initialise(BattleScene battleScene, BattleUnit battleUnit, bool isEnemyUnit)
@@ -32,23 +32,21 @@ namespace RPGSystem
             m_button = GetComponent<Button>();
 
             // Init health bar
-            m_currentHealthBar = GetComponentInChildren<HealthBarUI>();
-            if (m_currentHealthBar)
-                m_currentHealthBar.unit = m_battleUnit;
+            m_healthBar.Initialise(m_battleUnit);
 
             skillSlotUIContainer.gameObject.SetActive(false);
 
             UpdateUI();
         }
 
-        protected void SendUnitAsUser()
+        private void SendUnitAsUser()
         {
             m_battleScene.AddUserToAction(m_battleUnit.battleID);
             skillSlotUIContainer.gameObject.SetActive(true);
             Debug.Log(m_battleUnit.displayName + " selected as user.");
         }
 
-        protected void SendUnitAsTarget()
+        private void SendUnitAsTarget()
         {
             m_battleScene.AddTargetToAction(m_battleUnit.battleID);
             Debug.Log(m_battleUnit.displayName + " selected as target.");
@@ -59,7 +57,6 @@ namespace RPGSystem
             m_button.interactable = true;
             m_button.onClick.RemoveAllListeners();
             m_button.onClick.AddListener(SendUnitAsUser);
-            skillSlotUIContainer.gameObject.SetActive(false);
         }
 
         public void SetAsAvailableTarget()
@@ -67,7 +64,6 @@ namespace RPGSystem
             m_button.interactable = true;
             m_button.onClick.RemoveAllListeners();
             m_button.onClick.AddListener(SendUnitAsTarget);
-            skillSlotUIContainer.gameObject.SetActive(false);
         }
 
         public void SetAsUnavailable()
@@ -78,8 +74,8 @@ namespace RPGSystem
         public override void UpdateUI()
         {           
             // update health bar display
-            if (m_currentHealthBar)
-                m_currentHealthBar.UpdateUI();
+            if (m_healthBar)
+                m_healthBar.UpdateUI();
 
             // name display set to unit name
             m_unitNameDisplay.text = m_battleUnit.displayName;

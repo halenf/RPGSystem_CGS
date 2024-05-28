@@ -9,27 +9,24 @@ namespace RPGSystem
 {
     public class SkillSlotUI : ObjectUI
     {
-        protected BattleScene m_battleScene;
-        protected BattleUnit m_battleUnit;
-        protected int m_skillSlotIndex;
+        private MyBattleScene m_battleScene;
+        private BattleUnit m_battleUnit;
+        private int m_skillSlotIndex;
 
-        protected Button m_button;
+        private Button m_button;
         public bool isReady
         {
             get { return m_battleUnit.skillSlots[m_skillSlotIndex].turnTimer == 0; }
         }
 
-        [SerializeField] protected TextMeshProUGUI m_textDisplay;
-        protected Image m_spriteDisplay;
+        [SerializeField] private TextMeshProUGUI m_textDisplay;
+        [SerializeField] private Image m_spriteDisplay;
 
-        public void Initialise(BattleScene battleScene, BattleUnit battleUnit, int skillIndex)
+        public void Initialise(MyBattleScene battleScene, BattleUnit battleUnit, int skillIndex)
         {
             m_battleScene = battleScene;
             m_battleUnit = battleUnit;
             m_skillSlotIndex = skillIndex;
-
-            // Get image component
-            m_spriteDisplay = GetComponent<Image>();
 
             // Initialise button
             m_button = GetComponent<Button>();
@@ -39,9 +36,10 @@ namespace RPGSystem
             UpdateUI();
         }
         
-        protected void SendSkillAsSkillSlotIndex()
+        private void SendSkillAsSkillSlotIndex()
         {
-            m_battleScene.AddSkillToAction(m_skillSlotIndex);
+            m_battleScene.AddSkillToCurrentAttackAction(m_skillSlotIndex);
+            transform.parent.gameObject.SetActive(false); // the parent of this is the skillslot container, so disable it
             Debug.Log(m_battleUnit.skillSlots[m_skillSlotIndex].skill.skillName + " selected as skill.");
         }
 

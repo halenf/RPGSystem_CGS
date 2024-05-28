@@ -398,7 +398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5351f4e70ac12a144af9a5a5f7e8207e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_gameSettingsAsset: {fileID: 11400000, guid: bccdf6eeca843fc4abec2755f718e6b2, type: 2}
+  m_gameSettingsAsset: {fileID: 11400000, guid: d5ca3064d6be45447ac5a35f52551904, type: 2}
 --- !u!4 &1200765278
 Transform:
   m_ObjectHideFlags: 0
@@ -521,7 +521,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1599643056}
-  - component: {fileID: 1599643055}
+  - component: {fileID: 1599643057}
   m_Layer: 0
   m_Name: BattleScene
   m_TagString: Untagged
@@ -529,22 +529,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1599643055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1599643054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5375e690291a8ed458231d7951928775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_battleSceneUIPrefab: {fileID: 6156308881136725141, guid: 110b139e0cf5db045b5562aa37b65717, type: 3}
-  m_characters:
-  - {fileID: 11400000, guid: ff375afc9769daa43a78725f4db77c05, type: 2}
-  - {fileID: 11400000, guid: ff375afc9769daa43a78725f4db77c05, type: 2}
 --- !u!4 &1599643056
 Transform:
   m_ObjectHideFlags: 0
@@ -560,3 +544,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1599643057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599643054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd442708947fd1e4c9fba861d3fc5bce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_battleSceneUIPrefab: {fileID: 6156308881136725141, guid: 110b139e0cf5db045b5562aa37b65717, type: 3}
+  m_characters:
+  - {fileID: 11400000, guid: 8353d87628e09034ab1eb5f9802045e5, type: 2}
+  - {fileID: 11400000, guid: 8353d87628e09034ab1eb5f9802045e5, type: 2}

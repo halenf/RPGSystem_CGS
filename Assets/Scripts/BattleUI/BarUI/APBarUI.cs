@@ -6,12 +6,17 @@ namespace RPGSystem
 {
     public class APBarUI : BarUI
     {
-        [HideInInspector] public Character character;
+        private Character m_character;
+
+        public void Initialise(Character character)
+        {
+            m_character = character;
+        }
 
         public override void UpdateUI()
         {
-            int maxAP = character.maxAP;
-            int currentAP = character.currentAP;
+            int maxAP = m_character.maxAP;
+            int currentAP = m_character.currentAP;
 
             m_slider.maxValue = maxAP;
             m_slider.value = currentAP;

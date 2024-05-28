@@ -333,6 +333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_unitNameDisplay: {fileID: 599403585123989475}
   m_unitSpriteDisplay: {fileID: 8863075752513828271}
+  m_healthBar: {fileID: 7408012034499177426}
   skillSlotUIContainer: {fileID: 4767665016469731594}
 --- !u!222 &5519848661577285723
 CanvasRenderer:
@@ -391,7 +392,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 3
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -579,3 +580,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6116919113426002809, guid: 5ed7b1d808486614693c466f510be2dc, type: 3}
   m_PrefabInstance: {fileID: 2287308262336777962}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7408012034499177426 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8750684346324755768, guid: 5ed7b1d808486614693c466f510be2dc, type: 3}
+  m_PrefabInstance: {fileID: 2287308262336777962}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30299009aa554a5478aaeb396430e7cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

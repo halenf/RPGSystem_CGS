@@ -37,5 +37,7 @@ public class GameManager : MonoBehaviour
         // load game settings from asset
         if (m_gameSettingsAsset)
             GameSettings.LoadSettingsFromSO(m_gameSettingsAsset);
+        else
+            Debug.LogError("No GameSettingsAsset attached to Manager.");
     }
 }

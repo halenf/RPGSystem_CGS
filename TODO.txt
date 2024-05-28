@@ -19,7 +19,6 @@ UnitData
 - Level curve into child class outside of package.
 
 GameSettings
-- Create MAX_STAT_MODIFIER
 - Move MAX_SKILLS_PER_CHARACTER to child class outside of package.
 
 Effect
@@ -33,3 +32,5 @@ Status
 
 Action
 - Make abstract, children are different types of actions ie attack, switch, item (?)
+
+Template Scripts for abstract classes.

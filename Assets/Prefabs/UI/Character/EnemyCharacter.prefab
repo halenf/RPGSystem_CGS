@@ -189,6 +189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_isEnemyCharacter: 1
   battleUnitUIContainer: {fileID: 114849068371256962}
+  m_currentAPBar: {fileID: 6085511092962680109}
   m_characterNameDisplay: {fileID: 114849069166668057}
   m_characterIconDisplay: {fileID: 114849069556189480}
 --- !u!1 &114849069166668056
@@ -623,3 +624,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1386128364371421978, guid: 4a40dc61d8828d64597ee0fb98450fc8, type: 3}
   m_PrefabInstance: {fileID: 5136514254443050550}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6085511092962680109 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1386128364371421979, guid: 4a40dc61d8828d64597ee0fb98450fc8, type: 3}
+  m_PrefabInstance: {fileID: 5136514254443050550}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 133d7af895ce6be4d81c7143477f55c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
