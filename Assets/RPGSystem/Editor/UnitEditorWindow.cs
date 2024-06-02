@@ -72,54 +72,6 @@ namespace RPGSystem
 
                 // skill slot layout
                 EditorGUILayout.PropertyField(m_skillSlots, new GUIContent("Skill Slots", "The unit's skill slots."));
-                /*
-                GUIContent skillFoldoutLabel = new GUIContent("Skill Slots", "This menu shows the unit's skill slots and allows you to " +
-                    "add and remove skills.");
-                showSkillSlots = EditorGUILayout.BeginFoldoutHeaderGroup(showSkillSlots, skillFoldoutLabel);
-                if (showSkillSlots)
-                {
-                    GUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField("", GUILayout.Width(Screen.width * 0.2f));
-                    GUILayout.Label("Skill", GUILayout.Width(Screen.width * 0.35f));
-                    GUILayout.Label("Turn Timer", GUILayout.Width(Screen.width * 0.35f));
-                    GUILayout.EndHorizontal();
-
-                    for (int i = 0; i < numOfSkills; i++)
-                    {
-                        GUILayout.BeginHorizontal();
-                        GUILayout.Label("Slot " + (i + 1).ToString(), GUILayout.Width(Screen.width * 0.2f));
-                        SerializedProperty skillSlot = m_skillSlots.GetArrayElementAtIndex(i);
-                        SerializedProperty skill = skillSlot.FindPropertyRelative("m_skill");
-                        SerializedProperty turnTimer = skillSlot.FindPropertyRelative("m_turnTimer");
-                        EditorGUILayout.PropertyField(skill, GUIContent.none, GUILayout.Width(Screen.width * 0.35f));
-                        EditorGUILayout.PropertyField(turnTimer, GUIContent.none, GUILayout.Width(Screen.width * 0.35f));
-                        GUILayout.EndHorizontal();
-                    }
-
-                    // add and remove skill buttons
-                    GUILayout.BeginHorizontal();
-
-                    if (numOfSkills < 3)
-                    {
-                        if (GUILayout.Button("+", GUILayout.Width(Screen.width * 0.1f)))
-                        {
-                            unit.AddSkillSlot();
-                            numOfSkills++;
-                        }
-                    }
-                    else
-                        EditorGUILayout.LabelField("", GUILayout.Width(Screen.width * 0.1f));
-
-                    if (numOfSkills > 1)
-                        if (GUILayout.Button("-", GUILayout.Width(Screen.width * 0.1f)))
-                        {
-                            unit.RemoveSkillSlot();
-                            numOfSkills--;
-                        }
-                    GUILayout.EndHorizontal();
-                }
-                EditorGUILayout.EndFoldoutHeaderGroup();
-                */
             }
 
             // reset unit button

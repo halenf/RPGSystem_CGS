@@ -23,12 +23,13 @@ public class DamageEffect : Effect
                     break;
                 case ValueType.UserStat:
                 case ValueType.TargetStat:
-                    damage = (int)((int)m_power * (m_valueType == ValueType.UserStat ? user.attack : target.attack) / (target.defence + 10.0f));
+                    damage = (int)((int)m_power * (m_valueType == ValueType.UserStat ? user.GetStat(BaseStatName.Strength) : 
+                        target.GetStat(BaseStatName.Strength) / (target.GetStat(BaseStatName.Fortitude) + 10.0f)));
                     int targetHP = target.currentHP;
                     Debug.Log(target.displayName + " takes " + damage + " damage!");
                     break;
                 case ValueType.Percentage:
-                    damage = (int)(target.maxHP / 100.0f * m_value);
+                    damage = (int)(target.GetStat(BaseStatName.Health) / 100.0f * m_value);
                     Debug.Log(target.displayName + " loses " + m_value + "% of its HP (" + damage + " damage)!");
                     break;
             }

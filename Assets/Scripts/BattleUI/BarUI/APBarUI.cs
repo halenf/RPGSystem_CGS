@@ -6,9 +6,9 @@ namespace RPGSystem
 {
     public class APBarUI : BarUI
     {
-        private Character m_character;
+        private MyCharacter m_character;
 
-        public void Initialise(Character character)
+        public void Initialise(MyCharacter character)
         {
             m_character = character;
         }

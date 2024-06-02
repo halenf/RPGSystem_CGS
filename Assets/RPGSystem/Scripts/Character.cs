@@ -5,8 +5,7 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    [CreateAssetMenu(fileName = "Character", menuName = "RPGSystem/Character", order = 1)]
-    public class Character : ScriptableObject
+    public abstract class Character : ScriptableObject
     {
         // personal character details
         [SerializeField] protected string m_characterName;

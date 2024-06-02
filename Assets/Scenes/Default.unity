@@ -553,10 +553,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1599643054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd442708947fd1e4c9fba861d3fc5bce, type: 3}
+  m_Script: {fileID: 11500000, guid: f8eed23112bda2c4bac05203a371d61f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_characters: []
   m_battleSceneUIPrefab: {fileID: 6156308881136725141, guid: 110b139e0cf5db045b5562aa37b65717, type: 3}
-  m_characters:
-  - {fileID: 11400000, guid: 8353d87628e09034ab1eb5f9802045e5, type: 2}
-  - {fileID: 11400000, guid: 8353d87628e09034ab1eb5f9802045e5, type: 2}

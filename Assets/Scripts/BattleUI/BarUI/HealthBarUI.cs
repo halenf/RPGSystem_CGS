@@ -6,9 +6,9 @@ namespace RPGSystem
 {
     public class HealthBarUI : BarUI
     {
-        private BattleUnit m_unit;
+        private MyBattleUnit m_unit;
 
-        public void Initialise(BattleUnit battleUnit)
+        public void Initialise(MyBattleUnit battleUnit)
         {
             m_unit = battleUnit;
         }

@@ -8,7 +8,7 @@ namespace RPGSystem
 {
     public class MyCharacterUI : ObjectUI
     {       
-        private Character m_character;
+        private MyCharacter m_character;
         [SerializeField] private bool m_isEnemyCharacter;
 
         // object references
@@ -17,7 +17,7 @@ namespace RPGSystem
         [SerializeField] private TextMeshProUGUI m_characterNameDisplay;
         [SerializeField] private Image m_characterIconDisplay;
 
-        public void Initialise(Character character, int characterIndex)
+        public void Initialise(MyCharacter character, int characterIndex)
         {
             // Set character
             m_character = character;

@@ -9,13 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 651f3310b344ef448a942f5eb25633a7, type: 3}
+  m_Script: {fileID: 11500000, guid: ae5beb325451e644d88af1fe43c612e7, type: 3}
   m_Name: Drago
   m_EditorClassIdentifier: 
-  m_unitName: Drago
-  m_baseStats:
-    m_health: 3
-    m_strength: 5
-    m_fortitude: 2
-    m_agility: 7
-  m_levelCurve: 200
+  m_unitName: 
+  m_levelCurve: 0

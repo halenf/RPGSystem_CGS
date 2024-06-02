@@ -16,21 +16,11 @@ Unit
 
 UnitData
 - Change basestats to be a custom class with protected variables for each stat.
-- Level curve into child class outside of package.
-
-GameSettings
-- Move MAX_SKILLS_PER_CHARACTER to child class outside of package.
-
-Effect
-- Move children into unqiue script for Scriptable Object functionality.
-
-Skill 
-- Move sprite to child class out of package.
-
 Status
 - Move statusType to child class out of package.
 
-Action
-- Make abstract, children are different types of actions ie attack, switch, item (?)
+EditorWindows
+- Make editor windows for child classes. Extend from parent's editor window
+- https://forum.unity.com/threads/using-custom-editor-for-an-inherited-class.934801/
 
 Template Scripts for abstract classes.

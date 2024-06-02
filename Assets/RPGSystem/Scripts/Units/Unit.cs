@@ -38,7 +38,7 @@ namespace RPGSystem
 
         public List<SkillSlot> skillSlots { get { return m_skillSlots; } }
 
-        // exp/m_level
+        // exp/level
         [SerializeField] [Min(0)] protected int m_totalExp;
         [SerializeField] protected int m_expToNextLevel;
         [SerializeField] protected int m_level = 1;
@@ -50,37 +50,13 @@ namespace RPGSystem
         /// Basic HP stat.
         /// </summary>
         protected int m_currentHP;
-        public int currentHP { get { return m_currentHP; } }
-
-        public int maxHP
+        public int currentHP
         {
-            get
-            {
-                return (int)(m_unitData.baseStats.health * Mathf.Pow(1000 * (m_level + 1), 0.4f));
-            }
+            get { return m_currentHP; }
+            set { m_currentHP = value; }
         }
 
-        public int attack
-        {
-            get
-            {
-                return (int)(30 * m_unitData.baseStats.strength * (m_level + 1) / 100.0f + 10);
-            }
-        }
-        public int defence
-        {
-            get
-            {
-                return (int)(30 * m_unitData.baseStats.fortitude * (m_level + 1) / 100.0f + 10);
-            }
-        }
-        public int speed
-        {
-            get
-            {
-                return (int)(30 * m_unitData.baseStats.agility * (m_level + 1)/ 100.0f + 10);
-            }
-        }
+        public abstract int GetStat(BaseStatName stat);
 
         // public methods for battle scene
         /// <summary>
@@ -170,10 +146,10 @@ namespace RPGSystem
         /// Override this method to change how your levelling system works.
         /// </summary>
         /// <param name="level">The level to calculate the exp to next level for.</param>
+        /// <param name="remainder">The number of remaining experience points after subtracting the </param>
         /// <returns></returns>
         public abstract int CalculateExpToNextLevel(int level, int remainder = 0);
         
-
         // functional methods
         /// <summary>
         /// Set's the Unit's level to the specified level.
@@ -183,10 +159,10 @@ namespace RPGSystem
         {
             m_totalExp = 0;
             // level cannot exceed max
-            m_level = value > GameSettings.MAX_UNIT_LEVEL ? 100 : value;
+            m_level = value > GameSettings.MAX_UNIT_LEVEL ? GameSettings.MAX_UNIT_LEVEL : value;
             m_expToNextLevel = 0;
-            for (int i = 0; i < value - 1; i++)
-                m_totalExp += CalculateExpToNextLevel(i + 1);
+            for (int i = 1; i < value; i++)
+                m_totalExp += CalculateExpToNextLevel(i);
             m_expToNextLevel = CalculateExpToNextLevel(m_level);
         }
 
@@ -197,7 +173,7 @@ namespace RPGSystem
         public void SetTotalExp(int value)
         {
             m_level = 1;
-            m_totalExp = 0;
+            m_totalExp = value;
             m_expToNextLevel = CalculateExpToNextLevel(m_level);
             int experience = value;
             while (experience > m_expToNextLevel)
@@ -205,7 +181,6 @@ namespace RPGSystem
                 if (m_level == GameSettings.MAX_UNIT_LEVEL)
                     break;
                 experience -= m_expToNextLevel;
-                m_totalExp += m_expToNextLevel;
                 GainExp(m_expToNextLevel);
                 LevelUp();
             }

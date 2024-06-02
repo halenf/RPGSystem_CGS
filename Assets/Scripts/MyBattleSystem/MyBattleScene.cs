@@ -12,15 +12,28 @@ public class MyBattleScene : BattleScene
     private Action m_currentAction;
 
     /// <summary>
-    /// Prefab for the BattleSceneUI.
+    /// Prefab for the MyBattleSceneUI.
     /// </summary>
-    [SerializeField] protected BattleSceneUI m_battleSceneUIPrefab;
-    protected BattleSceneUI m_battleSceneUI;
+    [SerializeField] private MyBattleSceneUI m_battleSceneUIPrefab;
+    private MyBattleSceneUI m_battleSceneUI;
 
     protected override void OnBattleStart()
     {
         base.OnBattleStart();
-        // Instantiates the BattleSceneUI
+
+        m_battleUnits = new MyBattleUnit[m_characters.Length * GameSettings.UNITS_PER_PARTY];
+        for (int c = 0; c < m_characters.Length; c++)
+        {
+            for (int u = 0; u < m_characters[c].units.Length; u++)
+            {
+                int index = c * GameSettings.UNITS_PER_PARTY + u;
+                m_battleUnits[index] = new MyBattleUnit(m_characters[c].units[u] as MyUnit, new BattleUnitID(c, u));
+                m_battleUnits[index].ResetBattleUnit();
+                Debug.Log(m_characters[c].characterName + " sends out " + GetBattleUnit(c, u).displayName + "!");
+            }
+        }
+
+        // Instantiates the MyBattleSceneUI
         m_battleSceneUI = Instantiate(m_battleSceneUIPrefab);
         m_battleSceneUI.Initialise(this);
     }
@@ -141,7 +154,7 @@ public class MyBattleScene : BattleScene
 
     public void AddAttackAction(BattleUnitID userID, int skillSlotIndex, BattleUnitID targetID)
     {
-        m_turnActions.Add(new AttackAction(userID, skillSlotIndex, targetID, GetBattleUnit(userID).speed));
+        m_turnActions.Add(new AttackAction(userID, skillSlotIndex, targetID, (GetBattleUnit(userID) as MyBattleUnit).speed));
     }
 
     public void RemoveAttackAction(BattleUnitID userID)

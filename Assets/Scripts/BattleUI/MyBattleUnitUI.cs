@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 namespace RPGSystem
 {
-    public class BattleUnitUI : ObjectUI
+    public class MyBattleUnitUI : ObjectUI
     {
-        private BattleScene m_battleScene;
-        private BattleUnit m_battleUnit;
+        private MyBattleScene m_battleScene;
+        private MyBattleUnit m_battleUnit;
         private bool m_facingLeft;
 
         [SerializeField] private TextMeshProUGUI m_unitNameDisplay;
@@ -20,7 +20,7 @@ namespace RPGSystem
         private Button m_button;
         public Transform skillSlotUIContainer;
 
-        public void Initialise(BattleScene battleScene, BattleUnit battleUnit, bool isEnemyUnit)
+        public void Initialise(MyBattleScene battleScene, MyBattleUnit battleUnit, bool isEnemyUnit)
         {
             m_battleScene = battleScene;
             
@@ -41,14 +41,14 @@ namespace RPGSystem
 
         private void SendUnitAsUser()
         {
-            m_battleScene.AddUserToAction(m_battleUnit.battleID);
+            m_battleScene.AddUserToCurrentAttackAction(m_battleUnit.battleID);
             skillSlotUIContainer.gameObject.SetActive(true);
             Debug.Log(m_battleUnit.displayName + " selected as user.");
         }
 
         private void SendUnitAsTarget()
         {
-            m_battleScene.AddTargetToAction(m_battleUnit.battleID);
+            m_battleScene.AddTargetToCurrentAttackAction(m_battleUnit.battleID);
             Debug.Log(m_battleUnit.displayName + " selected as target.");
         }
 

@@ -9,14 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cd6fc26c5ff2fa418953b9009150484, type: 3}
-  m_Name: Default
+  m_Script: {fileID: 11500000, guid: 4e975e565481d7a4aada6750acce4abf, type: 3}
+  m_Name: MyUnit
   m_EditorClassIdentifier: 
-  m_unitData: {fileID: 11400000, guid: 72d7de8f7851de04ba85b749d1b024bd, type: 2}
+  m_unitData: {fileID: 0}
   m_unitNickname: Drago
-  m_skillSlots:
-  - m_skill: {fileID: 11400000, guid: 27ed47418dedafa458460e92bbc078c1, type: 2}
-    m_turnTimer: 0
+  m_skillSlots: []
   m_totalExp: 0
   m_expToNextLevel: 0
   m_level: 1
+  m_balls: 0

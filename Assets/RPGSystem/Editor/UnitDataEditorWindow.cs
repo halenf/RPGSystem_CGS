@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    //[CustomEditor(typeof(UnitData), true)]
+    [CustomEditor(typeof(UnitData), false)]
     public class UnitDataEditorWindow : Editor
     {
         SerializedProperty m_unitName, m_baseStats;

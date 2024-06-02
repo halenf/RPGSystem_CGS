@@ -24,18 +24,18 @@ public class HealEffect : Effect
                     break;
                 case ValueType.UserStat:
                 case ValueType.TargetStat:
-                    restore = (int)((int)m_power * user.unit.maxHP * 0.08f);
+                    restore = (int)((int)m_power * user.GetStat(BaseStatName.Health) * 0.08f);
                     Debug.Log(target.displayName + " restores " + restore + " HP!");
                     break;
                 case ValueType.Percentage:
-                    restore = (int)(target.maxHP / 100.0f * m_value);
+                    restore = (int)(target.GetStat(BaseStatName.Health) / 100.0f * m_value);
                     Debug.Log(target.displayName + " restores " + m_value + "% of its HP (" + restore + " HP)!");
                     break;
             }
 
             // don't restore HP over maximum
-            if (target.currentHP + restore > target.maxHP)
-                restore = target.maxHP - target.currentHP;
+            if (target.currentHP + restore > target.GetStat(BaseStatName.Health))
+                restore = target.GetStat(BaseStatName.Health) - target.currentHP;
 
             target.RestoreHealth(restore);
         }

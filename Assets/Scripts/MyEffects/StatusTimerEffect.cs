@@ -15,7 +15,7 @@ public class StatusTimerEffect : Effect
             {
                 target.ChangeStatusTimer(i, m_value);
             }
-            Debug.Log("All of " + target.displayName + "'s statuses were extended by " + m_value + " turns!");
+            Debug.Log("All of " + target.displayName + "'s statuses were " + (m_value > 0 ? "extended" : "reduced") + " by " + m_value + " turn(s)!");
         }
     }
 }

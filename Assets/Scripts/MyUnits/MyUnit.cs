@@ -3,12 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Unit", menuName = "Unit", order = 1)]
+[CreateAssetMenu(fileName = "MyUnit", menuName = "Unit", order = 1)]
 public class MyUnit : Unit
 {
-    private int BasicStatFormula(int baseStat)
+    private int HealthStatFormula()
     {
-        return (int)(30 * baseStat * (m_level + 1) / 100.0f + 10);
+        return (int)(m_unitData.baseStats[(int)BaseStatName.Health].value * Mathf.Pow(1000 * (m_level + 1), 0.4f));
+    }
+    
+    private int BasicStatFormula(BaseStatName stat)
+    {
+        if (stat != BaseStatName.Health)
+            return (int)(30 * m_unitData.baseStats[(int)stat].value * (m_level + 1) / 100.0f + 10);
+        else
+            return HealthStatFormula();
+    }
+
+    public override int GetExpWorth()
+    {
+        return (int)(CalculateExpToNextLevel(m_level) / 4.0f);
     }
 
     /// <summary>
@@ -24,6 +37,18 @@ public class MyUnit : Unit
     {
         if (level == GameSettings.MAX_UNIT_LEVEL)
             return 0;
-        return (int)Mathf.Pow(level, 2.1f) + (int)m_unitData.levelCurve * level - remainder;
+        return (int)Mathf.Pow(level, 2.1f) + (int)(m_unitData as MyUnitData).levelCurve * level - remainder;
     }
+
+    public override int GetStat(BaseStatName stat)
+    {
+        return BasicStatFormula(stat);
+    }
+
+    [SerializeField] private int m_balls;
+
+    public int maxHP { get { return HealthStatFormula(); } }
+    public int attack { get { return BasicStatFormula(BaseStatName.Strength); } }
+    public int defence { get { return BasicStatFormula(BaseStatName.Fortitude); } }
+    public int speed { get { return BasicStatFormula(BaseStatName.Agility); } }
 }

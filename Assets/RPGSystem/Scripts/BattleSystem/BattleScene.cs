@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace RPGSystem
@@ -137,11 +138,19 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Runs when the battle starts.
+        /// Runs when the battle starts. Override to add your own method of initialising m_battleUnits.
         /// </summary>
         protected virtual void OnBattleStart()
         {
             // only handles two characters for now
+            if (m_characters.Length < 2)
+            {
+                Debug.LogError("Battle needs at least 2 Characters to run!");
+#if UNITY_EDITOR
+                EditorApplication.isPlaying = false;
+#endif
+            }
+
             Debug.Log("Battle started between " + m_characters[0].characterName + " and " + m_characters[1].characterName + "!");
 
             // get Characters and BattleUnits ready for battle
@@ -151,17 +160,6 @@ namespace RPGSystem
                 foreach (Unit unit in character.units)
                 {
                     unit.InitialiseForBattle();
-                }
-            }
-            m_battleUnits = new BattleUnit[m_characters.Length * GameSettings.UNITS_PER_PARTY];
-            for (int c = 0; c < m_characters.Length; c++)
-            {
-                for (int u = 0; u < m_characters[c].units.Length; u++)
-                {
-                    int index = c * GameSettings.UNITS_PER_PARTY + u;
-                    m_battleUnits[index] = new BattleUnit(m_characters[c].units[u], new BattleUnitID(c, u));
-                    m_battleUnits[index].ResetBattleUnit();
-                    Debug.Log(m_characters[c].characterName + " sends out " + GetBattleUnit(c, u).displayName + "!");
                 }
             }
         }

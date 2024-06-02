@@ -8,14 +8,13 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    public class BattleUnit
+    public abstract class BattleUnit
     {
         public BattleUnit() { }
         public BattleUnit(Unit unit, BattleUnitID id)
         {
             m_unit = unit;
             m_battleID = id;
-            currentHP = maxHP;
         }
         
         [SerializeField] protected Unit m_unit;
@@ -38,22 +37,6 @@ namespace RPGSystem
             get { return m_unit.currentHP; }
             set { m_unit.currentHP = value; }
         }
-        public int maxHP
-        {
-            get { return m_unit.maxHP; }
-        }
-        public int attack
-        {
-            get { return m_unit.attack; }
-        }
-        public int defence
-        {
-            get { return m_unit.defence; }
-        }
-        public int speed
-        {
-            get { return m_unit.speed; }
-        }
 
         // status slots
         [SerializeField] protected List<StatusSlot> m_statusSlots = new List<StatusSlot>();
@@ -75,19 +58,21 @@ namespace RPGSystem
         }
 
         // tracks stat modifiers from buffs
-        [SerializeField][Min(0)] protected Dictionary<UnitBaseStatNames, float> m_statModifiers = new Dictionary<UnitBaseStatNames, float>();
+        [SerializeField][Min(0)] protected Dictionary<BaseStatName, float> m_statModifiers = new Dictionary<BaseStatName, float>();
+
+        public int GetStat(BaseStatName stat)
+        {
+            return m_unit.GetStat(stat);
+        }
 
         /// <summary>
         /// Resets the BattleUnit to a default state.
         /// </summary>
-        public void ResetBattleUnit()
+        public virtual void ResetBattleUnit()
         {
             // clear stat buffs/debuffs
             for (int i = 1; i < m_statModifiers.Count; i++)
-                m_statModifiers[(UnitBaseStatNames)i] = 1;
-
-            // reset HP
-            currentHP = maxHP;
+                m_statModifiers[(BaseStatName)i] = 1;
 
             // reset all skill cooldowns
             foreach (SkillSlot skillSlot in m_unit.skillSlots)
@@ -109,9 +94,9 @@ namespace RPGSystem
         public bool TakeDamage(int damage)
         {
             // reduce HP
-            currentHP -= damage;
+            m_unit.currentHP -= damage;
 
-            if (currentHP <= 0)
+            if (m_unit.currentHP <= 0)
                 return true;
             return false;
         }
@@ -131,7 +116,7 @@ namespace RPGSystem
         /// </summary>
         /// <param name="baseStat">The stat to be affected.</param>
         /// <param name="value">Magnitude of the modifer. Negative values represent a debuff.</param>
-        public void ApplyStatModifier(UnitBaseStatNames baseStat, int value)
+        public void ApplyStatModifier(BaseStatName baseStat, int value)
         {
             // apply percentage multiplier to specified stat (compounding with other boosts)
             // note: negative values represent a debuff

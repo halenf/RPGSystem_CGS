@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "MyCharacter", menuName = "Character", order = 1)]
 public class MyCharacter : Character
 {
-    [CreateAssetMenu(fileName = "MyCharacter", menuName = "Character", order = 1)]
     public class CharacterSkillSlot
     {
         [SerializeField] private Skill m_skill;
@@ -26,15 +26,15 @@ public class MyCharacter : Character
     /// <summary>
     /// 2D image representing the Character.
     /// </summary>
-    [SerializeField] protected Sprite m_sprite;
+    [SerializeField] private Sprite m_sprite;
 
     /// <summary>
     /// Character's available character skills.
     /// </summary>
-    [SerializeField] protected CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[GameSettings.MAX_SKILLS_PER_CHARACTER];
+    [SerializeField] private CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[GameSettings.MAX_SKILLS_PER_CHARACTER];
 
-    protected int m_skill;
-    protected int m_currentAP;
+    [SerializeField] private int m_skill;
+    [SerializeField] private int m_currentAP;
 
     public Sprite sprite { get { return m_sprite; } }
     public int skill { get { return m_skill; } }

@@ -17,6 +17,9 @@ public class EnableTriggeredEffect : Effect
     public override void DoEffect(BattleUnit user, BattleUnit[] targets)
     {
         foreach (BattleUnit target in targets)
+        {
             target.EnableTriggeredEffect(effect);
+            Debug.Log(target.displayName + " gained " + m_effect.ToString() + "!");
+        }
     }
 }

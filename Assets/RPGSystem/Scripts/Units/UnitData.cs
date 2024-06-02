@@ -1,59 +1,41 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace RPGSystem
 {
-    public enum UnitLevelCurve
+    public abstract class UnitData : ScriptableObject
     {
-        Slow = 220,
-        Medium = 200,
-        Fast = 185
-    }
+        [Serializable]
+        public class BaseStat
+        {
+            [SerializeField] private BaseStatName m_stat;
+            [SerializeField] private int m_value;
 
-    [CreateAssetMenu(fileName = "UnitData", menuName = "RPGSystem/UnitData", order = 1)]
-    public class UnitData : ScriptableObject
-    {
+            public BaseStatName stat { get { return m_stat; } }
+            public int value { get { return m_value; } }
+        }
+
         // unit name
         [SerializeField] protected string m_unitName;
         // values that represent how the unit will grow
-        [SerializeField] protected BaseStats m_baseStats;
-        // represents the amount of experience a unit needs to level up
-        [SerializeField] protected UnitLevelCurve m_levelCurve;
-        // list of skills a unit can learn as it levels up
-        [SerializeField] protected Dictionary<int, Skill[]> m_levelUpSkills;
+        [SerializeField] protected BaseStat[] m_baseStats;
 
-        public string unitName
+        public string unitName { get { return m_unitName; } }
+        public BaseStat[] baseStats { get { return m_baseStats; } }
+
+        private void InitialiseBaseStats()
         {
-            get { return m_unitName; }
-        }
-        public BaseStats baseStats
-        {
-            get
-            {
-                return m_baseStats;
-            }
-        }
-        public UnitLevelCurve levelCurve
-        {
-            get
-            {
-                return m_levelCurve;
-            }
-        }
-        public Dictionary<int, Skill[]> levelUpSkills
-        {
-            get
-            {
-                return m_levelUpSkills;
-            }
+            m_baseStats = new BaseStat[Enum.GetNames(typeof(BaseStatName)).Length];
         }
 
         [ContextMenu("Reset")]
-        public void ResetUnitData()
+        public virtual void ResetUnitData()
         {
             m_unitName = string.Empty;
-            m_baseStats = new BaseStats();
+            InitialiseBaseStats();
         }
     }
 }
+

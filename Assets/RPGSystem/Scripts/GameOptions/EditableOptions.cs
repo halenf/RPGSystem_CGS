@@ -46,23 +46,11 @@ namespace RPGSystem
     }
 
     // The names of the Base Stats in the game
-    public enum UnitBaseStatNames
+    public enum BaseStatName
     {
         Health = 0,
         Strength = 1,
         Fortitude = 2,
         Agility = 3
-    }
-
-    // class for UnitData to hold base stat values
-    [Serializable]
-    public struct BaseStats
-    {
-        [SerializeField] private int m_health, m_strength, m_fortitude, m_agility;
-
-        public int health { get { return m_health; } }
-        public int strength { get { return m_strength; } }
-        public int fortitude { get { return m_fortitude; } }
-        public int agility { get { return m_agility; } }
     }
 }

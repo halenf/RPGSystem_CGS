@@ -26,7 +26,7 @@ public class BattleUnitEditorWindow : EditorWindow
                 showModifierFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(showModifierFoldout, modifierFoldoutLabel);
                 if (showModifierFoldout)
                 {
-                    string[] unitBaseStatNames = Enum.GetNames(typeof(UnitBaseStatNames));
+                    string[] unitBaseStatNames = Enum.GetNames(typeof(BaseStatName));
                     for (int i = 1; i < 4; i++)
                     {
                         EditorGUILayout.BeginHorizontal();

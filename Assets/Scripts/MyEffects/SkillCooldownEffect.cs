@@ -14,6 +14,7 @@ public class SkillCooldownEffect : Effect
             for (int i = 0; i < 3; i++)
             {
                 target.ChangeSkillCooldown(i, m_value);
+                Debug.Log("All of " + target.displayName + "'s skill cooldowns were " + (m_value > 0 ? "extended" : "reduced") + " by " + m_value + " turn(s)!");
             }
         }
     }

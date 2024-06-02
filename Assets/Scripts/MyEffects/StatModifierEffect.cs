@@ -8,15 +8,15 @@ using UnityEngine;
 public class StatModifierEffect : Effect
 {
     // note: HP cannot be boosted via this method
-    [SerializeField] private UnitBaseStatNames m_baseStat;
-    public UnitBaseStatNames baseStat
+    [SerializeField] private BaseStatName m_baseStat;
+    public BaseStatName baseStat
     {
         get { return m_baseStat; }
     }
 
     public override void DoEffect(BattleUnit user, BattleUnit[] targets)
     {
-        if (m_baseStat == UnitBaseStatNames.Health)
+        if (m_baseStat == BaseStatName.Health)
             return;
 
         foreach (BattleUnit target in targets)
