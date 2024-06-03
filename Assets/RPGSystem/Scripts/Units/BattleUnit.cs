@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace RPGSystem
@@ -58,7 +55,7 @@ namespace RPGSystem
         }
 
         // tracks stat modifiers from buffs
-        [SerializeField][Min(0)] protected Dictionary<BaseStatName, float> m_statModifiers = new Dictionary<BaseStatName, float>();
+        [SerializeField][Min(0)] protected Dictionary<BaseStatName, float> m_statModifiers;
 
         public int GetStat(BaseStatName stat)
         {

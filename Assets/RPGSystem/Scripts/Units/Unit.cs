@@ -1,15 +1,17 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RPGSystem
-{   
+{
+    using LevelUpSkill = UnitData.LevelUpSkill;
+
     public abstract class Unit : ScriptableObject
     {
-        // unit data
+        /// <summary>
+        /// The UnitData this Unit is built from.
+        /// </summary>
         [SerializeField] protected UnitData m_unitData;
         public UnitData unitData
         {
@@ -56,27 +58,63 @@ namespace RPGSystem
             set { m_currentHP = value; }
         }
 
+        /// <summary>
+        /// Returns the stat corresponding to the supplied BaseStat.
+        /// </summary>
         public abstract int GetStat(BaseStatName stat);
 
-        // public methods for battle scene
+        /// <param name="level"></param>
+        /// <returns>The Skills this Unit learns at the specified level.</returns>
+        public Skill[] GetSkillsForLevel(int level)
+        {
+            return m_unitData.levelUpSkills.Where(levelUpSkill => levelUpSkill.level == level).Select(levelUpSkill => levelUpSkill.skill).ToArray();
+        }
+
+        public void InitialiseSkillSlots(UnitData unitData)
+        {
+            m_skillSlots = null;
+            int index = 0;
+            for (int i = 0; i < unitData.levelUpSkills.Length; i++)
+            {
+                if (unitData.levelUpSkills[i].level > m_level)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            for (int i = index - 1; i !< 0; i--)
+            {
+                if (!AddSkillSlot(unitData.levelUpSkills[i].skill))
+                    break;
+            }
+        }
+
         /// <summary>
         /// Initialises or replaces a SkillSlot in skillSlots with a new Skill in the first empty SkillSlot
         /// or at the specified index.
         /// </summary>
         /// <param name="skill">The Skill to learn.</param>
-        /// <param name="skillSlotIndex">Index in skillSlots to overwrite.</param>
-        public void LearnSkill(Skill skill, int skillSlotIndex = 0)
+        /// <param name="skillSlotIndex">Index of the SkillSlot to overwrite.</param>
+        public void LearnSkill(Skill skill, int skillSlotIndex)
         {
-            // put the skill into the first empty SkillSlot
-            for (int i = 0; i < m_skillSlots.Count; i++)
-                if (m_skillSlots[i].skill == null)
+            // put the skill into the first empty SkillSlot, the designated SkillSlot,
+            // or add to the end if the list is not at the max yet
+            for (int i = 0; i < GameSettings.MAX_SKILLS_PER_UNIT; i++)
+            {
+                if (m_skillSlots.ElementAtOrDefault(i) != null)
                 {
-                    m_skillSlots[i] = new SkillSlot(skill);
+                    if (m_skillSlots[i].skill == null || i == skillSlotIndex)
+                    {
+                        m_skillSlots[i] = new SkillSlot(skill);
+                        return;
+                    }
+                }
+                else
+                {
+                    m_skillSlots.Add(new SkillSlot(skill));
                     return;
                 }
-
-            // Otherwise overwrite the SkillSlot at the specified index
-            m_skillSlots[skillSlotIndex] = new SkillSlot(skill);
+            }
         }
 
         /// <summary>
@@ -187,11 +225,14 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Cut any null entries from the Unit's SkillSlots.
+        /// Prepare the Unit for a battle. Override to add your own functionality.
         /// </summary>
         public virtual void InitialiseForBattle()
         {
+            //Cut any null entries from the Unit's SkillSlots.
             m_skillSlots = m_skillSlots.Where(slot => slot.skill != null).ToList();
+            if (m_skillSlots.Count == 0)
+                InitialiseSkillSlots(m_unitData);
         }
 
         public virtual void ResetUnit()
@@ -204,14 +245,18 @@ namespace RPGSystem
             m_skillSlots = null;
         }
 
-        public void AddSkillSlot(Skill skill = null)
+        public bool AddSkillSlot(Skill skill = null)
         {
+            if (m_skillSlots.Count == GameSettings.MAX_SKILLS_PER_UNIT)
+                return false;
+
             if (skill == null)
                 // add a new empty skill slot
                 m_skillSlots.Add(new SkillSlot());
             else
                 // add a skill slot with the predefined values
                 m_skillSlots.Add(new SkillSlot(skill));
+            return true;
         }
 
         public void RemoveSkillSlot(Skill skill = null)

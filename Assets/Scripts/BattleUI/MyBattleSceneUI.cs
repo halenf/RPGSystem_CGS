@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace RPGSystem
-{   
+{
     public class MyBattleSceneUI : ObjectUI
     {
         private MyBattleScene m_battleScene;

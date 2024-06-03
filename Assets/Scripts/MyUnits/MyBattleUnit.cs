@@ -1,7 +1,4 @@
 using RPGSystem;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class MyBattleUnit : BattleUnit
 {
@@ -20,15 +17,15 @@ public class MyBattleUnit : BattleUnit
     }
     public int attack
     {
-        get { return m_unit.GetStat(BaseStatName.Strength); }
+        get { return (int)(m_unit.GetStat(BaseStatName.Strength) * m_statModifiers[BaseStatName.Strength]); }
     }
     public int defence
     {
-        get { return m_unit.GetStat(BaseStatName.Fortitude); }
+        get { return (int)(m_unit.GetStat(BaseStatName.Fortitude) * m_statModifiers[BaseStatName.Fortitude]); }
     }
     public int speed
     {
-        get { return m_unit.GetStat(BaseStatName.Agility); }
+        get { return (int)(m_unit.GetStat(BaseStatName.Agility) * m_statModifiers[BaseStatName.Agility]); }
     }
 
     public override void ResetBattleUnit()

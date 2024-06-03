@@ -1,11 +1,11 @@
 using RPGSystem;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MyUnit", menuName = "Unit", order = 1)]
 public class MyUnit : Unit
 {
+    public MyUnit() : base() { }
+    
     private int HealthStatFormula()
     {
         return (int)(m_unitData.baseStats[(int)BaseStatName.Health].value * Mathf.Pow(1000 * (m_level + 1), 0.4f));
@@ -44,8 +44,6 @@ public class MyUnit : Unit
     {
         return BasicStatFormula(stat);
     }
-
-    [SerializeField] private int m_balls;
 
     public int maxHP { get { return HealthStatFormula(); } }
     public int attack { get { return BasicStatFormula(BaseStatName.Strength); } }

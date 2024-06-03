@@ -9,18 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae5beb325451e644d88af1fe43c612e7, type: 3}
-  m_Name: Drago
+  m_Script: {fileID: 11500000, guid: cbc89bd2ca13e4e47bf0a1e6e9d34945, type: 3}
+  m_Name: Default
   m_EditorClassIdentifier: 
-  m_unitName: 
-  m_baseStats:
-  - m_stat: 0
-    m_value: 0
-  - m_stat: 0
-    m_value: 0
-  - m_stat: 0
-    m_value: 0
-  - m_stat: 0
-    m_value: 0
-  m_levelCurve: 0
-  m_levelUpSkills: []
+  m_characterName: 
+  m_units:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  m_sprite: {fileID: 0}
+  m_skill: 0
+  m_currentAP: 0

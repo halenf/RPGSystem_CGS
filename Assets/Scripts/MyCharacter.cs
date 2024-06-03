@@ -1,11 +1,11 @@
 using RPGSystem;
-using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MyCharacter", menuName = "Character", order = 1)]
 public class MyCharacter : Character
 {
+    [System.Serializable]   
     public class CharacterSkillSlot
     {
         [SerializeField] private Skill m_skill;
@@ -31,10 +31,10 @@ public class MyCharacter : Character
     /// <summary>
     /// Character's available character skills.
     /// </summary>
-    [SerializeField] private CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[GameSettings.MAX_SKILLS_PER_CHARACTER];
-
+    [Header("Character Skills")]
     [SerializeField] private int m_skill;
     [SerializeField] private int m_currentAP;
+    [SerializeField] private CharacterSkillSlot[] m_characterSkillSlots = new CharacterSkillSlot[GameSettings.MAX_SKILLS_PER_CHARACTER];
 
     public Sprite sprite { get { return m_sprite; } }
     public int skill { get { return m_skill; } }
@@ -46,6 +46,7 @@ public class MyCharacter : Character
     {
         base.InitialiseForBattle();
         m_currentAP = maxAP;
+        m_characterSkillSlots = m_characterSkillSlots.Where(slot => slot.skill != null).ToArray();
     }
 
     public override void ResetCharacter()
@@ -53,6 +54,7 @@ public class MyCharacter : Character
         base.ResetCharacter();
         m_sprite = null;
         m_skill = 1;
+        m_characterSkillSlots = null;
     }
 
     public void ChangeAP(int value)
