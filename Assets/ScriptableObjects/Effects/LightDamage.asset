@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: LightDamage
   m_EditorClassIdentifier: 
   m_value: 0
-  m_valueType: 0
-  m_power: 0
+  m_valueType: 1
+  m_power: 3

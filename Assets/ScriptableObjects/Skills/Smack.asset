@@ -16,4 +16,4 @@ MonoBehaviour:
   m_turnTimer: 0
   m_targets: 0
   m_effects:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: b6f93b914f4a71541adec8942e6d7050, type: 2}
