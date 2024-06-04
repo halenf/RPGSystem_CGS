@@ -3,26 +3,9 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    [CreateAssetMenu(fileName = "Skill", menuName = "RPGSystem/Skill", order = 1)]
+    [CreateAssetMenu(fileName = "Skill", menuName = "RPGSystem/Skill", order = 0)]
     public class Skill : ScriptableObject
     {
-        /// <summary>
-        /// The name of the Skill.
-        /// </summary>
-        [SerializeField] protected string m_skillName;
-        /// <summary>
-        /// The default length of the Skill's cooldown.
-        /// </summary>
-        [SerializeField] protected int m_turnTimer;
-        /// <summary>
-        /// What the Skill can target.
-        /// </summary>
-        [SerializeField] protected TargetType m_targets;
-        /// <summary>
-        /// The Skill's Effects trigger in the order set here.
-        /// </summary>
-        [SerializeField] protected Effect[] m_effects;
-
         [Serializable]
         public enum TargetType
         {
@@ -37,31 +20,39 @@ namespace RPGSystem
             Everyone = 128
         }
 
-        public string skillName
+        [Serializable]
+        public enum SkillPriority
         {
-            get
-            {
-                return m_skillName;
-            }
+            AlwaysLast = -3,
+            None = 0,
+            AlwaysFirst = 3
         }
-        public int turnTimer
-        {
-            get
-            {
-                return m_turnTimer;
-            }
-        }
-        public TargetType targets
-        {
-            get { return m_targets; }
-        }
-        public Effect[] effects
-        {
-            get
-            {
-                return m_effects;
-            }
-        }
+        
+        /// <summary>
+        /// The name of the Skill.
+        /// </summary>
+        [SerializeField] protected string m_skillName;
+        /// <summary>
+        /// The default length of the Skill's cooldown.
+        /// </summary>
+        [SerializeField] protected int m_turnTimer;
+        /// <summary>
+        /// What the Skill can target.
+        /// </summary>
+        [SerializeField] protected TargetType m_targets;
+        /// <summary>
+        /// Turn order priority.
+        /// </summary>
+        [SerializeField] protected SkillPriority m_priority;
+        /// <summary>
+        /// The Skill's Effects trigger in the order set here.
+        /// </summary>
+        [SerializeField] protected Effect[] m_effects;
+
+        public string skillName { get { return m_skillName; } }
+        public int turnTimer { get { return m_turnTimer; } }
+        public TargetType targets { get { return m_targets; } }
+        public Effect[] effects { get { return m_effects; } }
     }
 
     [Serializable]

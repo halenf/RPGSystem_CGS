@@ -2,7 +2,7 @@ using RPGSystem;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MyCharacter", menuName = "Character", order = 1)]
+[CreateAssetMenu(fileName = "MyCharacter", menuName = "MyGame/Character", order = 1)]
 public class MyCharacter : Character
 {
     [System.Serializable]   

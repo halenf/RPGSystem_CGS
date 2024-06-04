@@ -6,6 +6,14 @@ namespace RPGSystem
     [CreateAssetMenu(fileName = "Status", menuName = "RPGSystem/Status", order = 1)]
     public class Status : ScriptableObject
     {       
+        [Serializable]
+        public enum StatusType
+        {
+            Default,
+            Buff,
+            Debuff
+        }
+
         /// <summary>
         /// Name of the Status.
         /// </summary>
@@ -28,14 +36,7 @@ namespace RPGSystem
         [SerializeField] protected Effect[] m_onTurnStart;
         [SerializeField] protected Effect[] m_onTurnEnd;
         [SerializeField] protected Effect[] m_onClear;
-
-        [System.Serializable]
-        public enum StatusType
-        {
-            Default,
-            Buff,
-            Debuff
-        }
+        [SerializeField] protected Effect[] m_onHit; // not implemented
 
         public string statusName { get { return m_statusName;} }
         public BattleUnit user { get { return m_user; } }
@@ -46,6 +47,7 @@ namespace RPGSystem
         public Effect[] onTurnStart { get { return m_onTurnStart; } }
         public Effect[] onTurnEnd { get { return m_onTurnEnd; } }
         public Effect[] onClear { get { return m_onClear; } }
+        public Effect[] onHit { get { return m_onHit; } }
 
         public void SetUser(BattleUnit unit)
         {

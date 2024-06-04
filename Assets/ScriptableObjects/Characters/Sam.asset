@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc89bd2ca13e4e47bf0a1e6e9d34945, type: 3}
+  m_Name: Sam
+  m_EditorClassIdentifier: 
+  m_characterName: Sam Sulek
+  m_units:
+  - {fileID: 11400000, guid: 3a6eb30537d849747bb086a571d836eb, type: 2}
+  - {fileID: 11400000, guid: 4f9fac9026d14d64e98c0e31f700395e, type: 2}
+  - {fileID: 11400000, guid: f10dc4d91b838d64b80b76e6a2248d98, type: 2}
+  m_sprite: {fileID: 21300000, guid: 57cff02de59877b478951affb8cb0e9a, type: 3}
+  m_skill: 5
+  m_currentAP: 0
+  m_characterSkillSlots:
+  - m_skill: {fileID: 0}
+    m_cost: 0
+  - m_skill: {fileID: 0}
+    m_cost: 0
+  - m_skill: {fileID: 0}
+    m_cost: 0

@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace RPGSystem
 {
+    [Serializable]
     public abstract class BattleUnit
     {
         public BattleUnit() { }
@@ -55,11 +56,20 @@ namespace RPGSystem
         }
 
         // tracks stat modifiers from buffs
-        [SerializeField][Min(0)] protected Dictionary<BaseStatName, float> m_statModifiers;
+        [SerializeField][Min(0)] protected Dictionary<BaseStatName, float> m_statModifiers = new Dictionary<BaseStatName, float>();
 
         public int GetStat(BaseStatName stat)
         {
             return m_unit.GetStat(stat);
+        }
+
+        private void InitialiseStatModifiers()
+        {
+            m_statModifiers = new Dictionary<BaseStatName, float>();
+            for (int i = 0; i < GameSettings.STAT_NAMES.Length; i++)
+            {
+                m_statModifiers.Add((BaseStatName)i, 1.0f);
+            }
         }
 
         /// <summary>
@@ -68,8 +78,7 @@ namespace RPGSystem
         public virtual void ResetBattleUnit()
         {
             // clear stat buffs/debuffs
-            for (int i = 1; i < m_statModifiers.Count; i++)
-                m_statModifiers[(BaseStatName)i] = 1;
+            InitialiseStatModifiers();
 
             // reset all skill cooldowns
             foreach (SkillSlot skillSlot in m_unit.skillSlots)

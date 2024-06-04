@@ -1,5 +1,6 @@
 using RPGSystem;
 
+[System.Serializable]
 public class MyBattleUnit : BattleUnit
 {
     public MyBattleUnit() { }

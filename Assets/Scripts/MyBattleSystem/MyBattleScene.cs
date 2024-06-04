@@ -12,6 +12,7 @@ public class MyBattleScene : BattleScene
     /// <summary>
     /// Prefab for the MyBattleSceneUI.
     /// </summary>
+    [Header("Custom Variables")]
     [SerializeField] private MyBattleSceneUI m_battleSceneUIPrefab;
     private MyBattleSceneUI m_battleSceneUI;
 
@@ -34,6 +35,32 @@ public class MyBattleScene : BattleScene
         // Instantiates the MyBattleSceneUI
         m_battleSceneUI = Instantiate(m_battleSceneUIPrefab);
         m_battleSceneUI.Initialise(this);
+    }
+
+    protected override void OnTurnStart()
+    {
+        base.OnTurnStart();
+
+        for (int c = 0; c < m_characters.Length; c++)
+        {
+            for (int u = 0; u < m_characters[c].units.Length; u++)
+            {
+                BattleUnit battleUnit = GetBattleUnit(c, u);
+                StatusSlot ventStatusSlot = battleUnit.statusSlots.Find(slot => slot.status.statusName == "Vent");
+                if (ventStatusSlot != null)
+                {
+                    if (ventStatusSlot.turnTimer == 0)
+                    {
+                        MyStatus ventStatus = ventStatusSlot.status as MyStatus;
+                        foreach (Effect effect in ventStatus.onClear)
+                        {
+                            effect.DoEffect(battleUnit, ventStatus.targets);
+                        }
+                        battleUnit.RemoveStatusSlot(ventStatus);
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>

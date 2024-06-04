@@ -398,7 +398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5351f4e70ac12a144af9a5a5f7e8207e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_gameSettingsAsset: {fileID: 11400000, guid: d5ca3064d6be45447ac5a35f52551904, type: 2}
+  m_gameSettingsAsset: {fileID: 11400000, guid: 2734a382682f73243a35af5761914995, type: 2}
 --- !u!4 &1200765278
 Transform:
   m_ObjectHideFlags: 0
@@ -556,5 +556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8eed23112bda2c4bac05203a371d61f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_characters: []
+  m_characters:
+  - {fileID: 11400000, guid: 8353d87628e09034ab1eb5f9802045e5, type: 2}
+  - {fileID: 11400000, guid: 12cb17a80e4e2684ca1ec260bc347514, type: 2}
   m_battleSceneUIPrefab: {fileID: 6156308881136725141, guid: 110b139e0cf5db045b5562aa37b65717, type: 3}

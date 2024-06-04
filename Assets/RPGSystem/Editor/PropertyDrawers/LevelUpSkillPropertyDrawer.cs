@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RPGSystem
 {
-    [CustomPropertyDrawer(typeof(UnitData.LevelUpSkill))]
+    [CustomPropertyDrawer(typeof(LevelUpSkill))]
     public class LevelUpSkillsPropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

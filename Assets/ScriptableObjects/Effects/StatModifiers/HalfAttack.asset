@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e975e565481d7a4aada6750acce4abf, type: 3}
-  m_Name: Default
+  m_Script: {fileID: 11500000, guid: 713e247fa140f02419145f2a4a82f2a3, type: 3}
+  m_Name: HalfAttack
   m_EditorClassIdentifier: 
-  m_unitData: {fileID: 0}
-  m_unitNickname: Drago
-  m_skillSlots: []
-  m_totalExp: 0
-  m_expToNextLevel: 0
-  m_level: 1
+  m_value: -100
+  m_baseStat: 1

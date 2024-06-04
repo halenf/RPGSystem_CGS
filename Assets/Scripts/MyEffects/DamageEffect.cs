@@ -2,7 +2,7 @@ using RPGSystem;
 using UnityEngine;
 
 [System.Serializable]
-[CreateAssetMenu(fileName = "DamageEffect", menuName = "Effects/Damage")]
+[CreateAssetMenu(fileName = "DamageEffect", menuName = "MyGame/Effects/Damage")]
 public class DamageEffect : Effect
 {
     [SerializeField] private ValueType m_valueType;

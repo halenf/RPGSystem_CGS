@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1303a9023f5db9945bfedc9aacbdd7f8, type: 3}
+  m_Name: CrustUp
+  m_EditorClassIdentifier: 
+  m_skillName: Crust Up
+  m_turnTimer: 2
+  m_targets: 1
+  m_priority: 3
+  m_effects:
+  - {fileID: 11400000, guid: c95d720af6fbe964cbc485e316fc436c, type: 2}

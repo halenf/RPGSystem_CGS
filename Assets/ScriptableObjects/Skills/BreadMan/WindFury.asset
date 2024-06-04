@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1303a9023f5db9945bfedc9aacbdd7f8, type: 3}
+  m_Name: WindFury
+  m_EditorClassIdentifier: 
+  m_skillName: Wind Fury
+  m_turnTimer: 3
+  m_targets: 0
+  m_priority: 0
+  m_effects:
+  - {fileID: 11400000, guid: e67351eb43fd8924197d1cd4e2c78c72, type: 2}
+  - {fileID: 11400000, guid: 4b8fca4f7a5f4334f830d11479641b58, type: 2}

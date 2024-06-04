@@ -1,11 +1,9 @@
 using RPGSystem;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MyUnit", menuName = "Unit", order = 1)]
+[CreateAssetMenu(fileName = "MyUnit", menuName = "MyGame/Unit", order = 1)]
 public class MyUnit : Unit
 {
-    public MyUnit() : base() { }
-    
     private int HealthStatFormula()
     {
         return (int)(m_unitData.baseStats[(int)BaseStatName.Health].value * Mathf.Pow(1000 * (m_level + 1), 0.4f));
@@ -14,7 +12,7 @@ public class MyUnit : Unit
     private int BasicStatFormula(BaseStatName stat)
     {
         if (stat != BaseStatName.Health)
-            return (int)(30 * m_unitData.baseStats[(int)stat].value * (m_level + 1) / 100.0f + 10);
+            return (int)(30.0f * m_unitData.baseStats[(int)stat].value * (m_level + 1) / 100.0f + 10);
         else
             return HealthStatFormula();
     }
@@ -37,7 +35,7 @@ public class MyUnit : Unit
     {
         if (level == GameSettings.MAX_UNIT_LEVEL)
             return 0;
-        return (int)Mathf.Pow(level, 2.1f) + (int)(m_unitData as MyUnitData).levelCurve * level - remainder;
+        return (int)(Mathf.Pow(level, 2.1f) + (int)(m_unitData as MyUnitData).levelCurve * level) - remainder;
     }
 
     public override int GetStat(BaseStatName stat)

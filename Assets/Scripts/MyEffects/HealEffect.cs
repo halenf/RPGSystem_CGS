@@ -2,12 +2,18 @@ using RPGSystem;
 using UnityEngine;
 
 [System.Serializable]
-[CreateAssetMenu(fileName = "HealEffect", menuName = "Effects/Heal", order = 1)]
+[CreateAssetMenu(fileName = "HealEffect", menuName = "MyGame/Effects/Heal", order = 1)]
 public class HealEffect : Effect
 {
     [SerializeField] private ValueType m_valueType;
     [SerializeField] private EffectPower m_power;
 
+    /// <summary>
+    /// Value = Amount to heal.
+    /// Use Power if healing by Stat.
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="targets"></param>
     public override void DoEffect(BattleUnit user, BattleUnit[] targets)
     {
         foreach (BattleUnit target in targets)

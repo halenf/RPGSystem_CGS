@@ -9,14 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42ee17a17f18c3b4a973c72291ebc445, type: 3}
-  m_Name: DamageAtEndOfTurn
+  m_Script: {fileID: 11500000, guid: 1303a9023f5db9945bfedc9aacbdd7f8, type: 3}
+  m_Name: PropaneToss
   m_EditorClassIdentifier: 
-  m_statusName: Poison
+  m_skillName: Propane Toss
   m_turnTimer: 0
-  m_statusType: 0
-  m_onApply: []
-  m_onTurnStart: []
-  m_onTurnEnd:
-  - {fileID: 11400000, guid: b6f93b914f4a71541adec8942e6d7050, type: 2}
-  m_onClear: []
+  m_targets: 0
+  m_priority: 0
+  m_effects:
+  - {fileID: 11400000, guid: 619052049cf4cba4ba4413822cb1693c, type: 2}

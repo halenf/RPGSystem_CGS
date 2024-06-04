@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace RPGSystem
 {
-    using LevelUpSkill = UnitData.LevelUpSkill;
-
     public abstract class Unit : ScriptableObject
     {
         /// <summary>
@@ -70,23 +67,30 @@ namespace RPGSystem
             return m_unitData.levelUpSkills.Where(levelUpSkill => levelUpSkill.level == level).Select(levelUpSkill => levelUpSkill.skill).ToArray();
         }
 
-        public void InitialiseSkillSlots(UnitData unitData)
+        /// <summary>
+        /// Initialises the Unit with the Skills it should know at its current level.
+        /// </summary>
+        public void InitialiseSkillSlots()
         {
-            m_skillSlots = null;
-            int index = 0;
-            for (int i = 0; i < unitData.levelUpSkills.Length; i++)
+            // empty m_skillSlots
+            m_skillSlots = new List<SkillSlot>();
+
+            if (m_unitData.levelUpSkills.Length == 0)
             {
-                if (unitData.levelUpSkills[i].level > m_level)
-                {
-                    index = i;
-                    break;
-                }
+                Debug.LogError(m_unitData.unitName + " UnitData has no level up skills!");
+                return;
             }
-            for (int i = index - 1; i !< 0; i--)
-            {
-                if (!AddSkillSlot(unitData.levelUpSkills[i].skill))
-                    break;
-            }
+
+            // get the skills for the unit's level
+            LevelUpSkill[] skillsForLevel = m_unitData.levelUpSkills.Where(levelUpSkill => levelUpSkill.level <= m_level).
+                OrderByDescending(levelUpSkill => levelUpSkill.level).ToArray();
+
+            // calc the number of skills the unit should learn
+            int numOfSkills = GameSettings.MAX_SKILLS_PER_UNIT >= skillsForLevel.Length ? skillsForLevel.Length : GameSettings.MAX_SKILLS_PER_UNIT;
+
+            // add the skills to m_skillSlots
+            for (int i = 0; i < numOfSkills; i++)
+                AddSkillSlot(skillsForLevel[i].skill);
         }
 
         /// <summary>
@@ -168,7 +172,7 @@ namespace RPGSystem
             }
 
             // calculate the next required amount of experience
-            m_expToNextLevel = CalculateExpToNextLevel(m_level) - expRemainder;
+            m_expToNextLevel = CalculateExpToNextLevel(m_level, expRemainder);
 
             Debug.Log(displayName + " grew to level " + m_level + "!");
         }
@@ -196,10 +200,14 @@ namespace RPGSystem
         public void SetLevel(int value)
         {
             m_totalExp = 0;
-            // level cannot exceed max
-            m_level = value > GameSettings.MAX_UNIT_LEVEL ? GameSettings.MAX_UNIT_LEVEL : value;
+
+            // level cannot exceed max or be less than 1
+            if (value < 1)
+                m_level = 1;
+            else
+                m_level = value > GameSettings.MAX_UNIT_LEVEL ? GameSettings.MAX_UNIT_LEVEL : value;
             m_expToNextLevel = 0;
-            for (int i = 1; i < value; i++)
+            for (int i = 1; i < m_level; i++)
                 m_totalExp += CalculateExpToNextLevel(i);
             m_expToNextLevel = CalculateExpToNextLevel(m_level);
         }
@@ -211,7 +219,7 @@ namespace RPGSystem
         public void SetTotalExp(int value)
         {
             m_level = 1;
-            m_totalExp = value;
+            m_totalExp = 0;
             m_expToNextLevel = CalculateExpToNextLevel(m_level);
             int experience = value;
             while (experience > m_expToNextLevel)
@@ -219,9 +227,12 @@ namespace RPGSystem
                 if (m_level == GameSettings.MAX_UNIT_LEVEL)
                     break;
                 experience -= m_expToNextLevel;
+                m_totalExp += m_expToNextLevel;
                 GainExp(m_expToNextLevel);
                 LevelUp();
             }
+            m_totalExp += experience;
+            m_expToNextLevel -= experience;
         }
 
         /// <summary>
@@ -232,7 +243,7 @@ namespace RPGSystem
             //Cut any null entries from the Unit's SkillSlots.
             m_skillSlots = m_skillSlots.Where(slot => slot.skill != null).ToList();
             if (m_skillSlots.Count == 0)
-                InitialiseSkillSlots(m_unitData);
+                InitialiseSkillSlots();
         }
 
         public virtual void ResetUnit()
@@ -242,13 +253,16 @@ namespace RPGSystem
             m_totalExp = 0;
             m_expToNextLevel = 0;
             m_level = 1;
-            m_skillSlots = null;
+            m_skillSlots = new List<SkillSlot>();
         }
 
-        public bool AddSkillSlot(Skill skill = null)
+        public void AddSkillSlot(Skill skill = null)
         {
             if (m_skillSlots.Count == GameSettings.MAX_SKILLS_PER_UNIT)
-                return false;
+            {
+                Debug.LogError(displayName + " already has max (" + GameSettings.MAX_SKILLS_PER_UNIT + ") Skills.");
+                return;
+            }
 
             if (skill == null)
                 // add a new empty skill slot
@@ -256,7 +270,6 @@ namespace RPGSystem
             else
                 // add a skill slot with the predefined values
                 m_skillSlots.Add(new SkillSlot(skill));
-            return true;
         }
 
         public void RemoveSkillSlot(Skill skill = null)

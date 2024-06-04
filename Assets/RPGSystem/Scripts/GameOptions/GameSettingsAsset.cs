@@ -12,6 +12,8 @@ namespace RPGSystem
         [SerializeField] protected int m_maxSkillsPerUnit = 3;
         [SerializeField] protected float m_maxStatModifier = 2;
 
+        [SerializeField] protected string[] m_statNames = { "Max HP", "Attack", "Defence", "Speed" };
+
         [Header("Custom Settings")]
         [SerializeField] protected int m_maxSkillsPerCharacter = 3;
 
@@ -21,6 +23,7 @@ namespace RPGSystem
         public int charactersPerBattle { get { return m_charactersPerBattle; } }
         public int maxSkillsPerUnit { get { return m_maxSkillsPerUnit; } }
         public float maxStatModifier { get { return m_maxStatModifier; } }
+        public string[] statNames { get { return m_statNames; } }
 
         // custom settings accessors here
         public int maxSkillsPerCharacter { get { return m_maxSkillsPerCharacter; } }

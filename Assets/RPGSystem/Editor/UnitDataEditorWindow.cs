@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace RPGSystem
     {
         protected SerializedProperty m_unitName, m_baseStats, m_levelUpSkills;
 
-        private bool showBaseStatFoldout;
+        private bool showBaseStatFoldout = true;
 
         private void OnEnable()
         {
@@ -21,7 +22,7 @@ namespace RPGSystem
             OnGUI();
 
             // reset unit button
-            GUILayout.Space(20);
+            GUILayout.Space(10);
             if (GUILayout.Button("Reset UnitData"))
                 ((UnitData)serializedObject.targetObject).ResetUnitData();
 
@@ -36,6 +37,8 @@ namespace RPGSystem
         protected virtual void OnGUI()
         {
             EditorGUILayout.PropertyField(m_unitName);
+            if (m_unitName.stringValue == string.Empty)
+                m_unitName.stringValue = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
 
             showBaseStatFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(showBaseStatFoldout, new GUIContent("Base Stats"));
             // show base stat field

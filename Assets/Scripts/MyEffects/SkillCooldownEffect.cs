@@ -2,9 +2,14 @@ using RPGSystem;
 using UnityEngine;
 
 [System.Serializable]
-[CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "Effects/SkillCooldown", order = 1)]
+[CreateAssetMenu(fileName = "SkillCooldownEffect", menuName = "MyGame/Effects/SkillCooldown", order = 1)]
 public class SkillCooldownEffect : Effect
 {
+    /// <summary>
+    /// Value = Number of turns to add to Target's SkillSlot cooldowns.
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="targets"></param>
     public override void DoEffect(BattleUnit user, BattleUnit[] targets)
     {
         foreach (BattleUnit target in targets)

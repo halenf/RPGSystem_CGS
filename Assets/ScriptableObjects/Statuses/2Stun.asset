@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42ee17a17f18c3b4a973c72291ebc445, type: 3}
+  m_Name: 2Stun
+  m_EditorClassIdentifier: 
+  m_statusName: Stun
+  m_turnTimer: 2
+  m_statusType: 2
+  m_onApply:
+  - {fileID: 11400000, guid: 431ec8b4809eeb945abe5bf430430eb6, type: 2}
+  m_onTurnStart: []
+  m_onTurnEnd: []
+  m_onClear:
+  - {fileID: 11400000, guid: 47fae3be669ace3448d694cc3e7fe960, type: 2}
+  m_onHit: []

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1303a9023f5db9945bfedc9aacbdd7f8, type: 3}
+  m_Name: Backstab
+  m_EditorClassIdentifier: 
+  m_skillName: Backstab
+  m_turnTimer: 3
+  m_targets: 0
+  m_priority: 0
+  m_effects:
+  - {fileID: 11400000, guid: c798d2431d042534cb932d6d926f09c0, type: 2}
