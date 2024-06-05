@@ -14,14 +14,10 @@ namespace RPGSystem
         public BaseStat[] baseStats { get { return m_baseStats; } }
         public LevelUpSkill[] levelUpSkills { get { return m_levelUpSkills; } }
 
-        protected virtual void Awake()
-        {
-            InitialiseBaseStats();
-        }
-
-        private void InitialiseBaseStats()
+        public void InitialiseBaseStats()
         {
             int numOfStats = GameSettings.STAT_NAMES.Length;
+
             m_baseStats = new BaseStat[numOfStats];
             for (int i = 0; i < numOfStats; i++)
             {

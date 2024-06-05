@@ -19,6 +19,8 @@ namespace RPGSystem
 
             if (m_showTextValue)
                 m_textValueDisplay.text = currentHP.ToString() + "/" + maxHP.ToString();
+            else
+                m_textValueDisplay.text = "";
         }
     }
 }

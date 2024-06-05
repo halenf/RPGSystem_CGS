@@ -52,6 +52,7 @@ namespace RPGSystem
         public string skillName { get { return m_skillName; } }
         public int turnTimer { get { return m_turnTimer; } }
         public TargetType targets { get { return m_targets; } }
+        public SkillPriority priority { get { return m_priority; } }
         public Effect[] effects { get { return m_effects; } }
     }
 

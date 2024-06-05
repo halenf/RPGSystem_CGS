@@ -6,7 +6,7 @@ namespace RPGSystem
     [Serializable]
     public class BaseStat
     {
-        public BaseStat(BaseStatName stat)
+        public BaseStat(BaseStatName stat, int value = 0)
         {
             m_stat = stat;
             m_value = 0;

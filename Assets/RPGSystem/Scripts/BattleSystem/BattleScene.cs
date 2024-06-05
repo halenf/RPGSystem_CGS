@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 namespace RPGSystem
@@ -88,7 +89,7 @@ namespace RPGSystem
         /// <summary>
         /// Returns the total number of Units participating in the battle.
         /// </summary>
-        public int TotalUnits
+        public int totalUnits
         {
             get
             {
@@ -128,7 +129,10 @@ namespace RPGSystem
                     break;
                 case BattlePhase.TurnEnd:
                     OnTurnEnd();
-                    m_currentPhase = BattlePhase.TurnStart;
+                    if (!BattleShouldEnd())
+                        m_currentPhase = BattlePhase.TurnStart;
+                    else
+                        m_currentPhase = BattlePhase.End;
                     break;
                 case BattlePhase.End:
                     OnBattleEnd();
@@ -212,6 +216,12 @@ namespace RPGSystem
         }
 
         /// <summary>
+        /// Returns if the Battle should be over.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract bool BattleShouldEnd();
+
+        /// <summary>
         /// Runs when the battle ends.
         /// </summary>
         protected virtual void OnBattleEnd()
@@ -236,14 +246,19 @@ namespace RPGSystem
             m_turnActions.Remove(action);
         }
 
+        protected abstract List<Action> OrderTurnActions();
+
         protected virtual void ProcessActions()
         {
             // sort action list by unit speed stats
-            List<Action> orderedTurnActions = m_turnActions.OrderBy(action => action.order).ToList();
+            List<Action> orderedTurnActions = OrderTurnActions();
             
             foreach (Action action in orderedTurnActions)
             {
                 BattleUnit user = GetBattleUnit(action.userID);
+
+                if (user.currentHP <= 0)
+                    continue;
 
                 switch (action)
                 {
@@ -293,7 +308,7 @@ namespace RPGSystem
                                 else
                                     goto default;
                             case TargetType.AllEnemies:
-                                targets = new BattleUnit[TotalUnits - playersNumberOfUnits];
+                                targets = new BattleUnit[totalUnits - playersNumberOfUnits];
                                 for (int c = 1; c < m_characters.Length; c++)
                                 {
                                     for (int u = 0; u < playersNumberOfUnits; u++)
@@ -324,7 +339,7 @@ namespace RPGSystem
                                 Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on its whole party!");
                                 break;
                             case TargetType.EveryoneButSelf:
-                                targets = new BattleUnit[TotalUnits - 1];
+                                targets = new BattleUnit[totalUnits - 1];
                                 buffer = 0;
                                 for (int c = 0; c < m_characters.Length; c++)
                                 {
@@ -339,7 +354,7 @@ namespace RPGSystem
                                 Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on everyone else!");
                                 break;
                             case TargetType.Everyone:
-                                targets = new BattleUnit[TotalUnits];
+                                targets = new BattleUnit[totalUnits];
                                 for (int c = 0; c < m_characters.Length; c++)
                                 {
                                     for (int u = 0; u < m_characters[c].units.Length; u++)
@@ -358,10 +373,26 @@ namespace RPGSystem
 
                         // do the effects
                         foreach (Effect effect in user.skillSlots[attackAction.skillSlotIndex].skill.effects)
+                        {
                             effect.DoEffect(user, targets);
+                            foreach (BattleUnit target in targets)
+                                if (target.currentHP <= 0)
+                                    UnitDefeated(user, target);
+                        }
                         break;
+
+                    case SkipAction skipAction:
+                        Debug.Log(GetBattleUnit(skipAction.userID).displayName + " does nothing!");
+                        break;
+
                 }
             }
+        }
+
+        protected virtual void UnitDefeated(BattleUnit user, BattleUnit target)
+        {
+            Debug.Log(user.displayName + " defeated " + target.displayName + "!");
+            user.unit.GainExp(target.unit.GetExpWorth());
         }
     }
 }

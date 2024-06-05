@@ -11,7 +11,6 @@ namespace RPGSystem
 
         // object references
         public Transform battleUnitUIContainer;
-        [SerializeField] private APBarUI m_currentAPBar;
         [SerializeField] private TextMeshProUGUI m_characterNameDisplay;
         [SerializeField] private Image m_characterIconDisplay;
 
@@ -20,9 +19,6 @@ namespace RPGSystem
             // Set character
             m_character = character;
 
-            // let the slider access the character details
-            m_currentAPBar.Initialise(m_character);
-
             UpdateUI();
         }
 
@@ -30,9 +26,6 @@ namespace RPGSystem
         {
             // name display
             m_characterNameDisplay.text = m_character.characterName;
-            
-            // ap slider display update
-            m_currentAPBar.UpdateUI();
 
             // set icon if available
             if (m_character.sprite != null)

@@ -18,7 +18,7 @@ namespace RPGSystem
         }
 
         [SerializeField] private TextMeshProUGUI m_textDisplay;
-        [SerializeField] private Image m_spriteDisplay;
+        [SerializeField] private TextMeshProUGUI m_turnTimerDisplay;
 
         public void Initialise(MyBattleScene battleScene, BattleUnit battleUnit, int skillIndex)
         {
@@ -62,6 +62,14 @@ namespace RPGSystem
             // display skill
             if (m_textDisplay)
                 m_textDisplay.text = m_battleUnit.skillSlots[m_skillSlotIndex].skill.name;
+            if (m_turnTimerDisplay)
+            {
+                int timer = m_battleUnit.skillSlots[m_skillSlotIndex].turnTimer;
+                if (timer == 0)
+                    m_turnTimerDisplay.text = "";
+                else
+                    m_turnTimerDisplay.text = timer.ToString();
+            }
         }
     }
 }

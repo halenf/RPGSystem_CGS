@@ -15,6 +15,10 @@ MonoBehaviour:
   m_unitData: {fileID: 11400000, guid: 72d7de8f7851de04ba85b749d1b024bd, type: 2}
   m_unitNickname: Drago
   m_skillSlots:
+  - m_skill: {fileID: 11400000, guid: 1c2dcb5ae528e094c9521af57afba456, type: 2}
+    m_turnTimer: 0
+  - m_skill: {fileID: 11400000, guid: 4fa055e0735064d4c90e33763331413a, type: 2}
+    m_turnTimer: 0
   - m_skill: {fileID: 11400000, guid: 27ed47418dedafa458460e92bbc078c1, type: 2}
     m_turnTimer: 0
   m_totalExp: 10242

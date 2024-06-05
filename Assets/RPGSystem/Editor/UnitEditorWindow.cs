@@ -23,7 +23,7 @@ namespace RPGSystem
             // reset unit button
             GUILayout.Space(10);
             if (GUILayout.Button("Reset Unit"))
-                ((Unit)serializedObject.targetObject).ResetUnit();
+                (target as Unit).ResetUnit();
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -40,8 +40,11 @@ namespace RPGSystem
             EditorGUILayout.PropertyField(m_unitData, GUIContent.none);
             EditorGUILayout.EndHorizontal();
 
+            //Unit unit = (Unit)serializedObject.targetObject;
+            Unit unit = target as Unit;
+
             // don't show the rest of the ui if the unit has no unit data
-            if (((Unit)serializedObject.targetObject).unitData != null)
+            if (unit.unitData != null)
             {
                 // set unit name, set default to unit type name
                 EditorGUILayout.BeginHorizontal();
@@ -50,7 +53,7 @@ namespace RPGSystem
                 EditorGUILayout.EndHorizontal();
                 if (m_unitNickname.stringValue == string.Empty)
                 {
-                    m_unitNickname.stringValue = ((Unit)serializedObject.targetObject).unitData.unitName;
+                    m_unitNickname.stringValue = unit.unitData.unitName;
                 }
 
                 // experience/level display
@@ -58,15 +61,15 @@ namespace RPGSystem
                 EditorGUILayout.LabelField(new GUIContent("Level", "This unit's curent level."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.08f));
                 int inputLevel = EditorGUILayout.IntField(m_level.intValue, GUILayout.Width(Screen.width * 0.1f));
                 if (inputLevel != m_level.intValue)
-                    ((Unit)serializedObject.targetObject).SetLevel(inputLevel);
+                    unit.SetLevel(inputLevel);
 
                 EditorGUILayout.LabelField(new GUIContent("Total Exp", "This unit's total experience."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.13f));
                 int inputExp = EditorGUILayout.IntField(m_totalExp.intValue, GUILayout.Width(Screen.width * 0.18f));
                 if (inputExp != m_totalExp.intValue)
-                    ((Unit)serializedObject.targetObject).SetTotalExp(inputExp);
+                    unit.SetTotalExp(inputExp);
 
                 // If the unit is at max level, don't show exp to next level
-                if (((Unit)target).level != GameSettings.MAX_UNIT_LEVEL)
+                if (unit.level != GameSettings.MAX_UNIT_LEVEL)
                 {
                     EditorGUILayout.LabelField(new GUIContent("Exp to Next Level", "The amount of exp this unit needs to level up."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.235f));
                     m_expToNextLevel.intValue = EditorGUILayout.IntField(m_expToNextLevel.intValue, GUILayout.Width(Screen.width * 0.16f));
@@ -78,7 +81,7 @@ namespace RPGSystem
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < GameSettings.STAT_NAMES.Length; i++)
                 {
-                    EditorGUILayout.LabelField(new GUIContent(GameSettings.STAT_NAMES[i] + ": " + ((Unit)serializedObject.targetObject).GetStat((BaseStatName)i)));
+                    EditorGUILayout.LabelField(new GUIContent(GameSettings.STAT_NAMES[i] + ": " + unit.GetStat((BaseStatName)i)));
                 }
                 EditorGUI.indentLevel--;
 
@@ -86,14 +89,14 @@ namespace RPGSystem
                 // if there aren't any SkillSlots, then initialise the Unit with its default Skills at its current level.
                 if (m_skillSlots.arraySize == 0)
                 {
-                    ((Unit)serializedObject.targetObject).InitialiseSkillSlots();
+                    unit.InitialiseSkillSlots();
                 }
 
                 EditorGUILayout.PropertyField(m_skillSlots, new GUIContent("Skill Slots", "The unit's skill slots."));
 
                 // Manually initialise skill slots
                 if (GUILayout.Button("Re-initialise Skill Slots"))
-                    ((Unit)serializedObject.targetObject).InitialiseSkillSlots();
+                    unit.InitialiseSkillSlots();
             }
         }
 

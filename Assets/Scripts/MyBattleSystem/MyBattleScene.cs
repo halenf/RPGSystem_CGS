@@ -1,4 +1,6 @@
 using RPGSystem;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static RPGSystem.Skill;
 
@@ -72,7 +74,16 @@ public class MyBattleScene : BattleScene
     protected override bool WaitForActions()
     {
         // if null, create new from default constructor
-        m_currentAction ??= new AttackAction();
+        if (m_currentAction == null)
+        {
+            MyBattleUnit battleUnit = GetBattleUnit(0, m_turnActions.Count) as MyBattleUnit;
+            if (battleUnit.triggeredEffects.HasFlag(TriggeredEffect.Stun) || battleUnit.allSkillsOnCooldown)
+            {
+                m_turnActions.Add(new SkipAction(GetBattleUnit(0, m_turnActions.Count).battleID));
+            }
+            else
+                m_currentAction = new AttackAction();
+        }
 
         switch (m_currentAction)
         {
@@ -98,7 +109,7 @@ public class MyBattleScene : BattleScene
                             for (int u = 0; u < m_characters[0].units.Length; u++)
                             {
                                 // if the turn actions already contains that unit's action, then don't make it available as a user
-                                if (m_turnActions.Find(action => (action as AttackAction).userID == new BattleUnitID(0, u)) == null)
+                                if (m_turnActions.Find(action => action.userID == new BattleUnitID(0, u)) == null)
                                     m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableUser();
                             }
                             break;
@@ -108,8 +119,11 @@ public class MyBattleScene : BattleScene
                             // activate the skill slots for the selected unit
                             for (int s = 0; s < GetBattleUnit(0, attackAction.userID.battleUnit).skillSlots.Count; s++)
                             {
-                                int skillIndex = attackAction.userID.battleUnit * GameSettings.MAX_SKILLS_PER_UNIT + s;
-                                m_battleSceneUI.skillSlotUIArray[skillIndex].SetAsAvailableSkill(true);
+                                if (GetBattleUnit(0, attackAction.userID.battleUnit).skillSlots[s].turnTimer == 0)
+                                {
+                                    int skillIndex = attackAction.userID.battleUnit * GameSettings.MAX_SKILLS_PER_UNIT + s;
+                                    m_battleSceneUI.skillSlotUIArray[skillIndex].SetAsAvailableSkill(true);
+                                }
                             }
                             break;
                         // if has user and skill, but no targets
@@ -121,7 +135,10 @@ public class MyBattleScene : BattleScene
                                 case TargetType.SingleParty:
                                     // activate the parties units to be selected as targets
                                     for (int u = 0; u < m_characters[0].units.Length; u++)
-                                        m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableTarget();
+                                    {
+                                        if ((GetBattleUnit(0, u) as MyBattleUnit).alive)
+                                            m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableTarget();
+                                    }
                                     break;
                                 case TargetType.Self:
                                 case TargetType.EveryoneButSelf:
@@ -146,7 +163,8 @@ public class MyBattleScene : BattleScene
                                     for (int c = 1; c < m_characters.Length; c++)
                                     {
                                         for (int u = 0; u < m_characters[c].units.Length; u++)
-                                            m_battleSceneUI.battleUnitUIArray[c * GameSettings.UNITS_PER_PARTY + u].SetAsAvailableTarget();
+                                            if ((GetBattleUnit(0, u) as MyBattleUnit).alive)
+                                                m_battleSceneUI.battleUnitUIArray[c * GameSettings.UNITS_PER_PARTY + u].SetAsAvailableTarget();
                                     }
                                     break;
                             }
@@ -179,7 +197,7 @@ public class MyBattleScene : BattleScene
 
     public void AddAttackAction(BattleUnitID userID, int skillSlotIndex, BattleUnitID targetID)
     {
-        m_turnActions.Add(new AttackAction(userID, skillSlotIndex, targetID, (GetBattleUnit(userID) as MyBattleUnit).speed));
+        m_turnActions.Add(new AttackAction(userID, skillSlotIndex, targetID));
     }
 
     public void RemoveAttackAction(BattleUnitID userID)
@@ -202,5 +220,40 @@ public class MyBattleScene : BattleScene
     {
         if (m_currentAction.GetType() == typeof(AttackAction))
             (m_currentAction as AttackAction).SetTarget(targetID);
+    }
+
+    protected override List<Action> OrderTurnActions()
+    {
+        List<SkipAction> skip = m_turnActions.OfType<SkipAction>().ToList();
+        List<AttackAction> attacks = m_turnActions.OfType<AttackAction>().ToList();
+
+        skip = skip.OrderByDescending(skip => GetBattleUnit(skip.userID).GetStat(BaseStatName.Agility)).ToList();
+        attacks = attacks.OrderByDescending(attack => (int)GetBattleUnit(attack.userID).skillSlots[attack.skillSlotIndex].skill.priority).
+            ThenByDescending(attack => GetBattleUnit(attack.userID).GetStat(BaseStatName.Agility)).ToList();
+
+        List<Action> result = skip.Concat<Action>(attacks).ToList();
+
+        return result;
+    }
+
+    protected override bool BattleShouldEnd()
+    {
+        int numOfCharactersAlive = 0;
+        for (int c = 0; c < m_characters.Length; c++)
+        {
+            for (int u = 0; u < m_characters[(c)].units.Length; u++)
+            {
+                if (m_characters[c].units[u].currentHP > 0)
+                {
+                    numOfCharactersAlive++;
+                    break;
+                }
+            }
+        }
+
+        if (numOfCharactersAlive < 2)
+            return true;
+        else
+            return false;
     }
 }

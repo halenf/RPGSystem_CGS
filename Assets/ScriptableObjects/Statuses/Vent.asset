@@ -17,7 +17,7 @@ MonoBehaviour:
   m_statusType: 1
   m_onApply:
   - {fileID: 11400000, guid: 380a4920819720a4c92f0c92d9410e2a, type: 2}
-  - {fileID: 11400000, guid: 046e814e7c7a520488bd0d8505fb1cb0, type: 2}
+  - {fileID: 11400000, guid: a437218ddf5aee345bbbdf44b307bd07, type: 2}
   m_onTurnStart: []
   m_onTurnEnd: []
   m_onClear:

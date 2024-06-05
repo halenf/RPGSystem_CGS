@@ -1,14 +1,21 @@
 using RPGSystem;
 
+public class SkipAction : Action
+{
+    public SkipAction(BattleUnitID user)
+    {
+        m_userID = user;
+    }
+}
+
 public class AttackAction : Action
 {
     public AttackAction() { isDirty = true; }
-    public AttackAction(BattleUnitID user, int skillIndex, BattleUnitID target, int order)
+    public AttackAction(BattleUnitID user, int skillIndex, BattleUnitID target)
     {
         m_userID = user;
         m_skillSlotIndex = skillIndex;
         m_targetID = target;
-        m_order = order;
     }
 
     protected int m_skillSlotIndex;

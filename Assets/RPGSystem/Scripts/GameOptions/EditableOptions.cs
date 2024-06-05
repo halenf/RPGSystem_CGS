@@ -48,6 +48,7 @@ namespace RPGSystem
     }
 
     // The names of the Base Stats in the game
+    [Serializable]
     public enum BaseStatName
     {
         Health = 0,

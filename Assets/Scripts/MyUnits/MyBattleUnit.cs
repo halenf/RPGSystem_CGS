@@ -1,4 +1,8 @@
 using RPGSystem;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 [System.Serializable]
 public class MyBattleUnit : BattleUnit
@@ -18,15 +22,36 @@ public class MyBattleUnit : BattleUnit
     }
     public int attack
     {
-        get { return (int)(m_unit.GetStat(BaseStatName.Strength) * m_statModifiers[BaseStatName.Strength]); }
+        get { return m_unit.GetStat(BaseStatName.Strength); }
     }
     public int defence
     {
-        get { return (int)(m_unit.GetStat(BaseStatName.Fortitude) * m_statModifiers[BaseStatName.Fortitude]); }
+        get { return m_unit.GetStat(BaseStatName.Fortitude); }
     }
     public int speed
     {
-        get { return (int)(m_unit.GetStat(BaseStatName.Agility) * m_statModifiers[BaseStatName.Agility]); }
+        get { return m_unit.GetStat(BaseStatName.Agility); }
+    }
+
+    public bool allSkillsOnCooldown
+    {
+        get
+        {
+            return m_unit.skillSlots.TrueForAll(slot => slot.turnTimer > 0);
+        }
+    } 
+
+    public bool alive { get { return currentHP > 0; } }
+
+    public int GetStat(string stat)
+    {
+        if (GameSettings.STAT_NAMES.Contains(stat))
+        {
+            return GetStat((BaseStatName)Array.IndexOf(GameSettings.STAT_NAMES, stat));
+        }
+        else
+            Debug.LogError("The Stat \"" + stat + "\" does not exist!");
+        return 0;
     }
 
     public override void ResetBattleUnit()

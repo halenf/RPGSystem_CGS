@@ -44,6 +44,9 @@ namespace RPGSystem
             // show base stat field
             if (showBaseStatFoldout)
             {
+                if (m_baseStats.arraySize == 0)
+                    (target as UnitData).InitialiseBaseStats();
+
                 int width = Screen.width;
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < m_baseStats.arraySize; i++)
