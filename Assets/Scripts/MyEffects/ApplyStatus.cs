@@ -7,13 +7,10 @@ public class ApplyStatus : Effect
 {
     [SerializeField] private Status m_status;
     
-    public override void DoEffect(BattleUnit user, BattleUnit[] targets)
+    public override void DoEffect(BattleUnit user, BattleUnit target)
     {
         m_status.SetUser(user);
-        foreach (BattleUnit target in targets)
-        {
-            target.GainStatus(m_status);
-            Debug.Log(target.displayName + " gained " + m_status.statusName + " for " + m_status.turnTimer + " turns!");
-        }
+        target.GainStatus(m_status);
+        Debug.Log(target.displayName + " gained " + m_status.statusName + " for " + m_status.turnTimer + " turns!");
     }
 }

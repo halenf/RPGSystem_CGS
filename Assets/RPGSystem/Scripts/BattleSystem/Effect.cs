@@ -25,7 +25,7 @@ namespace RPGSystem
         [SerializeField] protected int m_value;
         public int value { get { return m_value; } }
 
-        public abstract void DoEffect(BattleUnit user, BattleUnit[] targets);
+        public abstract void DoEffect(BattleUnit user, BattleUnit target);
     }
 
 }

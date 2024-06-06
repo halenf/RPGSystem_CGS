@@ -99,11 +99,20 @@ namespace RPGSystem
         /// <param name="damage">Amount of HP lost.</param>
         public bool TakeDamage(int damage)
         {
+            if (m_triggeredEffects.HasFlag(TriggeredEffect.Invulnerable))
+            {
+                Debug.Log(displayName + "' is Invulnerable and blocks the instance of damage!");
+                return false;
+            }
+
             // reduce HP
             m_unit.currentHP -= damage;
 
             if (m_unit.currentHP <= 0)
+            {
+                m_unit.currentHP = 0;
                 return true;
+            }
             return false;
         }
 
@@ -113,7 +122,7 @@ namespace RPGSystem
         /// <param name="value">Amount of HP to restore.</param>
         public void RestoreHealth(int value)
         {
-            // increase HP, don't allow unit to have HP over the maximum
+            // increase HP
             currentHP += value;
         }
 

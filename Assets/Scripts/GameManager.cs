@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(this);
         }
 
-        // Load the game settings
         LoadGameSettings();
     }
 

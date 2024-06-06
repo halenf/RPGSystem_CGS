@@ -17,10 +17,8 @@ MonoBehaviour:
   m_skillSlots:
   - m_skill: {fileID: 11400000, guid: a42194a13944ebc459508a83c7bf3bf3, type: 2}
     m_turnTimer: 0
-  - m_skill: {fileID: 11400000, guid: a2089b458cd0bab439da993c896c84c2, type: 2}
-    m_turnTimer: 3
   - m_skill: {fileID: 11400000, guid: fe3201511ce77e549b3df272ca68e972, type: 2}
-    m_turnTimer: 2
-  m_totalExp: 8667
-  m_expToNextLevel: 1975
-  m_level: 10
+    m_turnTimer: 0
+  m_totalExp: 5764
+  m_expToNextLevel: 1678
+  m_level: 8

@@ -6,6 +6,10 @@ public class SkipAction : Action
     {
         m_userID = user;
     }
+    public SkipAction(int character, int user)
+    {
+        m_userID = new BattleUnitID(character, user);
+    }
 }
 
 public class AttackAction : Action
@@ -16,6 +20,7 @@ public class AttackAction : Action
         m_userID = user;
         m_skillSlotIndex = skillIndex;
         m_targetID = target;
+        isDirty = true;
     }
 
     protected int m_skillSlotIndex;

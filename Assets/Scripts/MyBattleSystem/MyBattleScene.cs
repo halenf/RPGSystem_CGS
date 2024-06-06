@@ -12,16 +12,40 @@ public class MyBattleScene : BattleScene
     private Action m_currentAction;
 
     /// <summary>
+    /// If a battle is currently in progress
+    /// </summary>
+    private bool m_isPlaying;
+    public bool isPlaying { get { return m_isPlaying; } }
+
+    /// <summary>
     /// Prefab for the MyBattleSceneUI.
     /// </summary>
     [Header("Custom Variables")]
     [SerializeField] private MyBattleSceneUI m_battleSceneUIPrefab;
     private MyBattleSceneUI m_battleSceneUI;
 
+    new private void Start()
+    {
+        base.Start();
+        m_isPlaying = true;
+    }
+
+    public void SetCharacters(MyCharacter[] characters)
+    {
+        m_characters = characters;
+    }
+
     protected override void OnBattleStart()
     {
         base.OnBattleStart();
 
+        // Instantiates the MyBattleSceneUI
+        m_battleSceneUI = Instantiate(m_battleSceneUIPrefab);
+        m_battleSceneUI.Initialise(this);
+    }
+
+    protected override void InitialiseBattleUnits()
+    {
         m_battleUnits = new MyBattleUnit[m_characters.Length * GameSettings.UNITS_PER_PARTY];
         for (int c = 0; c < m_characters.Length; c++)
         {
@@ -33,10 +57,6 @@ public class MyBattleScene : BattleScene
                 Debug.Log(m_characters[c].characterName + " sends out " + GetBattleUnit(c, u).displayName + "!");
             }
         }
-
-        // Instantiates the MyBattleSceneUI
-        m_battleSceneUI = Instantiate(m_battleSceneUIPrefab);
-        m_battleSceneUI.Initialise(this);
     }
 
     protected override void OnTurnStart()
@@ -54,11 +74,10 @@ public class MyBattleScene : BattleScene
                     if (ventStatusSlot.turnTimer == 0)
                     {
                         MyStatus ventStatus = ventStatusSlot.status as MyStatus;
-                        foreach (Effect effect in ventStatus.onClear)
-                        {
-                            effect.DoEffect(battleUnit, ventStatus.targets);
-                        }
+                        foreach (BattleUnit target in ventStatus.targets)
+                            ventStatusSlot.OnClear(target);
                         battleUnit.RemoveStatusSlot(ventStatus);
+                        Debug.Log(battleUnit.displayName + " lost Vent!");
                     }
                 }
             }
@@ -76,15 +95,22 @@ public class MyBattleScene : BattleScene
         // if null, create new from default constructor
         if (m_currentAction == null)
         {
-            MyBattleUnit battleUnit = GetBattleUnit(0, m_turnActions.Count) as MyBattleUnit;
-            if (battleUnit.triggeredEffects.HasFlag(TriggeredEffect.Stun) || battleUnit.allSkillsOnCooldown)
+            // check if a unit should skip its turn
+            for (int u = 0; u < m_characters[0].units.Length; u++)
             {
-                m_turnActions.Add(new SkipAction(GetBattleUnit(0, m_turnActions.Count).battleID));
+                MyBattleUnit battleUnit = GetBattleUnit(0, u) as MyBattleUnit;
+                if (battleUnit.triggeredEffects.HasFlag(TriggeredEffect.Stun) || battleUnit.allSkillsOnCooldown)
+                {
+                    m_turnActions.Add(new SkipAction(new BattleUnitID(0, u)));
+                }
             }
-            else
+
+            // if all units should skip their turn, dont create an attack action
+            if (m_turnActions.Count != m_characters[0].units.Length)
                 m_currentAction = new AttackAction();
         }
 
+        // logic for building the current action from UI
         switch (m_currentAction)
         {
             case AttackAction attackAction:
@@ -128,11 +154,11 @@ public class MyBattleScene : BattleScene
                             break;
                         // if has user and skill, but no targets
                         case 2:
-                            Debug.Log("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
                             // activate the units based on the TargetType of the skill
                             switch (GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.targets)
                             {
                                 case TargetType.SingleParty:
+                                    Debug.Log("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
                                     // activate the parties units to be selected as targets
                                     for (int u = 0; u < m_characters[0].units.Length; u++)
                                     {
@@ -159,6 +185,7 @@ public class MyBattleScene : BattleScene
                                     goto case TargetType.SingleEnemy;
                                 case TargetType.SingleEnemy:
                                 case TargetType.AdjacentEnemies:
+                                    Debug.Log("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
                                     // activate all enemy units
                                     for (int c = 1; c < m_characters.Length; c++)
                                     {
@@ -186,11 +213,17 @@ public class MyBattleScene : BattleScene
                     }
                 }
                 break;
+
+            case null:
+                break;
         }
 
         // if all the party's actions are completed, return true
         if (m_turnActions.Count == m_characters[0].units.Length)
+        {
+            GetAIActions();
             return true;
+        }
 
         return false;
     }
@@ -236,12 +269,69 @@ public class MyBattleScene : BattleScene
         return result;
     }
 
+    protected override Character GetLastCharacter()
+    {
+        for (int c = 0; c < m_characters.Length; c++)
+        {
+            if ((m_characters[c] as MyCharacter).hasUnitsForBattle)
+               return m_characters[c];
+        }
+        return null;
+    }
+
+    private void GetAIActions()
+    {
+        for (int c = 1; c < m_characters.Length; c++)
+        {
+            for (int u = 0; u < m_characters[c].units.Length; u++)
+            {
+                MyBattleUnit battleUnit = GetBattleUnit(c, u) as MyBattleUnit;
+                if (battleUnit.allSkillsOnCooldown)
+                {
+                    m_turnActions.Add(new SkipAction(c, u));
+                }
+                else
+                {
+                    // AI choose target character
+                    int targetCharacter = Random.Range(0, m_characters.Length);
+                    while (targetCharacter == c || !(m_characters[targetCharacter] as MyCharacter).hasUnitsForBattle)
+                    {
+                        targetCharacter++;
+                        if (targetCharacter == m_characters.Length)
+                            targetCharacter = 0;
+                    }
+
+                    // AI choose target unit
+                    int targetUnit = Random.Range(0, m_characters[targetCharacter].units.Length);
+                    while (m_characters[targetCharacter].units[targetUnit].currentHP <= 0)
+                    {
+                        targetUnit++;
+                        if (targetUnit == m_characters[targetCharacter].units.Length)
+                            targetUnit = 0;
+                    }
+                    
+                    // ai choose skill to use
+                    int skillIndex = Random.Range(0, battleUnit.skillSlots.Count);
+                    while (battleUnit.skillSlots[skillIndex].turnTimer != 0)
+                    {
+                        skillIndex++;
+                        if (skillIndex == battleUnit.skillSlots.Count)
+                            skillIndex = 0;
+                    }
+
+                    // add the attack action
+                    m_turnActions.Add(new AttackAction(new BattleUnitID(c, u), skillIndex, new BattleUnitID(targetCharacter, targetUnit)));
+                }
+            }
+        }
+    }
+
     protected override bool BattleShouldEnd()
     {
         int numOfCharactersAlive = 0;
         for (int c = 0; c < m_characters.Length; c++)
         {
-            for (int u = 0; u < m_characters[(c)].units.Length; u++)
+            for (int u = 0; u < m_characters[c].units.Length; u++)
             {
                 if (m_characters[c].units[u].currentHP > 0)
                 {
@@ -255,5 +345,11 @@ public class MyBattleScene : BattleScene
             return true;
         else
             return false;
+    }
+
+    protected override void OnBattleEnd()
+    {
+        base.OnBattleEnd();
+        m_isPlaying = false;
     }
 }

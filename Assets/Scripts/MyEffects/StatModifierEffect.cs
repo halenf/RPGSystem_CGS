@@ -13,15 +13,12 @@ public class StatModifierEffect : Effect
     /// </summary>
     /// <param name="user"></param>
     /// <param name="targets"></param>
-    public override void DoEffect(BattleUnit user, BattleUnit[] targets)
+    public override void DoEffect(BattleUnit user, BattleUnit target)
     {
         if (m_baseStat == BaseStatName.Health)
             return;
 
-        foreach (BattleUnit target in targets)
-        {
-            target.ApplyStatModifier(m_baseStat, m_value);
-            Debug.Log(target.displayName + "'s " + m_baseStat.ToString() + " is " + (m_value > 0 ? "raised" : "dropped") + " by " + m_value + "%!");
-        }
+        target.ApplyStatModifier(m_baseStat, m_value);
+        Debug.Log(target.displayName + "'s " + GameSettings.STAT_NAMES[(int)m_baseStat] + " is " + (m_value > 0 ? "raised" : "dropped") + " by " + m_value + "%!");
     }
 }

@@ -92,7 +92,15 @@ namespace RPGSystem
         {
             foreach (Effect effect in m_status.onApply)
             {
-                effect.DoEffect(m_status.user, new BattleUnit[] { target });
+                effect.DoEffect(m_status.user, target);
+            }
+        }
+
+        public void OnTurnStart(BattleUnit target)
+        {
+            foreach (Effect effect in m_status.onTurnStart)
+            {
+                effect.DoEffect(m_status.user, target);
             }
         }
 
@@ -104,7 +112,7 @@ namespace RPGSystem
         {
             foreach (Effect effect in m_status.onTurnEnd)
             {
-                effect.DoEffect(m_status.user, new BattleUnit[] { target });
+                effect.DoEffect(m_status.user, target);
             }
         }
 
@@ -115,15 +123,21 @@ namespace RPGSystem
         public void OnClear(BattleUnit target)
         {
             // if clear effects on this targets should not fail
-            if ((target.triggeredEffects & TriggeredEffect.FailStatusClearEffects) == 0)
+            if (!target.triggeredEffects.HasFlag(TriggeredEffect.FailStatusClearEffects))
             {
                 foreach (Effect effect in m_status.onClear)
                 {
-                    effect.DoEffect(m_status.user, new BattleUnit[] { target });
+                    effect.DoEffect(m_status.user, target);
                 }
             }
-            else
-                target.EnableTriggeredEffect(TriggeredEffect.FailStatusClearEffects);
+        }
+
+        public void OnHit(BattleUnit target)
+        {
+            foreach (Effect effect in m_status.onHit)
+            {
+                effect.DoEffect(m_status.user, target);
+            }
         }
 
         public void ChangeTurnTimer(int value)

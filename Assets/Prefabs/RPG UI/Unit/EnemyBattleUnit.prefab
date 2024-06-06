@@ -565,6 +565,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8750684346324755768, guid: 5ed7b1d808486614693c466f510be2dc, type: 3}
+      propertyPath: m_showTextValue
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8758211130432657426, guid: 5ed7b1d808486614693c466f510be2dc, type: 3}
       propertyPath: m_Name
       value: Health Bar

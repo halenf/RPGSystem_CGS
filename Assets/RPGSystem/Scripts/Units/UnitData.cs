@@ -7,7 +7,7 @@ namespace RPGSystem
         // unit name
         [SerializeField] protected string m_unitName;
         // values that represent how the unit will grow
-        [SerializeField] protected BaseStat[] m_baseStats = new BaseStat[GameSettings.STAT_NAMES.Length];
+        [SerializeField] protected BaseStat[] m_baseStats;
         // array of skills a unit can learn as it levels up
         [SerializeField] protected LevelUpSkill[] m_levelUpSkills;
         public string unitName { get { return m_unitName; } }

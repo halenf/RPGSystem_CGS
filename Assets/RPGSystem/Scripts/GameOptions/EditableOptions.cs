@@ -6,15 +6,14 @@ namespace RPGSystem
     public static class GameSettings
     {       
         // core settings here
-        public static int UNITS_PER_PARTY = 3;
-        public static int MAX_UNIT_LEVEL = 100;
-        public static int CHARACTERS_PER_BATTLE = 2;
-        public static int MAX_SKILLS_PER_UNIT = 3;
-        public static float MAX_STAT_MODIFIER = 2;
-        public static string[] STAT_NAMES = { "Max HP", "Attack", "Defence", "Speed" };
+        public static int UNITS_PER_PARTY;
+        public static int MAX_UNIT_LEVEL;
+        public static int CHARACTERS_PER_BATTLE;
+        public static int MAX_SKILLS_PER_UNIT;
+        public static float MAX_STAT_MODIFIER;
+        public static string[] STAT_NAMES;
 
         // custom settings go here
-        public static int MAX_SKILLS_PER_CHARACTER = 3;
 
         public static void LoadSettingsFromSO(GameSettingsAsset set)
         {
@@ -26,7 +25,6 @@ namespace RPGSystem
             STAT_NAMES = set.statNames;
 
             // set custom settings here
-            MAX_SKILLS_PER_CHARACTER = set.maxSkillsPerCharacter;
 
             Debug.Log("Successfully loaded " + set.name + " into GameSettings.");
         }

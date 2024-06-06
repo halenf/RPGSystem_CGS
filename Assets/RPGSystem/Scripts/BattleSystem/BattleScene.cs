@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 namespace RPGSystem
@@ -141,17 +138,17 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Runs when the battle starts. Override to add your own method of initialising m_battleUnits.
+        /// Runs when the battle starts.
         /// </summary>
         protected virtual void OnBattleStart()
         {
+            // Set turn number to 0
+            m_turnNumber = 0;
+            
             // only handles two characters for now
             if (m_characters.Length < 2)
             {
                 Debug.LogError("Battle needs at least 2 Characters to run!");
-#if UNITY_EDITOR
-                EditorApplication.isPlaying = false;
-#endif
             }
 
             Debug.Log("Battle started between " + m_characters[0].characterName + " and " + m_characters[1].characterName + "!");
@@ -165,26 +162,34 @@ namespace RPGSystem
                     unit.InitialiseForBattle();
                 }
             }
+
+            InitialiseBattleUnits();
         }
+
+        protected abstract void InitialiseBattleUnits();
 
         /// <summary>
         /// Runs when the turn starts.
         /// </summary>
         protected virtual void OnTurnStart()
         {
+            m_turnNumber++;
+            Debug.Log("Turn " + (m_turnNumber).ToString());
+            
             // check OnTurnStart Status Effects
             for (int c = 0; c < m_characters.Length; c++)
             {
                 for (int u = 0; u < m_characters[c].units.Length; u++)
                 {
                     BattleUnit battleUnit = GetBattleUnit(c, u);
-                    if (battleUnit.statusSlots.Count > 0)
+                    foreach (StatusSlot slot in battleUnit.statusSlots)
                     {
-                        foreach (StatusSlot slot in battleUnit.statusSlots)
+                        if (slot.status.onTurnStart.Length > 0)
                         {
-                            Debug.Log(battleUnit.displayName + "'s " + slot.status.statusName);
-                            foreach (Effect effect in slot.status.onTurnStart)
-                                effect.DoEffect(slot.status.user, new BattleUnit[] { battleUnit });
+                            Debug.Log(battleUnit.displayName + "'s " + slot.status.statusName + " activates!");
+                            slot.OnTurnStart(battleUnit);
+                            if (battleUnit.currentHP == 0)
+                                UnitDefeated(slot.status.user, battleUnit, slot.status.statusName);
                         }
                     }
                 }
@@ -201,15 +206,34 @@ namespace RPGSystem
             {
                 for (int u = 0; u < m_characters[c].units.Length; u++)
                 {
+                    // check for on turn end status effects
                     BattleUnit battleUnit = GetBattleUnit(c, u);
-                    if (battleUnit.statusSlots.Count > 0)
+                    List<StatusSlot> slotsToRemove = new List<StatusSlot>();
+                    foreach (StatusSlot slot in battleUnit.statusSlots)
                     {
-                        foreach (StatusSlot slot in battleUnit.statusSlots)
+                        // status on turn end effects
+                        if (slot.status.onTurnEnd.Length > 0)
                         {
-                            Debug.Log(battleUnit.displayName + "'s " + slot.status.statusName);
-                            foreach (Effect effect in slot.status.onTurnEnd)
-                                effect.DoEffect(slot.status.user, new BattleUnit[] { battleUnit });
+                            Debug.Log(battleUnit.displayName + "'s " + slot.status.statusName + " activates!");
+                            slot.OnTurnEnd(battleUnit);
+                            if (battleUnit.currentHP == 0)
+                                UnitDefeated(slot.status.user, battleUnit, slot.status.statusName);
                         }
+
+                        // lower timer of status
+                        slot.ChangeTurnTimer(-1);
+
+                        // status on clear effects
+                        if (slot.turnTimer == 0)
+                            slotsToRemove.Add(slot);
+                    }
+
+                    // clear any slots that need to be cleared
+                    foreach (StatusSlot slot in slotsToRemove)
+                    {
+                        Debug.Log(slot.status.statusName + " is cleared!");
+                        slot.OnClear(battleUnit);
+                        battleUnit.RemoveStatusSlot(slot.status);
                     }
                 }
             }
@@ -226,14 +250,24 @@ namespace RPGSystem
         /// </summary>
         protected virtual void OnBattleEnd()
         {
-
+            Character lastCharacter = GetLastCharacter();
+            if (lastCharacter != null)
+            {
+                Debug.Log(lastCharacter.characterName + " wins the battle!");
+            }
+            else
+            {
+                Debug.Log("It's a draw!");
+            }
         }
+
+        protected abstract Character GetLastCharacter();
 
         /// <summary>
         /// Override this method to determine how your BattleScene will accept actions.
         /// Return true when the turn is ready to be processed.
         /// </summary>
-        /// <returns>If battle is ready to progress.</returns>
+        /// <returns>If battle should progress to next phase.</returns>
         protected abstract bool WaitForActions();
 
         public void AddAction(Action action)
@@ -316,7 +350,7 @@ namespace RPGSystem
                                         targets[u] = GetBattleUnit(targetCharacter, u);
                                     }
                                 }
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on the entire enemy party!");
+                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on all enemies!");
                                 break;
                             case TargetType.WholePartyButSelf:
                                 targets = new BattleUnit[playersNumberOfUnits - 1];
@@ -374,10 +408,16 @@ namespace RPGSystem
                         // do the effects
                         foreach (Effect effect in user.skillSlots[attackAction.skillSlotIndex].skill.effects)
                         {
-                            effect.DoEffect(user, targets);
                             foreach (BattleUnit target in targets)
-                                if (target.currentHP <= 0)
-                                    UnitDefeated(user, target);
+                            {
+                                if (target.currentHP > 0)
+                                {
+                                    effect.DoEffect(user, target);
+                                    if (target.currentHP <= 0)
+                                        UnitDefeated(user, target);
+                                }
+                                Debug.Log("But there was no target!");
+                            }
                         }
                         break;
 
@@ -389,9 +429,13 @@ namespace RPGSystem
             }
         }
 
-        protected virtual void UnitDefeated(BattleUnit user, BattleUnit target)
+        protected virtual void UnitDefeated(BattleUnit user, BattleUnit target, string causeOfDefeat = "")
         {
-            Debug.Log(user.displayName + " defeated " + target.displayName + "!");
+            if (causeOfDefeat == string.Empty)
+                Debug.Log(user.displayName + " defeated " + target.displayName + "!");
+            else
+                Debug.Log(target.displayName + " was deafeated by " + causeOfDefeat);
+
             user.unit.GainExp(target.unit.GetExpWorth());
         }
     }

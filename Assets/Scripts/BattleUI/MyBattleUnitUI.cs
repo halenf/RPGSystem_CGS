@@ -32,7 +32,15 @@ namespace RPGSystem
             // Init health bar
             m_healthBar.Initialise(m_battleUnit);
 
+            // skill slots are inactive by default
             skillSlotUIContainer.gameObject.SetActive(false);
+
+            // if the unit should face the other way, flip it by inverting the scale
+            if (m_facingLeft)
+            {
+                Vector3 scale = m_unitSpriteDisplay.rectTransform.localScale;
+                m_unitSpriteDisplay.rectTransform.localScale = new Vector3(-scale.x, scale.y, scale.z);
+            }
 
             UpdateUI();
         }
@@ -78,12 +86,8 @@ namespace RPGSystem
             // name display set to unit name
             m_unitNameDisplay.text = m_battleUnit.displayName;
 
-            // if the unit should face the other way, flip it by inverting the scale
-            if (m_facingLeft)
-            {
-                Vector3 scale = m_unitSpriteDisplay.rectTransform.localScale;
-                m_unitSpriteDisplay.rectTransform.localScale = new Vector3(-scale.x, scale.y, scale.z);
-            }
+            // update icon display
+            m_unitSpriteDisplay.sprite = (m_battleUnit.unit.unitData as MyUnitData).sprite;
         }
     }
 }

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: WeakJimmy
   m_EditorClassIdentifier: 
   m_unitData: {fileID: 11400000, guid: 4b5806f403ab2fe4da0076b6201283a9, type: 2}
-  m_unitNickname: Jimmy
+  m_unitNickname: Weak Jimmy
   m_skillSlots:
-  - m_skill: {fileID: 11400000, guid: 27ed47418dedafa458460e92bbc078c1, type: 2}
+  - m_skill: {fileID: 11400000, guid: fe3201511ce77e549b3df272ca68e972, type: 2}
     m_turnTimer: 0
-  m_totalExp: 3990
-  m_expToNextLevel: 1354
-  m_level: 7
+  m_totalExp: 3062
+  m_expToNextLevel: 1243
+  m_level: 6

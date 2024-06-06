@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1303a9023f5db9945bfedc9aacbdd7f8, type: 3}
   m_Name: PoisonShield
   m_EditorClassIdentifier: 
-  m_skillName: 
-  m_turnTimer: 0
+  m_skillName: Poison Shield
+  m_turnTimer: 3
   m_targets: 1
   m_priority: 3
   m_effects:

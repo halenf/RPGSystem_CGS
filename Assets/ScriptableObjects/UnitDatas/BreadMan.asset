@@ -17,11 +17,11 @@ MonoBehaviour:
   - m_stat: 0
     m_value: 6
   - m_stat: 1
-    m_value: 6
+    m_value: 8
   - m_stat: 2
-    m_value: 6
+    m_value: 4
   - m_stat: 3
-    m_value: 6
+    m_value: 2
   m_levelUpSkills:
   - m_level: 0
     m_skill: {fileID: 11400000, guid: 2340f658f2745b54782b5d25c34710c8, type: 2}

@@ -10,17 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e975e565481d7a4aada6750acce4abf, type: 3}
-  m_Name: StrongJimmy
+  m_Name: Adamongus
   m_EditorClassIdentifier: 
-  m_unitData: {fileID: 11400000, guid: 4b5806f403ab2fe4da0076b6201283a9, type: 2}
-  m_unitNickname: Strong Jimmy
+  m_unitData: {fileID: 11400000, guid: 00c87a8e01e0e794cb50faf412f15bc7, type: 2}
+  m_unitNickname: Adamongus
   m_skillSlots:
-  - m_skill: {fileID: 11400000, guid: a42194a13944ebc459508a83c7bf3bf3, type: 2}
-    m_turnTimer: 0
-  - m_skill: {fileID: 11400000, guid: a2089b458cd0bab439da993c896c84c2, type: 2}
-    m_turnTimer: 0
-  - m_skill: {fileID: 11400000, guid: fe3201511ce77e549b3df272ca68e972, type: 2}
-    m_turnTimer: 0
+  - m_skill: {fileID: 11400000, guid: 1a7f0143fb5bb8743af8c7a630093f64, type: 2}
+    m_turnTimer: 3
   m_totalExp: 9342
   m_expToNextLevel: 0
   m_level: 10
