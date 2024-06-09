@@ -32,15 +32,13 @@ public class MyBattleUnit : BattleUnit
         get { return m_unit.GetStat(BaseStatName.Agility); }
     }
 
-    public bool allSkillsOnCooldown
+    public bool canActThisTurn
     {
         get
         {
-            return m_unit.skillSlots.TrueForAll(slot => slot.turnTimer > 0);
+            return m_unit.skillSlots.TrueForAll(slot => slot.turnTimer > 0) || !m_triggeredEffects.HasFlag(TriggeredEffect.Stun);
         }
-    } 
-
-    public bool alive { get { return currentHP > 0; } }
+    }
 
     public int GetStat(string stat)
     {

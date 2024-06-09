@@ -38,7 +38,7 @@ namespace RPGSystem
         {
             m_battleScene.AddSkillToCurrentAttackAction(m_skillSlotIndex);
             transform.parent.gameObject.SetActive(false); // the parent of this is the skillslot container, so disable it
-            Debug.Log(m_battleUnit.skillSlots[m_skillSlotIndex].skill.skillName + " selected as skill.");
+            BattleTextLog.Instance.AddLine(m_battleUnit.skillSlots[m_skillSlotIndex].skill.skillName + " selected as skill.");
         }
 
         public void SetAsAvailableSkill(bool value)

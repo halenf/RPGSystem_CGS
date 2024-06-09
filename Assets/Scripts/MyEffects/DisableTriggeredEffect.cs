@@ -10,6 +10,6 @@ public class DisableTriggeredEffect : Effect
     public override void DoEffect(BattleUnit user, BattleUnit target)
     {
         target.DisableTriggeredEffect(m_effect);
-        Debug.Log(target.displayName + " recovered from " + m_effect + "!");
+        BattleTextLog.Instance.AddLine(target.displayName + "'s " + m_effect + " is cleared!");
     }
 }

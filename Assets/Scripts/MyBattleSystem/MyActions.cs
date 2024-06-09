@@ -12,6 +12,18 @@ public class SkipAction : Action
     }
 }
 
+public class DefeatedAction : Action
+{
+    public DefeatedAction(BattleUnitID user)
+    {
+        m_userID = user;
+    }
+    public DefeatedAction(int character, int user)
+    {
+        m_userID = new BattleUnitID(character, user);
+    }
+}
+
 public class AttackAction : Action
 {
     public AttackAction() { isDirty = true; }

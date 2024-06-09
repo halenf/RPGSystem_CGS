@@ -54,7 +54,7 @@ public class MyBattleScene : BattleScene
                 int index = c * GameSettings.UNITS_PER_PARTY + u;
                 m_battleUnits[index] = new MyBattleUnit(m_characters[c].units[u] as MyUnit, new BattleUnitID(c, u));
                 m_battleUnits[index].ResetBattleUnit();
-                Debug.Log(m_characters[c].characterName + " sends out " + GetBattleUnit(c, u).displayName + "!");
+                BattleTextLog.Instance.AddLine(m_characters[c].characterName + " sends out " + GetBattleUnit(c, u).displayName + "!");
             }
         }
     }
@@ -77,9 +77,24 @@ public class MyBattleScene : BattleScene
                         foreach (BattleUnit target in ventStatus.targets)
                             ventStatusSlot.OnClear(target);
                         battleUnit.RemoveStatusSlot(ventStatus);
-                        Debug.Log(battleUnit.displayName + " lost Vent!");
+                        BattleTextLog.Instance.AddLine(battleUnit.displayName + " lost Vent!");
                     }
                 }
+            }
+        }
+
+        // check if a unit should skip its turn
+        // only run this once per turn
+        for (int u = 0; u < m_characters[0].units.Length; u++)
+        {
+            MyBattleUnit battleUnit = GetBattleUnit(0, u) as MyBattleUnit;
+            if (battleUnit.currentHP == 0)
+            {
+                m_turnActions.Add(new DefeatedAction(0, u));
+            }
+            else if (!battleUnit.canActThisTurn)
+            {
+                m_turnActions.Add(new SkipAction(new BattleUnitID(0, u)));
             }
         }
     }
@@ -95,16 +110,6 @@ public class MyBattleScene : BattleScene
         // if null, create new from default constructor
         if (m_currentAction == null)
         {
-            // check if a unit should skip its turn
-            for (int u = 0; u < m_characters[0].units.Length; u++)
-            {
-                MyBattleUnit battleUnit = GetBattleUnit(0, u) as MyBattleUnit;
-                if (battleUnit.triggeredEffects.HasFlag(TriggeredEffect.Stun) || battleUnit.allSkillsOnCooldown)
-                {
-                    m_turnActions.Add(new SkipAction(new BattleUnitID(0, u)));
-                }
-            }
-
             // if all units should skip their turn, dont create an attack action
             if (m_turnActions.Count != m_characters[0].units.Length)
                 m_currentAction = new AttackAction();
@@ -130,7 +135,7 @@ public class MyBattleScene : BattleScene
                     {
                         // if has no user, skill, or targets
                         case 0:
-                            Debug.Log("Choose one of your Units.");
+                            BattleTextLog.Instance.AddLine("Choose one of your Units.");
                             // activate the parties units to be selected as users
                             for (int u = 0; u < m_characters[0].units.Length; u++)
                             {
@@ -141,7 +146,7 @@ public class MyBattleScene : BattleScene
                             break;
                         // if has a user, but no skill or targets
                         case 1:
-                            Debug.Log("Choose a skill for " + GetBattleUnit(attackAction.userID).displayName + " to use.");
+                            BattleTextLog.Instance.AddLine("Choose a skill for " + GetBattleUnit(attackAction.userID).displayName + " to use.");
                             // activate the skill slots for the selected unit
                             for (int s = 0; s < GetBattleUnit(0, attackAction.userID.battleUnit).skillSlots.Count; s++)
                             {
@@ -158,11 +163,11 @@ public class MyBattleScene : BattleScene
                             switch (GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.targets)
                             {
                                 case TargetType.SingleParty:
-                                    Debug.Log("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
+                                    BattleTextLog.Instance.AddLine("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
                                     // activate the parties units to be selected as targets
                                     for (int u = 0; u < m_characters[0].units.Length; u++)
                                     {
-                                        if ((GetBattleUnit(0, u) as MyBattleUnit).alive)
+                                        if ((GetBattleUnit(0, u) as MyBattleUnit).currentHP != 0)
                                             m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableTarget();
                                     }
                                     break;
@@ -185,12 +190,12 @@ public class MyBattleScene : BattleScene
                                     goto case TargetType.SingleEnemy;
                                 case TargetType.SingleEnemy:
                                 case TargetType.AdjacentEnemies:
-                                    Debug.Log("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
+                                    BattleTextLog.Instance.AddLine("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
                                     // activate all enemy units
                                     for (int c = 1; c < m_characters.Length; c++)
                                     {
                                         for (int u = 0; u < m_characters[c].units.Length; u++)
-                                            if ((GetBattleUnit(0, u) as MyBattleUnit).alive)
+                                            if ((GetBattleUnit(0, u) as MyBattleUnit).currentHP != 0)
                                                 m_battleSceneUI.battleUnitUIArray[c * GameSettings.UNITS_PER_PARTY + u].SetAsAvailableTarget();
                                     }
                                     break;
@@ -205,7 +210,7 @@ public class MyBattleScene : BattleScene
                     // then check if action is complete
                     if (attackAction.buildState == 3)
                     {
-                        Debug.Log(GetBattleUnit(attackAction.userID).displayName + " will use " +
+                        BattleTextLog.Instance.AddLine(GetBattleUnit(attackAction.userID).displayName + " will use " +
                             GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + " on Character " +
                             attackAction.targetID.character + "'s party at position " + attackAction.targetID.battleUnit + ".");
                         m_turnActions.Add(attackAction);
@@ -226,16 +231,6 @@ public class MyBattleScene : BattleScene
         }
 
         return false;
-    }
-
-    public void AddAttackAction(BattleUnitID userID, int skillSlotIndex, BattleUnitID targetID)
-    {
-        m_turnActions.Add(new AttackAction(userID, skillSlotIndex, targetID));
-    }
-
-    public void RemoveAttackAction(BattleUnitID userID)
-    {
-        m_turnActions.RemoveAll(action => (action as AttackAction).userID == userID);
     }
 
     public void AddUserToCurrentAttackAction(BattleUnitID userID)
@@ -286,7 +281,11 @@ public class MyBattleScene : BattleScene
             for (int u = 0; u < m_characters[c].units.Length; u++)
             {
                 MyBattleUnit battleUnit = GetBattleUnit(c, u) as MyBattleUnit;
-                if (battleUnit.allSkillsOnCooldown)
+                if (battleUnit.currentHP == 0)
+                {
+                    m_turnActions.Add(new DefeatedAction(c, u));
+                }
+                else if (!battleUnit.canActThisTurn)
                 {
                     m_turnActions.Add(new SkipAction(c, u));
                 }

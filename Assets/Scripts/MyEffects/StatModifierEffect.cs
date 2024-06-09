@@ -19,6 +19,6 @@ public class StatModifierEffect : Effect
             return;
 
         target.ApplyStatModifier(m_baseStat, m_value);
-        Debug.Log(target.displayName + "'s " + GameSettings.STAT_NAMES[(int)m_baseStat] + " is " + (m_value > 0 ? "raised" : "dropped") + " by " + m_value + "%!");
+        BattleTextLog.Instance.AddLine(target.displayName + "'s " + GameSettings.STAT_NAMES[(int)m_baseStat] + " is " + (m_value > 0 ? "raised" : "dropped") + " by " + m_value + "%!");
     }
 }

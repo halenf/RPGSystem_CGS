@@ -12,6 +12,6 @@ public class StatModifierSelf : Effect
             return;
 
         user.ApplyStatModifier(m_stat, m_value);
-        Debug.Log(user.displayName + " changes its " + GameSettings.STAT_NAMES[(int)m_stat] + " by " + m_value + " percent!");
+        BattleTextLog.Instance.AddLine(user.displayName + " changes its " + GameSettings.STAT_NAMES[(int)m_stat] + " by " + m_value + " percent!");
     }
 }

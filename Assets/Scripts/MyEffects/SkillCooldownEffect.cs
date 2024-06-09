@@ -19,13 +19,13 @@ public class SkillCooldownEffect : Effect
             for (int i = 0; i < target.skillSlots.Count; i++)
             {
                 target.ChangeSkillCooldown(i, m_value);
-                Debug.Log("All of " + target.displayName + "'s skill cooldowns is " + (m_value > 0 ? "extended" : "reduced") + " by " + m_value + " turn(s)!");
+                BattleTextLog.Instance.AddLine("All of " + target.displayName + "'s skill cooldowns is " + (m_value > 0 ? "extended" : "reduced") + " by " + m_value + " turn(s)!");
             }
         }
         else
         {
             target.ChangeSkillCooldown(m_targetSkillIndex, m_value);
-            Debug.Log(target.displayName + " has " + target.skillSlots[m_targetSkillIndex].skill.skillName + 
+            BattleTextLog.Instance.AddLine(target.displayName + " has " + target.skillSlots[m_targetSkillIndex].skill.skillName + 
                 " cooldown " + (m_value > 0 ? "extended" : "reduced") + " by " + m_value + " turn(s)!");
         }
     }

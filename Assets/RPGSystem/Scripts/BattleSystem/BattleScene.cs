@@ -25,6 +25,11 @@ namespace RPGSystem
         }
 
         /// <summary>
+        /// The object that stores and displays the the battle Actions
+        /// </summary>
+        [SerializeField] protected BattleTextLog m_textLogPrefab;
+
+        /// <summary>
         /// Characters participating in the battle.
         /// </summary>
         [SerializeField] protected Character[] m_characters;
@@ -151,7 +156,11 @@ namespace RPGSystem
                 Debug.LogError("Battle needs at least 2 Characters to run!");
             }
 
-            Debug.Log("Battle started between " + m_characters[0].characterName + " and " + m_characters[1].characterName + "!");
+            // create the battle log canvas
+            Instantiate(m_textLogPrefab, transform);
+
+            // First line :)
+            BattleTextLog.Instance.AddLine("Battle started between " + m_characters[0].characterName + " and " + m_characters[1].characterName + "!");
 
             // get Characters and BattleUnits ready for battle
             foreach (Character character in m_characters)
@@ -162,7 +171,6 @@ namespace RPGSystem
                     unit.InitialiseForBattle();
                 }
             }
-
             InitialiseBattleUnits();
         }
 
@@ -174,7 +182,7 @@ namespace RPGSystem
         protected virtual void OnTurnStart()
         {
             m_turnNumber++;
-            Debug.Log("Turn " + (m_turnNumber).ToString());
+            BattleTextLog.Instance.AddLine("Turn " + (m_turnNumber).ToString());
             
             // check OnTurnStart Status Effects
             for (int c = 0; c < m_characters.Length; c++)
@@ -186,7 +194,7 @@ namespace RPGSystem
                     {
                         if (slot.status.onTurnStart.Length > 0)
                         {
-                            Debug.Log(battleUnit.displayName + "'s " + slot.status.statusName + " activates!");
+                            BattleTextLog.Instance.AddLine(battleUnit.displayName + "'s " + slot.status.statusName + " activates!");
                             slot.OnTurnStart(battleUnit);
                             if (battleUnit.currentHP == 0)
                                 UnitDefeated(slot.status.user, battleUnit, slot.status.statusName);
@@ -214,7 +222,7 @@ namespace RPGSystem
                         // status on turn end effects
                         if (slot.status.onTurnEnd.Length > 0)
                         {
-                            Debug.Log(battleUnit.displayName + "'s " + slot.status.statusName + " activates!");
+                            BattleTextLog.Instance.AddLine(battleUnit.displayName + "'s " + slot.status.statusName + " activates!");
                             slot.OnTurnEnd(battleUnit);
                             if (battleUnit.currentHP == 0)
                                 UnitDefeated(slot.status.user, battleUnit, slot.status.statusName);
@@ -231,7 +239,7 @@ namespace RPGSystem
                     // clear any slots that need to be cleared
                     foreach (StatusSlot slot in slotsToRemove)
                     {
-                        Debug.Log(slot.status.statusName + " is cleared!");
+                        BattleTextLog.Instance.AddLine(GetBattleUnit(c, u).displayName + "'s " + slot.status.statusName + " is cleared!");
                         slot.OnClear(battleUnit);
                         battleUnit.RemoveStatusSlot(slot.status);
                     }
@@ -253,11 +261,11 @@ namespace RPGSystem
             Character lastCharacter = GetLastCharacter();
             if (lastCharacter != null)
             {
-                Debug.Log(lastCharacter.characterName + " wins the battle!");
+                BattleTextLog.Instance.AddLine(lastCharacter.characterName + " wins the battle!");
             }
             else
             {
-                Debug.Log("It's a draw!");
+                BattleTextLog.Instance.AddLine("It's a draw!");
             }
         }
 
@@ -314,7 +322,7 @@ namespace RPGSystem
                             case TargetType.Self:
                                 targets = new BattleUnit[1];
                                 targets[0] = user;
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on itself!");
+                                BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on itself!");
                                 break;
                             case TargetType.AdjacentEnemies:
                                 if (m_characters[attackAction.targetID.character].units.Length > 1)
@@ -324,7 +332,7 @@ namespace RPGSystem
                                         targets = new BattleUnit[2];
                                         targets[0] = GetBattleUnit(attackAction.targetID);
                                         targets[1] = GetBattleUnit(targetCharacter, targetUnit + (attackAction.targetID.battleUnit == 0 ? 1 : -1));
-                                        Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on " +
+                                        BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on " +
                                             GetBattleUnit(attackAction.targetID).displayName + " and " + GetBattleUnit(targetCharacter, targetUnit + 1).displayName + "!");
                                     }
                                     else
@@ -333,7 +341,7 @@ namespace RPGSystem
                                         targets[0] = GetBattleUnit(targetCharacter, targetUnit - 1);
                                         targets[1] = GetBattleUnit(attackAction.targetID);
                                         targets[2] = GetBattleUnit(targetCharacter, targetUnit + 1);
-                                        Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on " +
+                                        BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on " +
                                             GetBattleUnit(targetCharacter, targetUnit - 1).displayName + ", " + GetBattleUnit(attackAction.targetID).displayName + " and  " +
                                             GetBattleUnit(targetCharacter, targetUnit + 1).displayName + "!");
                                     }
@@ -350,7 +358,7 @@ namespace RPGSystem
                                         targets[u] = GetBattleUnit(targetCharacter, u);
                                     }
                                 }
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on all enemies!");
+                                BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on all enemies!");
                                 break;
                             case TargetType.WholePartyButSelf:
                                 targets = new BattleUnit[playersNumberOfUnits - 1];
@@ -362,7 +370,7 @@ namespace RPGSystem
                                     else
                                         buffer = -1;
                                 }
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on its party members!");
+                                BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on its party members!");
                                 break;
                             case TargetType.WholeParty:
                                 targets = new BattleUnit[playersNumberOfUnits];
@@ -370,7 +378,7 @@ namespace RPGSystem
                                 {
                                     targets[u] = GetBattleUnit(userCharacter, u);
                                 }
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on its whole party!");
+                                BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on its whole party!");
                                 break;
                             case TargetType.EveryoneButSelf:
                                 targets = new BattleUnit[totalUnits - 1];
@@ -385,7 +393,7 @@ namespace RPGSystem
                                             buffer = -1;
                                     }
                                 }
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on everyone else!");
+                                BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on everyone else!");
                                 break;
                             case TargetType.Everyone:
                                 targets = new BattleUnit[totalUnits];
@@ -396,11 +404,11 @@ namespace RPGSystem
                                         targets[c * GameSettings.UNITS_PER_PARTY + u] = GetBattleUnit(c, u);
                                     }
                                 }
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on everyone!");
+                                BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName + " on everyone!");
                                 break;
                             default:
                                 targets[0] = GetBattleUnit(attackAction.targetID);
-                                Debug.Log(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName +
+                                BattleTextLog.Instance.AddLine(user.displayName + " uses " + user.skillSlots[attackAction.skillSlotIndex].skill.skillName +
                                     " on " + GetBattleUnit(attackAction.targetID).displayName + "!");
                                 break;
                         }
@@ -416,25 +424,27 @@ namespace RPGSystem
                                     if (target.currentHP <= 0)
                                         UnitDefeated(user, target);
                                 }
-                                Debug.Log("But there was no target!");
+                                else
+                                    BattleTextLog.Instance.AddLine("But there was no target!");
                             }
                         }
                         break;
 
                     case SkipAction skipAction:
-                        Debug.Log(GetBattleUnit(skipAction.userID).displayName + " does nothing!");
+                        BattleTextLog.Instance.AddLine(GetBattleUnit(skipAction.userID).displayName + " does nothing!");
                         break;
 
                 }
             }
+            m_turnActions.Clear();
         }
 
         protected virtual void UnitDefeated(BattleUnit user, BattleUnit target, string causeOfDefeat = "")
         {
             if (causeOfDefeat == string.Empty)
-                Debug.Log(user.displayName + " defeated " + target.displayName + "!");
+                BattleTextLog.Instance.AddLine(user.displayName + " defeated " + target.displayName + "!");
             else
-                Debug.Log(target.displayName + " was deafeated by " + causeOfDefeat);
+                BattleTextLog.Instance.AddLine(target.displayName + " was deafeated by " + causeOfDefeat);
 
             user.unit.GainExp(target.unit.GetExpWorth());
         }

@@ -11,6 +11,6 @@ public class EnableTriggeredEffect : Effect
     public override void DoEffect(BattleUnit user, BattleUnit target)
     {
         target.EnableTriggeredEffect(m_effect);
-        Debug.Log(target.displayName + " gained " + m_effect.ToString() + "!");
+        BattleTextLog.Instance.AddLine(target.displayName + " gained " + m_effect.ToString() + "!");
     }
 }

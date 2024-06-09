@@ -9,6 +9,6 @@ public class ApplyStatusToSelf : Effect
     public override void DoEffect(BattleUnit user, BattleUnit target)
     {
         user.GainStatus(m_status);
-        Debug.Log(user.displayName + " gained " + m_status.statusName + "!");
+        BattleTextLog.Instance.AddLine(user.displayName + " gained " + m_status.statusName + "!");
     }
 }

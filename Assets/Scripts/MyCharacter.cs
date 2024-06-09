@@ -1,5 +1,4 @@
 using RPGSystem;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MyCharacter", menuName = "MyGame/Character", order = 1)]

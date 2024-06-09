@@ -22,16 +22,16 @@ public class HealEffect : Effect
         {
             case ValueType.Value:
                 restore = m_value;
-                Debug.Log(target.displayName + " restores " + restore + " HP!");
+                BattleTextLog.Instance.AddLine(target.displayName + " restores " + restore + " HP!");
                 break;
             case ValueType.UserStat:
             case ValueType.TargetStat:
                 restore = (int)((int)m_power * user.GetStat(BaseStatName.Health) * 0.08f);
-                Debug.Log(target.displayName + " restores " + restore + " HP!");
+                BattleTextLog.Instance.AddLine(target.displayName + " restores " + restore + " HP!");
                 break;
             case ValueType.Percentage:
                 restore = (int)(target.GetStat(BaseStatName.Health) / 100.0f * m_value);
-                Debug.Log(target.displayName + " restores " + m_value + "% of its HP (" + restore + " HP)!");
+                BattleTextLog.Instance.AddLine(target.displayName + " restores " + m_value + "% of its HP (" + restore + " HP)!");
                 break;
         }
 

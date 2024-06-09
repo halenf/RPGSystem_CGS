@@ -11,6 +11,6 @@ public class ApplyStatus : Effect
     {
         m_status.SetUser(user);
         target.GainStatus(m_status);
-        Debug.Log(target.displayName + " gained " + m_status.statusName + " for " + m_status.turnTimer + " turns!");
+        BattleTextLog.Instance.AddLine(target.displayName + " gained " + m_status.statusName + " for " + m_status.turnTimer + " turns!");
     }
 }

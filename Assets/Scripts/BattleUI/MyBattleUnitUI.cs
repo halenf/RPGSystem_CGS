@@ -49,13 +49,13 @@ namespace RPGSystem
         {
             m_battleScene.AddUserToCurrentAttackAction(m_battleUnit.battleID);
             skillSlotUIContainer.gameObject.SetActive(true);
-            Debug.Log(m_battleUnit.displayName + " selected as user.");
+            BattleTextLog.Instance.AddLine(m_battleUnit.displayName + " selected as user.");
         }
 
         private void SendUnitAsTarget()
         {
             m_battleScene.AddTargetToCurrentAttackAction(m_battleUnit.battleID);
-            Debug.Log(m_battleUnit.displayName + " selected as target.");
+            BattleTextLog.Instance.AddLine(m_battleUnit.displayName + " selected as target.");
         }
 
         public void SetAsAvailableUser()

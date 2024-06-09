@@ -15,18 +15,18 @@ public class DamageEffect : Effect
         {
             case ValueType.Value:
                 damage = m_value;
-                Debug.Log(target.displayName + " takes " + m_value + " damage!");
+                BattleTextLog.Instance.AddLine(target.displayName + " takes " + m_value + " damage!");
                 break;
             case ValueType.UserStat:
             case ValueType.TargetStat:
                 damage = (int)((int)m_power * (m_valueType == ValueType.UserStat ? user.GetStat(BaseStatName.Strength) : 
                     target.GetStat(BaseStatName.Strength) / (target.GetStat(BaseStatName.Fortitude) + 10.0f)));
                 int targetHP = target.currentHP;
-                Debug.Log(target.displayName + " takes " + damage + " damage!");
+                BattleTextLog.Instance.AddLine(target.displayName + " takes " + damage + " damage!");
                 break;
             case ValueType.Percentage:
                 damage = (int)(target.GetStat(BaseStatName.Health) / 100.0f * m_value);
-                Debug.Log(target.displayName + " loses " + m_value + "% of its HP (" + damage + " damage)!");
+                BattleTextLog.Instance.AddLine(target.displayName + " loses " + m_value + "% of its HP (" + damage + " damage)!");
                 break;
         }
 
@@ -43,7 +43,7 @@ public class DamageEffect : Effect
             else
                 restore = damage;
 
-            Debug.Log(user.displayName + " steals " + restore + " HP from " + target.displayName + "!");
+            BattleTextLog.Instance.AddLine(user.displayName + " steals " + restore + " HP from " + target.displayName + "!");
             user.RestoreHealth(restore);
         }
     }

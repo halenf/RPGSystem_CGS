@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RPGSystem
@@ -101,7 +102,7 @@ namespace RPGSystem
         {
             if (m_triggeredEffects.HasFlag(TriggeredEffect.Invulnerable))
             {
-                Debug.Log(displayName + "' is Invulnerable and blocks the instance of damage!");
+                BattleTextLog.Instance.AddLine(displayName + " is Invulnerable and blocks the instance of damage!");
                 return false;
             }
 
@@ -150,7 +151,16 @@ namespace RPGSystem
         public void GainStatus(Status status)
         {
             // if targets does not have debuff immunity
-            if ((m_triggeredEffects & TriggeredEffect.DebuffImmunity) == 0)
+            if (status.statusType == Status.StatusType.Debuff && m_triggeredEffects.HasFlag(TriggeredEffect.DebuffImmunity))
+                BattleTextLog.Instance.AddLine("But " + displayName + " is immune to debuffs!");
+            // if unit already has this status, extend it
+            else if (m_statusSlots.Find(slot => slot.status.statusName == status.statusName) != null)
+            {
+                StatusSlot slot = m_statusSlots.Find(slot => slot.status.statusName == status.statusName);
+                slot.ChangeTurnTimer(status.turnTimer);
+                BattleTextLog.Instance.AddLine(displayName + "'s " + status.statusName + " was extended by " + status.turnTimer.ToString() + " turns!");
+            }
+            else
             {
                 // add new status to status list, then call its on apply affects
                 m_statusSlots.Add(new StatusSlot(status));
@@ -241,8 +251,8 @@ namespace RPGSystem
                     // removes all status slots that have a matching status
                     // a unit shouldn't be able to have two of the same status so it should only remove one status slot,
                     // if it has that status
-                    if (m_statusSlots.RemoveAll(statusSlot => statusSlot.status == status) == 0)
-                        Debug.LogError(displayName + " does not have a SkillSlot with " + status.statusType + ".");
+                    if (m_statusSlots.RemoveAll(statusSlot => statusSlot.status.statusName == status.statusName) == 0)
+                        Debug.LogError(displayName + " does not have a StatusSlot with " + status.statusName + ".");
             }
             else
                 Debug.LogError(displayName + " has no StatusSlots to remove.");

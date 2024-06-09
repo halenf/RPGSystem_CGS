@@ -131,7 +131,7 @@ namespace RPGSystem
         {
             if (m_level < GameSettings.MAX_UNIT_LEVEL)
             {
-                Debug.Log(displayName + " gained " + value + " experience-points.");
+                BattleTextLog.Instance.AddLine(displayName + " gained " + value + " experience-points.");
                 int expGained = value;
                 m_expToNextLevel -= value;
 
@@ -167,14 +167,14 @@ namespace RPGSystem
             {
                 m_level = GameSettings.MAX_UNIT_LEVEL;
                 m_expToNextLevel = 0;
-                Debug.Log(displayName + " has reached the maximum level!");
+                BattleTextLog.Instance.AddLine(displayName + " has reached the maximum level!");
                 return;
             }
 
             // calculate the next required amount of experience
             m_expToNextLevel = CalculateExpToNextLevel(m_level, expRemainder);
 
-            Debug.Log(displayName + " grew to level " + m_level + "!");
+            BattleTextLog.Instance.AddLine(displayName + " grew to level " + m_level + "!");
         }
 
         /// <summary>
