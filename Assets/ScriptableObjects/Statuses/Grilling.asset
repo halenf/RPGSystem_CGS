@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_statusName: Grilling
   m_turnTimer: 2
-  m_statusType: 0
+  m_statusType: 1
   m_onApply:
   - {fileID: 11400000, guid: a437218ddf5aee345bbbdf44b307bd07, type: 2}
   m_onTurnStart: []
