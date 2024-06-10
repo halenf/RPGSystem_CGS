@@ -17,6 +17,5 @@ MonoBehaviour:
   m_targets: 2
   m_priority: 0
   m_effects:
-  - {fileID: 11400000, guid: f6a700855cfbbb547b50feef17bc8e31, type: 2}
   - {fileID: 11400000, guid: 619052049cf4cba4ba4413822cb1693c, type: 2}
-  - {fileID: 11400000, guid: 74a31c3df28df7041ba2c722c5c1ea73, type: 2}
+  - {fileID: 11400000, guid: 619052049cf4cba4ba4413822cb1693c, type: 2}

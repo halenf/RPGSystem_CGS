@@ -17,8 +17,10 @@ public class BattleTesterUI : MonoBehaviour
     [SerializeField] private TMP_Dropdown m_spriteDropdown;
     [SerializeField] private Button m_createCharacterButton;
     
-    public void Initialise(MyUnit[] units, Sprite[] sprites)
+    public void Initialise(BattleTester battleTester, MyUnit[] units, Sprite[] sprites)
     {
+        m_battleTester = battleTester;
+        
         m_units = units;
         m_sprites = sprites;
 
@@ -59,10 +61,7 @@ public class BattleTesterUI : MonoBehaviour
 
     public void CreateCharacter()
     {
-        if (m_nameField.text != string.Empty)
-        { 
-            Unit[] units = { m_units[m_unitDropdowns[0].value], m_units[m_unitDropdowns[1].value], m_units[m_unitDropdowns[2].value] };
-            m_battleTester.StartBattle(m_nameField.text, units, m_sprites[m_spriteDropdown.value]);
-        }
+        Unit[] units = { m_units[m_unitDropdowns[0].value], m_units[m_unitDropdowns[1].value], m_units[m_unitDropdowns[2].value] };
+        m_battleTester.StartBattle(m_nameField.text, units, m_sprites[m_spriteDropdown.value]);
     }
 }

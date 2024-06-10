@@ -32,7 +32,7 @@ public class BattleTester : MonoBehaviour
         // if battle scene exists and has stopped playing
         if (m_battleScene != null && !m_battleScene.isPlaying)
         {
-            Destroy(m_battleScene);
+            Destroy(m_battleScene.gameObject);
             InitialiseUIObject();
         }
     }
@@ -41,7 +41,7 @@ public class BattleTester : MonoBehaviour
     {
         m_character = ScriptableObject.CreateInstance<MyCharacter>();
         m_character.Initialise(name, units, sprite);
-        Destroy(m_ui);
+        Destroy(m_ui.gameObject);
         m_battleScene = Instantiate(m_battleScenePrefab);
         m_battleScene.Initialise(new Character[] { m_character, m_presetCharacters[Random.Range(0, m_presetCharacters.Length)] });
     }
@@ -49,6 +49,6 @@ public class BattleTester : MonoBehaviour
     private void InitialiseUIObject()
     {
         m_ui = Instantiate(m_uiPrefab);
-        m_ui.Initialise(m_unitOptions, m_spriteOptions);
+        m_ui.Initialise(this, m_unitOptions, m_spriteOptions);
     }
 }

@@ -29,12 +29,12 @@ public class MyBattleScene : BattleScene
     public void Initialise(Character[] characters)
     {
         m_characters = characters;
+        m_isPlaying = true;
     }
 
     new private void Start()
     {
         base.Start();
-        m_isPlaying = true;
         m_endBattleButton.SetActive(false);
     }
 
@@ -100,7 +100,7 @@ public class MyBattleScene : BattleScene
             {
                 m_turnActions.Add(new DefeatedAction(0, u));
             }
-            else if (!battleUnit.canActThisTurn)
+            else if (battleUnit.cantActThisTurn)
             {
                 m_turnActions.Add(new SkipAction(new BattleUnitID(0, u)));
             }
@@ -173,10 +173,13 @@ public class MyBattleScene : BattleScene
                                 case TargetType.SingleParty:
                                     BattleTextLog.Instance.AddLine("Choose the target for " + GetBattleUnit(attackAction.userID).skillSlots[attackAction.skillSlotIndex].skill.skillName + ".");
                                     // activate the parties units to be selected as targets
-                                    for (int u = 0; u < m_characters[0].units.Length; u++)
+                                    for (int c = 0; c < m_characters.Length; c++)
                                     {
-                                        if ((GetBattleUnit(0, u) as MyBattleUnit).currentHP != 0)
-                                            m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableTarget();
+                                        for (int u = 0; u < m_characters[c].units.Length; u++)
+                                        {
+                                            if (GetBattleUnit(c, u).currentHP > 0)
+                                                m_battleSceneUI.battleUnitUIArray[u].SetAsAvailableTarget();
+                                        }
                                     }
                                     break;
                                 case TargetType.Self:
@@ -203,7 +206,7 @@ public class MyBattleScene : BattleScene
                                     for (int c = 1; c < m_characters.Length; c++)
                                     {
                                         for (int u = 0; u < m_characters[c].units.Length; u++)
-                                            if ((GetBattleUnit(0, u) as MyBattleUnit).currentHP != 0)
+                                            if (GetBattleUnit(c, u).currentHP > 0)
                                                 m_battleSceneUI.battleUnitUIArray[c * GameSettings.UNITS_PER_PARTY + u].SetAsAvailableTarget();
                                     }
                                     break;
@@ -234,6 +237,9 @@ public class MyBattleScene : BattleScene
         // if all the party's actions are completed, return true
         if (m_turnActions.Count == m_characters[0].units.Length)
         {
+            if (m_turnNumber == 2)
+                Debug.Log("Before crash");
+
             GetAIActions();
             return true;
         }
@@ -293,7 +299,7 @@ public class MyBattleScene : BattleScene
                 {
                     m_turnActions.Add(new DefeatedAction(c, u));
                 }
-                else if (!battleUnit.canActThisTurn)
+                else if (battleUnit.cantActThisTurn)
                 {
                     m_turnActions.Add(new SkipAction(c, u));
                 }
@@ -372,6 +378,7 @@ public class MyBattleScene : BattleScene
 
     public void EndBattle()
     {
+        Destroy(m_battleSceneUI.gameObject);
         m_isPlaying = false;
     }
 }

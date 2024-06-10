@@ -32,11 +32,11 @@ public class MyBattleUnit : BattleUnit
         get { return m_unit.GetStat(BaseStatName.Agility); }
     }
 
-    public bool canActThisTurn
+    public bool cantActThisTurn
     {
         get
         {
-            return !m_unit.skillSlots.TrueForAll(slot => slot.turnTimer == 0) || !m_triggeredEffects.HasFlag(TriggeredEffect.Stun);
+            return m_unit.skillSlots.TrueForAll(slot => slot.turnTimer > 0) || m_triggeredEffects.HasFlag(TriggeredEffect.Stun);
         }
     }
 
