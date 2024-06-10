@@ -7,6 +7,8 @@ namespace RPGSystem
     {
         protected SerializedProperty m_unitData, m_unitNickname, m_totalExp, m_expToNextLevel, m_level, m_skillSlots;
 
+        protected bool hasBeenChanged;
+
         private void OnEnable()
         {
             GetSerializedProperties();
@@ -16,6 +18,7 @@ namespace RPGSystem
         {
             serializedObject.Update();
 
+            hasBeenChanged = false;
             EditorGUI.BeginChangeCheck();
 
             OnGUI();
@@ -25,8 +28,9 @@ namespace RPGSystem
             if (GUILayout.Button("Reset Unit"))
                 (target as Unit).ResetUnit();
 
-            if (EditorGUI.EndChangeCheck())
+            if (EditorGUI.EndChangeCheck() || hasBeenChanged)
             {
+                EditorUtility.SetDirty(target);
                 serializedObject.ApplyModifiedProperties();
                 GetSerializedProperties(); // If changes were made to the object, update references to properties
             }
@@ -61,12 +65,18 @@ namespace RPGSystem
                 EditorGUILayout.LabelField(new GUIContent("Level", "This unit's curent level."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.08f));
                 int inputLevel = EditorGUILayout.IntField(m_level.intValue, GUILayout.Width(Screen.width * 0.1f));
                 if (inputLevel != m_level.intValue)
+                {
                     unit.SetLevel(inputLevel);
+                    hasBeenChanged = true;
+                }
 
                 EditorGUILayout.LabelField(new GUIContent("Total Exp", "This unit's total experience."), EditorStyles.boldLabel, GUILayout.Width(Screen.width * 0.13f));
                 int inputExp = EditorGUILayout.IntField(m_totalExp.intValue, GUILayout.Width(Screen.width * 0.18f));
                 if (inputExp != m_totalExp.intValue)
+                {
                     unit.SetTotalExp(inputExp);
+                    hasBeenChanged = true;
+                }
 
                 // If the unit is at max level, don't show exp to next level
                 if (unit.level != GameSettings.MAX_UNIT_LEVEL)
@@ -90,13 +100,17 @@ namespace RPGSystem
                 if (m_skillSlots.arraySize == 0)
                 {
                     unit.InitialiseSkillSlots();
+                    hasBeenChanged = true;
                 }
 
                 EditorGUILayout.PropertyField(m_skillSlots, new GUIContent("Skill Slots", "The unit's skill slots."));
 
                 // Manually initialise skill slots
                 if (GUILayout.Button("Re-initialise Skill Slots"))
+                {
                     unit.InitialiseSkillSlots();
+                    hasBeenChanged = true;
+                }
             }
         }
 

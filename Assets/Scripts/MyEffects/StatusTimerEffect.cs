@@ -17,15 +17,22 @@ public class StatusTimerEffect : Effect
         for (int i = 0; i < target.statusSlots.Count; i++)
         {
             if (m_statusName == string.Empty)
+            {
                 target.ChangeStatusTimer(i, m_value);
+            }
             else if (target.statusSlots[i].status.statusName == m_statusName)
             {
                 target.ChangeStatusTimer(i, m_value);
                 BattleTextLog.Instance.AddLine(target.displayName + "'s " + m_statusName + " was " + (m_value > 0 ? "extended" : "reduced") + " by " + m_value + " turns!");
-                return;
+                break;
             }
         }
         if (m_statusName == string.Empty)
             BattleTextLog.Instance.AddLine("All of " + target.displayName + "'s statuses were " + (m_value > 0 ? "extended" : "reduced") + " by " + m_value + " turn(s)!");
+        if (target.statusSlots.Count == 0)
+            BattleTextLog.Instance.AddLine("But " + target.displayName + " is not inflicted with any Statuses!");
+
+        // check if any of the statuses should be cleared
+        target.CheckStatusTimers();
     }
 }

@@ -35,7 +35,6 @@ namespace RPGSystem
     [Flags]
     public enum TriggeredEffect
     {
-        None = 0,
         FailNextSkillEffect = 1,
         FailStatusClearEffects = 2, // Implemented
         DamageOnSkillUse = 4,

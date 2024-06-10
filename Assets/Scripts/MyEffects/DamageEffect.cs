@@ -20,7 +20,7 @@ public class DamageEffect : Effect
             case ValueType.UserStat:
             case ValueType.TargetStat:
                 damage = (int)((int)m_power * (m_valueType == ValueType.UserStat ? user.GetStat(BaseStatName.Strength) : 
-                    target.GetStat(BaseStatName.Strength) / (target.GetStat(BaseStatName.Fortitude) + 10.0f)));
+                    target.GetStat(BaseStatName.Strength) / (target.GetStat(BaseStatName.Fortitude) + 10.0f)) / 4.0f);
                 int targetHP = target.currentHP;
                 BattleTextLog.Instance.AddLine(target.displayName + " takes " + damage + " damage!");
                 break;

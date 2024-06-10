@@ -15,6 +15,10 @@ MonoBehaviour:
   m_unitData: {fileID: 11400000, guid: 00c87a8e01e0e794cb50faf412f15bc7, type: 2}
   m_unitNickname: Adamongus
   m_skillSlots:
+  - m_skill: {fileID: 11400000, guid: 139ec48ab1da63d45a90ee5fa6c7e589, type: 2}
+    m_turnTimer: 3
+  - m_skill: {fileID: 11400000, guid: d4227f97e3d871643b52de29cb88de99, type: 2}
+    m_turnTimer: 3
   - m_skill: {fileID: 11400000, guid: 1a7f0143fb5bb8743af8c7a630093f64, type: 2}
     m_turnTimer: 3
   m_totalExp: 9342

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_statusName: Burn
   m_turnTimer: 2
-  m_statusType: 0
+  m_statusType: 1
   m_onApply: []
   m_onTurnStart: []
   m_onTurnEnd:

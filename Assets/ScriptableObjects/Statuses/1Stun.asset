@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_statusName: Stun
   m_turnTimer: 1
-  m_statusType: 0
+  m_statusType: 2
   m_onApply:
   - {fileID: 11400000, guid: 431ec8b4809eeb945abe5bf430430eb6, type: 2}
   m_onTurnStart: []

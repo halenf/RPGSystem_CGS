@@ -15,7 +15,11 @@ MonoBehaviour:
   m_unitData: {fileID: 11400000, guid: 4223eeb23a17bf440812782d28cfb847, type: 2}
   m_unitNickname: Hank Hill
   m_skillSlots:
-  - m_skill: {fileID: 11400000, guid: 27ed47418dedafa458460e92bbc078c1, type: 2}
+  - m_skill: {fileID: 11400000, guid: b23208bf8483ccb4eb0a1764b6e9ed86, type: 2}
+    m_turnTimer: 4
+  - m_skill: {fileID: 11400000, guid: 64203c5b4462f3649affb522c4bacff6, type: 2}
+    m_turnTimer: 3
+  - m_skill: {fileID: 11400000, guid: 8d041a22af1698f4c8c50883c95cc6f0, type: 2}
     m_turnTimer: 0
   m_totalExp: 8667
   m_expToNextLevel: 1975

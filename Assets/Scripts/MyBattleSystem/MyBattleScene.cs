@@ -24,10 +24,18 @@ public class MyBattleScene : BattleScene
     [SerializeField] private MyBattleSceneUI m_battleSceneUIPrefab;
     private MyBattleSceneUI m_battleSceneUI;
 
+    [SerializeField] private GameObject m_endBattleButton;
+
+    public void Initialise(Character[] characters)
+    {
+        m_characters = characters;
+    }
+
     new private void Start()
     {
         base.Start();
         m_isPlaying = true;
+        m_endBattleButton.SetActive(false);
     }
 
     public void SetCharacters(MyCharacter[] characters)
@@ -346,9 +354,24 @@ public class MyBattleScene : BattleScene
             return false;
     }
 
+    protected override void UnitDefeated(BattleUnit user, BattleUnit target, string causeOfDefeat = "")
+    {
+        if (causeOfDefeat == string.Empty)
+            BattleTextLog.Instance.AddLine(user.displayName + " defeated " + target.displayName + "!");
+        else
+            BattleTextLog.Instance.AddLine(target.displayName + " was deafeated by " + causeOfDefeat);
+
+        // dont gain exp because this is just a battle tester
+    }
+
     protected override void OnBattleEnd()
     {
         base.OnBattleEnd();
+        m_endBattleButton.SetActive(true);
+    }
+
+    public void EndBattle()
+    {
         m_isPlaying = false;
     }
 }

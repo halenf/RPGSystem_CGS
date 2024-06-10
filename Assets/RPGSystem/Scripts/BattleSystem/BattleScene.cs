@@ -21,7 +21,8 @@ namespace RPGSystem
             ChooseActions,
             Action,
             TurnEnd,
-            End
+            End,
+            WaitForExit
         }
 
         /// <summary>
@@ -138,6 +139,7 @@ namespace RPGSystem
                     break;
                 case BattlePhase.End:
                     OnBattleEnd();
+                    m_currentPhase = BattlePhase.WaitForExit;
                     break;
             }
         }
@@ -200,6 +202,10 @@ namespace RPGSystem
                                 UnitDefeated(slot.status.user, battleUnit, slot.status.statusName);
                         }
                     }
+
+                    // and tick down skill slot timers
+                    foreach (SkillSlot slot in battleUnit.skillSlots)
+                        slot.ChangeTurnTimer(-1);
                 }
             }
         }
@@ -230,19 +236,10 @@ namespace RPGSystem
 
                         // lower timer of status
                         slot.ChangeTurnTimer(-1);
-
-                        // status on clear effects
-                        if (slot.turnTimer == 0)
-                            slotsToRemove.Add(slot);
                     }
 
-                    // clear any slots that need to be cleared
-                    foreach (StatusSlot slot in slotsToRemove)
-                    {
-                        BattleTextLog.Instance.AddLine(GetBattleUnit(c, u).displayName + "'s " + slot.status.statusName + " is cleared!");
-                        slot.OnClear(battleUnit);
-                        battleUnit.RemoveStatusSlot(slot.status);
-                    }
+                    // check if any statuses should be cleared
+                    battleUnit.CheckStatusTimers();
                 }
             }
         }
@@ -414,20 +411,24 @@ namespace RPGSystem
                         }
 
                         // do the effects
-                        foreach (Effect effect in user.skillSlots[attackAction.skillSlotIndex].skill.effects)
+                        foreach (BattleUnit target in targets)
                         {
-                            foreach (BattleUnit target in targets)
+                            if (target.currentHP > 0)
                             {
-                                if (target.currentHP > 0)
-                                {
+                                foreach (Effect effect in user.skillSlots[attackAction.skillSlotIndex].skill.effects)
+                                {  
                                     effect.DoEffect(user, target);
                                     if (target.currentHP <= 0)
                                         UnitDefeated(user, target);
                                 }
-                                else
-                                    BattleTextLog.Instance.AddLine("But there was no target!");
                             }
+                            else
+                                BattleTextLog.Instance.AddLine("But there was no target!");
                         }
+
+                        // set the cooldown on the used skill
+                        user.skillSlots[attackAction.skillSlotIndex].ChangeTurnTimer(user.skillSlots[attackAction.skillSlotIndex].skill.turnTimer);
+
                         break;
 
                     case SkipAction skipAction:

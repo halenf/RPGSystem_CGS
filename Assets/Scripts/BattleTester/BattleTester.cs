@@ -22,39 +22,33 @@ public class BattleTester : MonoBehaviour
 
     private void Start()
     {
-        m_ui = Instantiate(m_uiPrefab);
-        m_ui.Initialise(m_unitOptions, m_spriteOptions);
+        InitialiseUIObject();
         m_battleScene = null;
         m_character = null;
     }
 
     private void Update()
     {
-        // if battle scene does not exist, handle battle tester options
-        if (m_battleScene == null)
-        {
-            
-
-            // if the character has been created
-            if (m_character != null)
-            {
-                m_ui.gameObject.SetActive(false);
-                Destroy(m_ui);
-                m_battleScene = Instantiate(m_battleScenePrefab);
-                m_battleScene.SetCharacters(new MyCharacter[] { m_character, m_presetCharacters[Random.Range(0, m_presetCharacters.Length)] });
-            }
-        }
         // if battle scene exists and has stopped playing
-        else if (!m_battleScene.isPlaying)
+        if (m_battleScene != null && !m_battleScene.isPlaying)
         {
             Destroy(m_battleScene);
-            m_ui = Instantiate(m_uiPrefab);
+            InitialiseUIObject();
         }
     }
 
-    public void CreateCharacter(string name, Unit[] units, Sprite sprite)
+    public void StartBattle(string name, Unit[] units, Sprite sprite)
     {
         m_character = ScriptableObject.CreateInstance<MyCharacter>();
         m_character.Initialise(name, units, sprite);
+        Destroy(m_ui);
+        m_battleScene = Instantiate(m_battleScenePrefab);
+        m_battleScene.Initialise(new Character[] { m_character, m_presetCharacters[Random.Range(0, m_presetCharacters.Length)] });
+    }
+
+    private void InitialiseUIObject()
+    {
+        m_ui = Instantiate(m_uiPrefab);
+        m_ui.Initialise(m_unitOptions, m_spriteOptions);
     }
 }

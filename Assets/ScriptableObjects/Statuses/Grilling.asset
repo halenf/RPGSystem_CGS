@@ -16,10 +16,13 @@ MonoBehaviour:
   m_turnTimer: 2
   m_statusType: 1
   m_onApply:
-  - {fileID: 11400000, guid: a437218ddf5aee345bbbdf44b307bd07, type: 2}
+  - {fileID: 11400000, guid: 431ec8b4809eeb945abe5bf430430eb6, type: 2}
+  - {fileID: 11400000, guid: c2fd225946e552247a5010a56e23eb92, type: 2}
   m_onTurnStart: []
   m_onTurnEnd: []
   m_onClear:
   - {fileID: 11400000, guid: 301fd51240e643d4a8884ce299fb1c5c, type: 2}
+  - {fileID: 11400000, guid: 47fae3be669ace3448d694cc3e7fe960, type: 2}
+  - {fileID: 11400000, guid: 9c451a79650999f4989cee2dda886847, type: 2}
   m_onHit:
   - {fileID: 11400000, guid: b6f93b914f4a71541adec8942e6d7050, type: 2}

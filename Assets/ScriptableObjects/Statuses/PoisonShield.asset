@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: PoisonShield
   m_EditorClassIdentifier: 
   m_statusName: Poison Shield
-  m_turnTimer: 2
-  m_statusType: 0
-  m_onApply: []
+  m_turnTimer: 1
+  m_statusType: 1
+  m_onApply:
+  - {fileID: 11400000, guid: c2fd225946e552247a5010a56e23eb92, type: 2}
   m_onTurnStart: []
   m_onTurnEnd: []
-  m_onClear: []
+  m_onClear:
+  - {fileID: 11400000, guid: 9c451a79650999f4989cee2dda886847, type: 2}
   m_onHit:
   - {fileID: 11400000, guid: f1257a348b800474c95572d569fc1dd2, type: 2}

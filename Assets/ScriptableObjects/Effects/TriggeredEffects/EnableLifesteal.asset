@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: EnableLifesteal
   m_EditorClassIdentifier: 
   m_value: 0
-  m_effect: 32
+  m_effect: 16

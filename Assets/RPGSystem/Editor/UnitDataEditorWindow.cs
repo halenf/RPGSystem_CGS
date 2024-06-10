@@ -17,6 +17,8 @@ namespace RPGSystem
 
         public sealed override void OnInspectorGUI()
         {
+            serializedObject.Update();
+
             EditorGUI.BeginChangeCheck();
 
             OnGUI();
@@ -28,9 +30,9 @@ namespace RPGSystem
 
             if (EditorGUI.EndChangeCheck())
             {
+                EditorUtility.SetDirty(target);
                 serializedObject.ApplyModifiedProperties();
                 GetSerializedProperties();
-                serializedObject.Update();
             }
         }
 

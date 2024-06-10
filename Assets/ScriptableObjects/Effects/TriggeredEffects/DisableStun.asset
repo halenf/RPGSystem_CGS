@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: DisableStun
   m_EditorClassIdentifier: 
   m_value: 0
-  m_effect: 0
+  m_effect: 32

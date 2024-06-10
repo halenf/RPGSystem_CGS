@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -37,7 +38,7 @@ namespace RPGSystem
             set { m_unit.currentHP = value; }
         }
 
-        // status slots
+        // slot slots
         [SerializeField] protected List<StatusSlot> m_statusSlots = new List<StatusSlot>();
         public List<StatusSlot> statusSlots
         {
@@ -145,15 +146,15 @@ namespace RPGSystem
         }
 
         /// <summary>
-        /// Adds a status to the unit's Status Slots.
+        /// Adds a slot to the unit's Status Slots.
         /// </summary>
-        /// <param name="status">The status to be applied to the unit.</param>
+        /// <param name="status">The slot to be applied to the unit.</param>
         public void GainStatus(Status status)
         {
             // if targets does not have debuff immunity
             if (status.statusType == Status.StatusType.Debuff && m_triggeredEffects.HasFlag(TriggeredEffect.DebuffImmunity))
                 BattleTextLog.Instance.AddLine("But " + displayName + " is immune to debuffs!");
-            // if unit already has this status, extend it
+            // if unit already has this slot, extend it
             else if (m_statusSlots.Find(slot => slot.status.statusName == status.statusName) != null)
             {
                 StatusSlot slot = m_statusSlots.Find(slot => slot.status.statusName == status.statusName);
@@ -162,11 +163,11 @@ namespace RPGSystem
             }
             else
             {
-                // add new status to status list, then call its on apply affects
+                // add new slot to slot list, then call its on apply affects
                 m_statusSlots.Add(new StatusSlot(status));
                 m_statusSlots.Last().OnApply(this);
             }
-            // if targets does have debuff immunity, then don't apply the status
+            // if targets does have debuff immunity, then don't apply the slot
         }
 
         /// <summary>
@@ -183,11 +184,11 @@ namespace RPGSystem
         /// <summary>
         /// Change the turn timer of a Status Slot at a specified index.
         /// </summary>
-        /// <param name="index">Index of the status slot.</param>
+        /// <param name="index">Index of the slot slot.</param>
         /// <param name="value">Amount to change the turn timer.</param>
         public void ChangeStatusTimer(int index, int value)
         {
-            // increase/decrease the turn timer of the status at the indicated index
+            // increase/decrease the turn timer of the slot at the indicated index
             m_statusSlots[index].ChangeTurnTimer(value);
         }
 
@@ -219,18 +220,37 @@ namespace RPGSystem
             m_triggeredEffects ^= effect;
         }
 
+        public void CheckStatusTimers()
+        {
+            List<StatusSlot> statusesToRemove = new List<StatusSlot>();
+            foreach (StatusSlot slot in m_statusSlots)
+            {
+                // slot on clear effects
+                if (slot.turnTimer == 0)
+                    statusesToRemove.Add(slot);
+            }
+
+            // clear any slots that need to be cleared
+            foreach (StatusSlot slot in statusesToRemove)
+            {
+                BattleTextLog.Instance.AddLine(displayName + "'s " + slot.status.statusName + " is cleared!");
+                slot.OnClear(this);
+                RemoveStatusSlot(slot.status);
+            }
+        }
+
         /// <summary>
         /// Adds a Status Slot to the unit.
-        /// Can be created with or without a status.
+        /// Can be created with or without a slot.
         /// </summary>
         /// <param name="status">The Status to add.</param>
         public void AddStatusSlot(Status status = null)
         {
             if (status == null)
-                // add a new empty status slot
+                // add a new empty slot slot
                 m_statusSlots.Add(new StatusSlot());
             else
-                // add a status slot with the predefined values
+                // add a slot slot with the predefined values
                 m_statusSlots.Add(new StatusSlot(status));
         }
 
@@ -239,18 +259,17 @@ namespace RPGSystem
         /// Either removes the newest Status Slot or the Status Slot with a Status matching the param.
         /// </summary>
         /// <param name="status">Will remove the Status Slot with this Status.</param>
-        /// <exception cref="IndexOutOfRangeException">If a status slot is attempted to be removed when there aren't any.</exception>
         public void RemoveStatusSlot(Status status = null)
         {
             if (m_statusSlots.Count > 0)
             {
                 if (status == null)
-                    // remove the last status slot in the list
+                    // remove the last slot slot in the list
                     m_statusSlots.RemoveAt(m_statusSlots.Count - 1);
                 else
-                    // removes all status slots that have a matching status
-                    // a unit shouldn't be able to have two of the same status so it should only remove one status slot,
-                    // if it has that status
+                    // removes all slot slots that have a matching slot
+                    // a unit shouldn't be able to have two of the same slot so it should only remove one slot slot,
+                    // if it has that slot
                     if (m_statusSlots.RemoveAll(statusSlot => statusSlot.status.statusName == status.statusName) == 0)
                         Debug.LogError(displayName + " does not have a StatusSlot with " + status.statusName + ".");
             }

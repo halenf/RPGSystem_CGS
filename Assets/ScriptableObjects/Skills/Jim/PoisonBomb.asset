@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_skillName: Poison Bomb
   m_turnTimer: 3
-  m_targets: 128
+  m_targets: 4
+  m_priority: 0
   m_effects:
   - {fileID: 11400000, guid: b6f93b914f4a71541adec8942e6d7050, type: 2}
   - {fileID: 11400000, guid: f1257a348b800474c95572d569fc1dd2, type: 2}
-  - {fileID: 11400000, guid: 046e814e7c7a520488bd0d8505fb1cb0, type: 2}

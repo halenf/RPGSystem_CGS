@@ -36,7 +36,7 @@ public class MyBattleUnit : BattleUnit
     {
         get
         {
-            return m_unit.skillSlots.TrueForAll(slot => slot.turnTimer > 0) || !m_triggeredEffects.HasFlag(TriggeredEffect.Stun);
+            return !m_unit.skillSlots.TrueForAll(slot => slot.turnTimer == 0) || !m_triggeredEffects.HasFlag(TriggeredEffect.Stun);
         }
     }
 

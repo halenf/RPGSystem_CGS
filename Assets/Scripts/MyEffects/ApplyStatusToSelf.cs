@@ -8,7 +8,8 @@ public class ApplyStatusToSelf : Effect
 
     public override void DoEffect(BattleUnit user, BattleUnit target)
     {
+        m_status.SetUser(user);
         user.GainStatus(m_status);
-        BattleTextLog.Instance.AddLine(user.displayName + " gained " + m_status.statusName + "!");
+        BattleTextLog.Instance.AddLine(user.displayName + " gained " + m_status.statusName +" for " + m_status.turnTimer + " turns!");
     }
 }
